@@ -1,7 +1,9 @@
 #ifndef _NODE_H
 #define _NODE_H
 #pragma once
-#include "Dispch.h"
+
+
+#include <map>
 
 /* 
 Graph class allowance. 

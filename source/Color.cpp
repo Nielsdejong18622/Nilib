@@ -1,6 +1,5 @@
 #include "Color.h"
 #include "RNG.hpp"
-
 #include <math.h>
 
 /*Color::Color(unsigned char R, unsigned char G, unsigned char B) : 

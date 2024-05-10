@@ -1,7 +1,7 @@
 #ifndef ARGS_H
 #define ARGS_H
-#include "Dispch.h"
-#include "Log.h"
+
+#include "Log.hpp"
 
 
 /* This class passes the arguments from the terminal. 
