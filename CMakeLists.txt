@@ -15,4 +15,4 @@ add_subdirectory(external/glfw)
 
 # Add subdirectories for the Nilibrary
 add_subdirectory(source)
-#add_subdirectory(tests)
+add_subdirectory(tests)
