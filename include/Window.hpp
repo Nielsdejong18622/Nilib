@@ -15,10 +15,6 @@
 #include <map>
 #include <functional>
 
-<<<<<<< HEAD
-=======
-#include <GLFW/glfw3.h>
->>>>>>> 43300999813f8cfa684e6af20ea9348c0dde89a5
 #include "Color.h"
 #include "Log.hpp"
 #include "GLFW/glfw3.h"
