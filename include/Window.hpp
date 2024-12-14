@@ -15,9 +15,9 @@
 #include <map>
 #include <functional>
 
-#include "GLFW/glfw3.h"
 #include "Color.h"
 #include "Log.hpp"
+#include "GLFW/glfw3.h"
 
 // Typedefs. 
 typedef std::function<void(void)> Callback;
