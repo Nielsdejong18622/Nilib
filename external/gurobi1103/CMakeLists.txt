@@ -27,6 +27,7 @@ endif()
 find_package(GUROBI REQUIRED)
 
 include_directories(${GUROBI_INCLUDE_DIRS})
+include_directories(${GUROBI_INCLUDE_DIRS}/GUROBI)
 
 # list source files here
 # set(sources examples/c++/mip1_c++.cpp)

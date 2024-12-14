@@ -5,7 +5,7 @@ add_library(Nilib STATIC
 )
 # Link GLFW to the Nilib library
 
-target_link_libraries(Nilib PUBLIC glfw opengl32 gurobi_c++mt ${GUROBI_LIBRARY})
+target_link_libraries(Nilib PUBLIC glfw opengl32 gurobi_c++mt ${GUROBI_LIBRARY} glad)
 
 # Include the headers
 target_include_directories(Nilib PUBLIC

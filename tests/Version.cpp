@@ -32,5 +32,7 @@ int main()
 
     // Clean up and exit
     glfwTerminate();
+
+    
     return 0;
 }
