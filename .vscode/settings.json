@@ -1,6 +1,3 @@
 {
-    "files.associations": {
-        "*.cpp": "cpp",
-        "map": "cpp"
-    }
+    "cmake.sourceDirectory": "C:/Users/Niels/Documents/PhD/Nilib/external/glfw"
 }

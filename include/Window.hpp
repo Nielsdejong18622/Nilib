@@ -16,7 +16,7 @@
 #include <functional>
 
 //#include "../lib/GLEW/glew.h"
-#include "../lib/GLFW3_4/glfw3.h"
+#include "GLFW/glfw3.h"
 #include "Color.h"
 #include "Log.hpp"
 
