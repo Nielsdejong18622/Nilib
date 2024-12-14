@@ -6,7 +6,7 @@ add_library(Nilib STATIC
 
 # Include the headers
 target_include_directories(Nilib PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include
 )
 
 # Link GLFW to the Nilib library

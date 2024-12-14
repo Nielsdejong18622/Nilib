@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add the external GLFW submodule
-add_subdirectory(external/glfw)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)
 
 # Add the GUROBI 11.03 library.
 #add_subdirectory(external/gurobi1103)
@@ -14,5 +14,5 @@ add_subdirectory(external/glfw)
 # Gurobi includes
 
 # Add subdirectories for the Nilibrary
-add_subdirectory(source)
-add_subdirectory(tests)
+add_subdirectory(${CMAKE_SOURCE_DIR}/source)
+add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
