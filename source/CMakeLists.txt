@@ -8,5 +8,5 @@ target_link_libraries(Nilib PUBLIC glfw opengl32)
 
 # Include the headers
 target_include_directories(Nilib PUBLIC
-    ${CMAKE_SOURCE_DIR}/../include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
