@@ -43,6 +43,8 @@ int main() {
 
         // Poll and process events
         glfwPollEvents();
+
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 
     // Cleanup and exit

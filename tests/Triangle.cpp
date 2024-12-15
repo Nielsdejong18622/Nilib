@@ -128,6 +128,7 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 
     // Cleanup
