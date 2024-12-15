@@ -5,7 +5,6 @@ project(Nilib VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-enable_testing()
 
 # Add the external GLFW submodule
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/gurobi1103)
@@ -14,4 +13,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
 
 # Add subdirectories for the Nilibrary
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+if (NILIB_BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+ endif()
