@@ -14,7 +14,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
 # Add subdirectories for the Nilibrary
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
-if (NILIB_BUILD_TESTING)
+string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_STANDALONE)
+if (NILIB_STANDALONE)
   enable_testing()
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
  endif()
