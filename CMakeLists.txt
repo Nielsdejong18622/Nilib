@@ -18,4 +18,7 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 if (NILIB_STANDALONE)
   enable_testing()
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+  # Build example directory.
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
  endif()
