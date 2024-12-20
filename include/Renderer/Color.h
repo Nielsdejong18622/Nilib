@@ -2,18 +2,16 @@
 #define _COLOR_H
 
 #include <vector>
+#include <array>
+#include <math.h>
 
 struct Color {
-
-public:
     float R = 0.2;
     float G = 0.2;
     float B = 0.2;
-
-    
+    float A = 0.2;
 
     Color(float R = 0, float G = 0, float B = 0);
-    //Color(unsigned char R, unsigned char G, unsigned char B);
 
     // Generate a deterministic array of HSL colors. 
     static std::vector<Color> HSLcolors(size_t num);
@@ -23,17 +21,49 @@ public:
     static Color HSL(float const hue, float const saturation, float const lightness);
 
     // Create a grey tone.
-    static Color GreyTone(float size_t);
+    static Color GreyTone(size_t const num);
 
     // Create a random color.
     static Color random();
 
 };
 
-namespace Colors{
-    
+// Holds a number of colors.
+template<size_t size> 
+class Palette {
 
-Color const Gray = Color(0.411, 0.411, 0.411);
+private:
+    std::array<Color, size> d_colors;
+
+    Palette() = default;
+
+public:
+    // Construct a palet from a custom list of colors (see below). 
+    Palette(Color (&&arr)[size])
+    {
+        d_colors = std::to_array(arr);
+    };
+
+    // Programatically create a ... palette of size.
+    static Palette const Grey()
+    {
+
+    }
+
+    // Rainbow.
+
+    // Virilis.
+
+    // Random.
+
+    // Access one of the colors.
+    Color const &operator[](size_t const index) const
+    {
+        return d_colors[index % size];
+    }
+};
+
+namespace Colors{
 Color const Grey = Color(0.411, 0.411, 0.411);
 Color const Red = Color(1.000, 0.000, 0.000);
 Color const Blue = Color(0.000, 0.000, 1.000);
@@ -54,11 +84,9 @@ Color const Olive = Color(0.502, 0.502, 0.000);
 Color const Teal = Color(0.000, 0.502, 0.502);
 Color const Lavender = Color(0.902, 0.902, 0.980);
 Color const Coral = Color(1.000, 0.498, 0.314);
+};
 
-
-
-
-
-
+namespace Palettes{
+    Palette<1> const rainbow({Colors::Purple});
 };
 #endif

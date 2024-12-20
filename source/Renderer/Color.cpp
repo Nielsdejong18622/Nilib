@@ -1,12 +1,7 @@
-#include "Color.h"
-#include "RNG.hpp"
-#include <math.h>
+#include "Renderer/Color.h"
+#include "Math/RNG.hpp"
 
-/*Color::Color(unsigned char R, unsigned char G, unsigned char B) : 
-    R(static_cast<unsigned char>(R / 255)),
-    G(static_cast<unsigned char>(G / 255)), 
-    B(static_cast<unsigned char>(B / 255)) { }
-*/
+#include <math.h>
 
 Color::Color(float R, float G, float B) : 
     R(R),
@@ -19,7 +14,7 @@ Color Color::random()
 }
 
 // Static constructors.
-Color Color::GreyTone(float size_t) {
+Color Color::GreyTone(size_t size_t) {
     return Color(1 / size_t, 1 / size_t, 1 / size_t);
 }
 
@@ -73,3 +68,4 @@ std::vector<Color> Color::HSLcolors(size_t const numColors) {
     }
     return colors;
 }
+

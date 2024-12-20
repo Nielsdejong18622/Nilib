@@ -14,7 +14,7 @@
 
 // Profile Macro.
 
-#ifdef ENABLE_PROFILE
+#ifndef ISABLE_PROFILE
 
     #define PROFILE_FUNCTION() \
     class Profiler { \
@@ -25,14 +25,14 @@
         } \
         ~Profiler() { \
             auto end_timepoint = std::chrono::high_resolution_clock::now(); \
-            auto start = std::chrono::time_point_cast<std::chrono::microseconds>(start_timepoint).time_since_epoch().count(); \
-            auto end = std::chrono::time_point_cast<std::chrono::microseconds>(end_timepoint).time_since_epoch().count(); \
+            auto start = std::chrono::time_point_cast<std::chrono::milliseconds>(start_timepoint).time_since_epoch().count(); \
+            auto end = std::chrono::time_point_cast<std::chrono::milliseconds>(end_timepoint).time_since_epoch().count(); \
             auto duration = end - start; \
             printFormattedTime(duration);\
         } \
     private:\
         void printFormattedTime(long long microseconds) { \
-            char const *unit = " microseconds";\
+            char const *unit = " milliseconds";\
             long long time = microseconds; \
             /*if (microseconds < 1000) {\
                 unit = " microseconds"; \
@@ -60,21 +60,6 @@
     #define PROFILE_FUNCTION() 
 #endif
 
-#ifdef ENABLE_ASSERT
-
-    #define ASSERT(condition, message) \
-    { \
-        if (!(condition)) { \
-            Log::error("Assertion failed: (") << #condition << ") " << message \
-                      << " in file " << __FILE__ \
-                      << " at line " << __LINE__ << '\n'; \
-            std::exit(EXIT_FAILURE); \
-        } \
-    } \
-
-#else
-	#define ASSERT(...)
-#endif
 
 
 enum class LogLevel {
@@ -85,7 +70,7 @@ enum class LogLevel {
   Debug = 8//DEBUG
 };
 
-#ifdef ENABLE_LOG 
+#ifndef ISABLE_LOG 
 
 #define DEFAULT_LOG_FILE "Last.log"
 

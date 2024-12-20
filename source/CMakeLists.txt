@@ -1,8 +1,8 @@
+# Find all .cpp and .hpp files
+file(GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
 # Define the static library Nilib
-add_library(Nilib STATIC
-    Color.cpp
-    Window.cpp
-)
+add_library(Nilib STATIC ${CPP_FILES})
 
 # Add compiler definition only when building Nilib as stand-alone.
 target_compile_definitions(Nilib PRIVATE NILIB_BUILD_TESTING)

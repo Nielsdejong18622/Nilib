@@ -1,8 +1,10 @@
 #ifndef ARGS_H
 #define ARGS_H
 
-#include "Log.hpp"
+#include "Core/Log.hpp"
 
+#include <unordered_map>
+#include <stdexcept>
 
 /* This class passes the arguments from the terminal. 
     Responsibilities:
@@ -19,25 +21,12 @@
     
     */
    
-class ArgParserException : public std::exception {
-public:
-    char const *what()
-    {
-        exit(0);
-    }
-};
-
 class Argparser
 {
     public: 
         Argparser(char const *argdescr = "", char const *version = "1.0")
             :d_argdescr(argdescr), d_version(version)
         {
-            
-        }
-        ~Argparser()
-        {
-
         }
 
         // A toggleable boolean flag. Examples -v or --v. or -verbose or --verbose
@@ -54,7 +43,7 @@ class Argparser
             d_optiondesc[strtolower(name)] = descr;
         }
 
-
+        // Check if a flag is True or False.
         std::string const operator[](std::string &&at)
         {
             std::string lat = strtolower(at);
@@ -63,30 +52,6 @@ class Argparser
                 return d_options[lat];
             }
             return d_flags[lat] ? "True" : "False";
-        }
-
-        // Dump the argparser to a stream. 
-        operator std::string() const
-        {
-            std::stringstream ss;
-            ss << "<ArgParser object <";    
-
-            for (auto const& [key, val] : d_flags)
-            {
-                ss << key        // string (key)
-                        << ':'  
-                        << val        // string's value
-                        << ',';
-            }
-            for (auto const& [key, val] : d_options)
-            {
-                ss << key        // string (key)
-                        << ':'  
-                        << val        // string's value
-                        << ',';
-            }
-            ss << '>';
-            return ss.str();
         }
 
         // Remove the prefix dashes -(-)  before a string. 
@@ -104,9 +69,91 @@ class Argparser
             return str;
         }
 
+        // Parse the command line arguments. 
+        void parse(int argc, char const **argv) 
+        {
+            this->argv.clear();
+            this->argv.reserve(argc);
+
+            if (argc == 1){
+            }
+                this->argv.push_back(argv[0]);
+            try
+            {
+                parse_internal(argc, argv);
+                Log::debug("Done parsing all the command line arguments.\n");
+                this->argc = this->argv.size();
+                checkoptions();
+            }
+            catch (...)
+            {
+                // Log the help text and terminate the program. 
+                printHelpText();
+                throw std::runtime_error();
+            }
+
+        }
+
+        void printHelpText()
+        {
+            // For every flag and option required. There is a description of correct usage. 
+            Log::info("Usage: ") << argv[0] 
+                                 << " " 
+                                 << "[options] " 
+                                 << "[flags] " 
+                                 << d_argdescr 
+                                 << '\n';
+            Log::info("Options:\n");
+            for (auto const& [key, val] : d_options)
+            {
+                Log::info() << "\t-" << key << "\t\t\t" <<  d_optiondesc[key] << '\n';
+            }
+            
+            Log::info("Flags:\n");
+            for (auto const& [key, val] : d_flags)
+            {
+                Log::info() << "\t-" << key << "\t\t\t\t" <<  d_flagdesc[key] << '\n';
+            }
+            Log::info(argv[0]) << " " << d_version << '\n'; 
+            exit(0);
+        }
+
+        // Check if all required options where parsed, print those missing.
+        void checkoptions()
+        {
+            for (auto const& [key, val] : d_options)
+            {
+                if (val.empty()) 
+                {
+                    Log::error("Missing option:") << key << '\n';
+                    throw std::runtime_error("Expected an missing option!");
+                }
+            }
+        }
 
 
-        void parse2(int argc, char const **argv)
+    public:
+        size_t argc = 0;
+        std::vector<std::string> argv;
+
+    private:
+        char const *d_argdescr;
+        char const *d_version;
+        std::unordered_map<std::string, std::string> d_options;
+        std::unordered_map<std::string, std::string> d_optiondesc; 
+        std::unordered_map<std::string, bool> d_flags;
+        std::unordered_map<std::string, std::string> d_flagdesc;
+
+        // Trims withespace characters from sting. 
+        inline std::string &trim(std::string &str)
+        {
+            str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
+            str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
+            return str;
+        }
+
+        
+        void parse_internal(int argc, char const **argv)
         {
             // Previous arg and bool. 
             std::string prarg(argv[0]);
@@ -119,7 +166,7 @@ class Argparser
                 {
                     if (arg[0] == '-'){
                         Log::error('[') << arg << "] is not an argument for " << prarg << "!\n";
-                        throw ArgParserException();
+                        throw std::runtime_error("Incorrect argument!");
                     }
 
                     d_options[prarg] = arg;
@@ -173,94 +220,9 @@ class Argparser
                 else{
                     // Nothing mathches, hence it must be an argument. 
                     Log::error('[') << arg << "] is not a flag, argument or option!\n";
-                    throw ArgParserException();
+                    throw std::runtime_error("Processed not a flag, argument nor option!");
                 }
             }
         }
-
-
-        // Parse the command line arguments. 
-        void parse(int argc, char const **argv) 
-        {
-            this->argv.clear();
-            this->argv.reserve(argc);
-
-            if (argc == 1){
-            }
-                this->argv.push_back(argv[0]);
-            try
-            {
-                parse2(argc, argv);
-                Log::debug("Done parsing all the command line arguments.\n");
-                this->argc = this->argv.size();
-                checkoptions();
-            }
-            catch (...)
-            {
-                // Log the help text and terminate the program. 
-                printHelpText();
-                throw ArgParserException();
-            }
-
-        }
-
-        void printHelpText()
-        {
-            // For every flag and option required. There is a description of correct usage. 
-            Log::info("Usage: ") << argv[0] 
-                                 << " " 
-                                 << "[options] " 
-                                 << "[flags] " 
-                                 << d_argdescr 
-                                 << '\n';
-            Log::info("Options:\n");
-            for (auto const& [key, val] : d_options)
-            {
-                Log::info() << "\t-" << key << "\t\t\t" <<  d_optiondesc[key] << '\n';
-            }
-            
-            Log::info("Flags:\n");
-            for (auto const& [key, val] : d_flags)
-            {
-                Log::info() << "\t-" << key << "\t\t\t\t" <<  d_flagdesc[key] << '\n';
-            }
-            Log::info(argv[0]) << " " << d_version << '\n'; 
-            exit(0);
-        }
-
-        // Check if all required options where parsed.
-        void checkoptions()
-        {
-            for (auto const& [key, val] : d_options)
-            {
-                if (val.empty()) 
-                {
-                    Log::error("Missing option:") << key << '\n';
-                    throw ArgParserException();
-                }
-            }
-        }
-
-        // Trims withespace characters from sting. 
-        inline std::string &trim(std::string &str)
-        {
-            str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
-            str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
-            return str;
-        }
-
-        char const *d_argdescr;
-        char const *d_version;
-        std::unordered_map<std::string, std::string> d_options;
-        std::unordered_map<std::string, std::string> d_optiondesc; 
-        std::unordered_map<std::string, bool> d_flags;
-        std::unordered_map<std::string, std::string> d_flagdesc;
-
-
-        
-    public:
-        size_t argc = 0;
-        std::vector<std::string> argv;
-
 };
 #endif
