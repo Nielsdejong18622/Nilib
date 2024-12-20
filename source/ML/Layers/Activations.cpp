@@ -33,7 +33,7 @@ void Relu::info() const
 {
     Log::debug("LeakyRelu NeuralLayer.\n");
 }
-void Relu::update(Optimizer &optim)
+void Relu::update(Optimizer &)
 {
 }
 void Relu::zeroGrad()
@@ -59,7 +59,7 @@ void Sigmoid::info() const
 {
     Log::debug("Sigmoid NeuralLayer.\n");
 }
-void Sigmoid::update(Optimizer &optim)
+void Sigmoid::update(Optimizer &)
 {
 }
 void Sigmoid::zeroGrad()

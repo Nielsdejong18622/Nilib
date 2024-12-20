@@ -32,7 +32,7 @@ public:
     }
 
 
-    // Generate a uniform value between min and max
+    // Generate a uniform value in [min, max]
     template<typename T = double>
     static T uniform(T const min, T const max) {
         if constexpr (std::is_integral_v<T>)

@@ -4,7 +4,6 @@
 
 void NeuralNet::display() const
 {
-    Log::info("NeuralNet ") << this << ".\n";
     for (auto &&layer : d_layers)
     {
         layer->display();
@@ -13,7 +12,6 @@ void NeuralNet::display() const
 }
 void NeuralNet::info() const
 {
-    Log::info("NeuralNet ") << this << ".\n";
     for (auto &&layer : d_layers)
     {
         layer->info();
@@ -42,9 +40,9 @@ Matrixf NeuralNet::feedforward(Matrixf const &X)
 }
 
 // Calculates and accumulates gradient in all applicable neurallayers.  
-Matrixf NeuralNet::backward(Matrixf const &X)
+Matrixf NeuralNet::backward(Matrixf const &Loss)
 {
-    Matrixf X1 = X;
+    Matrixf X1 = Loss;
     //if (X == Matrixf::all(X.rows(), X.cols(), 0.0)) return X;
     for (int lay = d_layers.size() - 1; lay >= 0; --lay)
     {
@@ -67,10 +65,8 @@ void NeuralNet::compile(Optimizer const &optimizer)
 // Update weights using the selected optimizer and accumulated gradient.  
 void NeuralNet::updateWeights()
 {
-    for (auto &&layer : d_layers)
-    {
+    for (auto &layer : d_layers)
         layer->update(d_optimizer);
-    }
 }
 
 // Visit every layer and reset the gradient. 

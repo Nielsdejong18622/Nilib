@@ -5,25 +5,24 @@ Dense::Dense(size_t const inputdim, size_t const outputdim)
     d_weights(Matrixf::create_randn(inputdim, outputdim, 0.0, 1.0)), d_weight_grads(inputdim, outputdim),
     d_bias(Matrixf::create_randn(1, outputdim, 0.0, 1.0)), d_bias_grads(1, outputdim)
 {
-    
 }
 
 Matrixf Dense::forward(Matrixf const &X)
 {
-    //CORE_ASSERT(X.rows() == 1)
-    //CORE_ASSERT(X.cols() == d_inputdim)
+    CORE_ASSERT(X.rows() == 1)
+    CORE_ASSERT(X.cols() == d_inputdim)
     d_input = X;
 
     auto output = X * d_weights + d_bias;
 
-    //CORE_ASSERT(!output.containsNA());
+    CORE_ASSERT(!output.containsNA());
     return output;
 }
 // We receive an error matrix.
 Matrixf Dense::backward(Matrixf const &error)
 {
-    //CORE_ASSERT(error.rows() == d_input.rows())
-    //CORE_ASSERT(d_input.cols() == d_weight_grads.rows() && error.cols() == d_weight_grads.cols())
+    CORE_ASSERT(error.rows() == d_input.rows())
+    CORE_ASSERT(d_input.cols() == d_weight_grads.rows() && error.cols() == d_weight_grads.cols())
     // Find out which weights are responsible.
     // dL/dW
     d_weight_grads += transpose(d_input) * error;
@@ -31,7 +30,7 @@ Matrixf Dense::backward(Matrixf const &error)
     // dL/dbias
     d_bias_grads += error;
     
-   //CORE_ASSERT(!d_weight_grads.containsNA())
+    CORE_ASSERT(!d_weight_grads.containsNA())
     // Return deriv to input. dL/dX
     return  error * transpose(d_weights);
 }

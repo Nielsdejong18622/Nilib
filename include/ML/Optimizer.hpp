@@ -6,7 +6,7 @@ struct Optimizer
 {
     struct OptimizerParams
     {
-
+        float regulr = 0.001f;
     } params;
 
     unsigned long long int iteration = 0;
