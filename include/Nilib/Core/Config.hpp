@@ -1,9 +1,9 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#include "Core/Log.hpp"
+#include "Nilib/Core/Log.hpp"
 #include <unordered_map>
-#include "Core/Assert.h"
+#include "Nilib/Core/Assert.h"
 #include <optional>
 
 class Config

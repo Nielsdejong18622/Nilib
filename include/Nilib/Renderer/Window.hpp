@@ -17,9 +17,9 @@
 
 //#include "../lib/GLEW/glew.h"
 #include <GLFW/glfw3.h>
-#include "Core/Log.hpp"
-#include "Renderer/Color.h"
-#include "Math/Mat.hpp"
+#include "Nilib/Core/Log.hpp"
+#include "Nilib/Renderer/Color.h"
+#include "Nilib/Math/Mat.hpp"
 
 // Typedefs. 
 typedef std::function<void(void)> Callback;

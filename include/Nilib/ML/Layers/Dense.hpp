@@ -1,10 +1,10 @@
-#ifndef _GRAPHCONV_H
-#define _GRAPHCONV_H
+#ifndef _DENSE_H
+#define _DENSE_H
 
-#include "ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
 
 // A fully connected neural layer.
-class GraphConv : public NeuralLayer
+class Dense : public NeuralLayer
 {
 protected:
     size_t const d_inputdim;
@@ -14,8 +14,11 @@ protected:
     Matrixf d_weights;
     // Holds the accumulated gradients.
     Matrixf d_weight_grads;
+
+    Matrixf d_bias;
+    Matrixf d_bias_grads;
 public:
-    GraphConv(size_t const inputdim, size_t const outputdim);
+    Dense(size_t const inputdim, size_t const outputdim);
 
     Matrixf forward(Matrixf const &X);
     Matrixf backward(Matrixf const &X);
@@ -24,7 +27,7 @@ public:
     void info() const;
 
     void display() const;
-    size_t learnables() const { return d_inputdim * d_outputdim; };
+    size_t learnables() const { return d_inputdim * d_outputdim + d_outputdim; };
 };
 
 #endif

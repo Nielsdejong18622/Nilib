@@ -1,5 +1,5 @@
 //Own headers
-#include "Renderer/Window.hpp"
+#include "Nilib/Renderer/Window.hpp"
 
 Window::Window(size_t width, size_t height, char const *title, bool eventbased=true, bool startopen=true) {
     /* Initialize the glfw library */

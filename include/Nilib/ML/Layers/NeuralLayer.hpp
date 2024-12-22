@@ -1,8 +1,8 @@
 #ifndef _INEURAL_LAYER_H
 #define _INEURAL_LAYER_H
 
-#include "Math/Matrix.hpp"
-#include "ML/Optimizer.hpp"
+#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/ML/Optimizer.hpp"
 #include <vector>
 
 class NeuralNet;

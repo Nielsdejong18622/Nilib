@@ -1,4 +1,4 @@
-#include "ML/Layers/BatchNorm.hpp"
+#include "Nilib/ML/Layers/BatchNorm.hpp"
 
 BatchNorm::BatchNorm(size_t const inputdim, float const momentum)
     : d_inputdim(inputdim),  

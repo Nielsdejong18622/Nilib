@@ -1,4 +1,4 @@
-#include "ML/Layers/GraphPool.hpp"
+#include "Nilib/ML/Layers/GraphPool.hpp"
 
 Matrixf GraphPool::forward(Matrixf const &X)
 {

@@ -1,9 +1,9 @@
 #ifndef _NEURAL_NET_H
 #define _NEURAL_NET_H
 
-#include "Math/Matrix.hpp"
-#include "ML/Layers/NeuralLayer.hpp"
-#include "ML/Optimizer.hpp"
+#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Optimizer.hpp"
 #include <vector>
 
 

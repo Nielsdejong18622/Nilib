@@ -1,7 +1,7 @@
 #ifndef _BATCH_NORM_HPP
 #define _BATCH_NORM_HPP
 
-#include "ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
 
 // BatchNorm layer that uses running averages. 
 class BatchNorm : public NeuralLayer

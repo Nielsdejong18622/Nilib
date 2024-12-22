@@ -1,4 +1,4 @@
-#include "ML/Layers/Dense.hpp"
+#include "Nilib/ML/Layers/Dense.hpp"
 
 Dense::Dense(size_t const inputdim, size_t const outputdim)
     : d_inputdim(inputdim), d_outputdim(outputdim), 

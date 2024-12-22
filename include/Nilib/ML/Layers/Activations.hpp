@@ -1,8 +1,8 @@
 #ifndef _ACTIVATIONS_H
 #define _ACTIVATIONS_H
 
-#include "ML/Layers/NeuralLayer.hpp"
-#include "ML/Optimizer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Optimizer.hpp"
 
 class Linear : public NeuralLayer
 {

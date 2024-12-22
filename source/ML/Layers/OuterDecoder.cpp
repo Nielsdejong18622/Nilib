@@ -1,5 +1,5 @@
-#include "ML/Layers/OuterDecoder.hpp"
-#include "ML/NeuralNet.hpp"
+#include "Nilib/ML/Layers/OuterDecoder.hpp"
+#include "Nilib/ML/NeuralNet.hpp"
 
 OuterDecoder::OuterDecoder()
 {

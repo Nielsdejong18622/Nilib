@@ -6,10 +6,10 @@
 #include <iostream> // For insertion into stream.
 #include <cmath> // For sqrt
 
-#include "Core/Assert.h"
-#include "Math/RNG.hpp"
-#include "Core/Serializer.hpp"
-#include "Core/Deserializer.hpp"
+#include "Nilib/Core/Assert.h"
+#include "Nilib/Math/RNG.hpp"
+#include "Nilib/Core/Serializer.hpp"
+#include "Nilib/Core/Deserializer.hpp"
 
 
 // Matrix class.

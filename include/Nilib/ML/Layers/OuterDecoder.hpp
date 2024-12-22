@@ -1,7 +1,7 @@
 #ifndef _OUTERDECODER_H
 #define _OUTERDECODER_H
 
-#include "ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
 
 // A fully connected neural layer.
 class OuterDecoder : public NeuralLayer

@@ -1,7 +1,7 @@
 #ifndef _GRAPH_POOL_H
 #define _GRAPH_POOL_H
 
-#include "ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
 
 class GraphPool : public NeuralLayer
 {

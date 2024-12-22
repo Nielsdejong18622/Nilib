@@ -1,9 +1,9 @@
 #ifndef _LINALG_H
 #define _LINALG_H
 
-#include "Core/Log.hpp"
-#include "Core/Assert.h"
-#include "Math/RNG.hpp"
+#include "Nilib/Core/Log.hpp"
+#include "Nilib/Core/Assert.h"
+#include "Nilib/Math/RNG.hpp"
 
 #include <array>
 #include <iostream>

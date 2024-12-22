@@ -1,4 +1,4 @@
-#include "Math/BeamSearch.hpp"
+#include "Nilib/Math/BeamSearch.hpp"
 
 
 namespace BeamSearch {

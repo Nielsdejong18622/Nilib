@@ -1,5 +1,5 @@
-#include "Renderer/Color.h"
-#include "Math/RNG.hpp"
+#include "Nilib/Renderer/Color.h"
+#include "Nilib/Math/RNG.hpp"
 
 #include <math.h>
 

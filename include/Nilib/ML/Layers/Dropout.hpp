@@ -1,7 +1,7 @@
 #ifndef _DROPOUT_H
 #define _DROPOUT_H
 
-#include "ML/Layers/NeuralLayer.hpp"
+#include "Nilib/ML/Layers/NeuralLayer.hpp"
 
 // A fully connected neural layer.
 class Dropout : public NeuralLayer

@@ -1,7 +1,7 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
-#include "Core/Log.hpp"
+#include "Nilib/Core/Log.hpp"
 
 // This header defines the ASSERT and CORE ASSERT macros.
 #ifndef ISABLE_ASSERT

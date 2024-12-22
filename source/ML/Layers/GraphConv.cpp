@@ -1,5 +1,5 @@
-#include "ML/Layers/GraphConv.hpp"
-#include "ML/NeuralNet.hpp"
+#include "Nilib/ML/Layers/GraphConv.hpp"
+#include "Nilib/ML/NeuralNet.hpp"
 
 GraphConv::GraphConv(size_t const inputdim, size_t const outputdim)
     : d_inputdim(inputdim), d_outputdim(outputdim), 

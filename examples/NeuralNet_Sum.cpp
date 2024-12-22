@@ -1,10 +1,10 @@
-#include "ML/NeuralNet.hpp"
-#include "ML/Layers/Dense.hpp"
-#include "ML/Layers/Dropout.hpp"
-#include "ML/Layers/Activations.hpp"
+#include "Nilib/ML/NeuralNet.hpp"
+#include "Nilib/ML/Layers/Dense.hpp"
+#include "Nilib/ML/Layers/Dropout.hpp"
+#include "Nilib/ML/Layers/Activations.hpp"
 
-#include "Math/RNG.hpp"
-#include "Core/Log.hpp"
+#include "Nilib/Math/RNG.hpp"
+#include "Nilib/Core/Log.hpp"
 
 #include <iomanip>
 #include <chrono>
