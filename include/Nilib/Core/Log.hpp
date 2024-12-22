@@ -12,53 +12,6 @@
 #include <windows.h> 
 #endif 
 
-// Profile Macro.
-
-#ifndef ISABLE_PROFILE
-
-    #define PROFILE_FUNCTION() \
-    class Profiler { \
-    public: \
-        Profiler(const char* func_name, const char* file_name, int line_num) \
-            : function_name(func_name), file(file_name), line(line_num) { \
-            start_timepoint = std::chrono::high_resolution_clock::now(); \
-        } \
-        ~Profiler() { \
-            auto end_timepoint = std::chrono::high_resolution_clock::now(); \
-            auto start = std::chrono::time_point_cast<std::chrono::milliseconds>(start_timepoint).time_since_epoch().count(); \
-            auto end = std::chrono::time_point_cast<std::chrono::milliseconds>(end_timepoint).time_since_epoch().count(); \
-            auto duration = end - start; \
-            printFormattedTime(duration);\
-        } \
-    private:\
-        void printFormattedTime(long long microseconds) { \
-            char const *unit = " milliseconds";\
-            long long time = microseconds; \
-            /*if (microseconds < 1000) {\
-                unit = " microseconds"; \
-                time = microseconds; }\
-            else if (microseconds < 1000000) { \
-                unit = " milliseconds";\
-                time = static_cast<double>(microseconds) / 1000; }\
-            else if (microseconds < 60000000) {\
-                unit = " seconds"; \
-                time = microseconds / 1000000; }\
-            else if (microseconds < 3600000000){\
-                unit = " minutes"; \
-                time = static_cast<double>(microseconds) / 60000000; }\
-            else{\
-                unit = " hours"; \
-                time = static_cast<double>(microseconds) / 3600000000; }\ */ \
-            Log::debug("PROFILED:__") << function_name << "__ in file " << file << ':' << line << " execution time: " << time << unit << '\n'; \
-        } \
-        const char* function_name; \
-        const char* file; \
-        int line; \
-        std::chrono::time_point<std::chrono::high_resolution_clock> start_timepoint; \
-    } profiler_instance(__func__, __FILE__, __LINE__);
-#else
-    #define PROFILE_FUNCTION() 
-#endif
 
 
 

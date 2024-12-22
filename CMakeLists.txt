@@ -15,6 +15,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_STANDALONE)
+
+# Definitons of Preprocessor directives. 
+target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=0)
+
+
 if (NILIB_STANDALONE)
   enable_testing()
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
