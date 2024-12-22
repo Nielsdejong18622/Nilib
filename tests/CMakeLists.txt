@@ -1,7 +1,7 @@
 # Define the test executable
-add_executable(TestVersion Version.cpp)
-add_executable(TestGlad Glad.cpp)
-add_executable(TestTriangle Triangle.cpp)
+add_executable(TestVersion TestVersion.cpp)
+add_executable(TestGlad TestGlad.cpp)
+add_executable(TestTriangle TestTriangle.cpp)
 
 # Link the static library to the test executable
 target_link_libraries(TestVersion PUBLIC Nilib)

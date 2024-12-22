@@ -11,11 +11,11 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 2) {
-        Log::error("Usage: NeuralNet_Sum.exe batch_size!\n");
-        return EXIT_FAILURE;
-    }
-    RNG::seed(127);
+//     if (argc != 2) {
+//         Log::error("Usage: NeuralNet_Sum.exe batch_size!\n");
+//         return EXIT_FAILURE;
+//     }
+    RNG::seed(128);
     
 
     NeuralNet NN;
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     adam.lr = 0.001;
     NN.compile(adam);
 
-    size_t const batch_size = std::stoul(argv[1]);
+    size_t const batch_size = std::stoul("100");
     
     size_t iteration = 0;
     float MSE_batch_loss = std::numeric_limits<float>::max();
