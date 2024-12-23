@@ -47,4 +47,6 @@ int main()
     I.print();
     LOG_INFO("G", G);
     G.print();
+    LOG_INFO("transpose(G)", transpose(G));
+    transpose(G).print();
 }

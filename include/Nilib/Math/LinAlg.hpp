@@ -15,13 +15,11 @@ namespace Nilib {
         MatrixData d_data;
 
     public:
-        auto operator()(size_t const row, size_t const col) const {
-            return d_data(row, col);
-        }
-        
-        auto &operator()(size_t const row, size_t const col) {
-            return d_data(row, col);
-        }
+        auto operator()(size_t const row, size_t const col) const { return d_data(row, col); }
+        auto &operator()(size_t const row, size_t const col) { return d_data(row, col); }
+
+        size_t rows() const {return d_data.rows(); }
+        size_t cols() const {return d_data.cols(); }
 
         // Inserts the matrix into a stream. 
         friend std::ostream &operator<<(std::ostream &os, Matrix const &mat) {
@@ -91,12 +89,33 @@ namespace Nilib {
         //     CORE_ASSERT(d_data.rows() == B.d_data.rows());
         // }
 
+        // In place transpose. (Only when dynamic storage)
+        // void T() {
+        //     for (size_t ridx = 0; ridx < rows(); ++ridx)
+        //     {
+        //         for (size_t cidx = 0; cidx < cols(); ++cidx)
+        //         {
+        //             d_data(ridx, cidx) = d_data(cidx, ridx);       
+        //         }   
+        //     }
+        //     d_data.
+        // }
+
+
         // static constructors. 
         static Matrix all(float const val) {
             Matrix result;
             for (size_t idx = 0; idx < result.d_data.size(); idx++)
                 result.d_data(idx) = val;
             return result;
+        }
+        
+        static Matrix zeros() {
+            return Matrix::all(0.0);
+        }
+
+        static Matrix ones() {
+            return Matrix::all(1.0);
         }
 
         static Matrix diag(size_t const n, size_t const m, float const val) {
@@ -152,6 +171,14 @@ namespace Nilib {
                 for (size_t k = 0; k < A.d_data.cols(); ++k)
                     res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
         return res;        
+    }
+    template<typename data>
+    Matrix<data> transpose(Matrix<data> const &A) {
+        Matrix<data> result(A.cols(), A.rows());
+        for (size_t ridx = 0; ridx < A.cols(); ++ridx)
+            for (size_t cidx = 0; cidx < A.rows(); ++cidx)
+                result(ridx, cidx) = A(cidx, ridx);
+        return result;
     }
 
     using Mat3x3 = Matrix<StaticMatrixData<3, 3, float>>;
