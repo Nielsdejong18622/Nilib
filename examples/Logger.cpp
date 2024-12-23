@@ -1,4 +1,4 @@
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 #include "Nilib/Math/Matrix.hpp"
 

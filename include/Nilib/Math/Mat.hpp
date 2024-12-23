@@ -1,7 +1,7 @@
 #ifndef _LINALG_H
 #define _LINALG_H
 
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
 

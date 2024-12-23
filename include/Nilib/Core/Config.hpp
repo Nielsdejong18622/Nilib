@@ -1,7 +1,7 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 #include <unordered_map>
 #include "Nilib/Core/Assert.hpp"
 #include <optional>

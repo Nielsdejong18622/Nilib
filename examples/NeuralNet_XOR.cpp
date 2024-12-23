@@ -4,7 +4,7 @@
 #include "Nilib/ML/Layers/Activations.hpp"
 
 #include "Nilib/Math/RNG.hpp"
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 #include <iomanip>
 #include <chrono>

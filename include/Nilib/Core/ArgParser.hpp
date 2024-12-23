@@ -1,7 +1,7 @@
 #ifndef ARGS_H
 #define ARGS_H
 
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 #include <unordered_map>
 #include <stdexcept>

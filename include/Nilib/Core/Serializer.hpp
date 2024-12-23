@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 class Serializer 
 {

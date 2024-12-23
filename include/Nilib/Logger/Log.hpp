@@ -1,7 +1,7 @@
 #ifndef _LOGGING2_H
 #define _LOGGING2_H
 
-#include "Nilib/Core/LogPool.hpp"
+#include "Nilib/Logger/LogPool.hpp"
 
 namespace Nilib {
 

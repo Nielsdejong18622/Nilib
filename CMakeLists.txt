@@ -28,7 +28,7 @@ target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=2)
 #define LOG_LEVEL_SUCCESS 5
 #define LOG_LEVEL_ERROR 5
 #define LOG_LEVEL_PROGRESS 6
-target_compile_definitions(Nilib PUBLIC LOG_LEVEL=3)
+target_compile_definitions(Nilib PUBLIC LOG_LEVEL=1)
 
 if (NILIB_STANDALONE)
   enable_testing()

@@ -2,7 +2,7 @@
 #define _PROFILER_H
 
 
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 #include <chrono>
 
 namespace Nilib {

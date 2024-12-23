@@ -1,7 +1,7 @@
 #ifndef _LOGGERPOOL_H
 #define _LOGGERPOOL_H
 
-#include "Nilib/Core/Loggers.hpp"
+#include "Nilib/Logger/Loggers.hpp"
 
 #include <iostream>
 #include <unordered_map>

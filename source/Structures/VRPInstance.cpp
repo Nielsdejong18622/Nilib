@@ -1,5 +1,5 @@
 #include "Nilib/Structures/VRPInstance.hpp"
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 Instance::Instance(size_t const nnodes, size_t const vehcap, Matrix<float> const &A, Matrix<float> const &X)
     : A(A), X(X), vehcap(vehcap)

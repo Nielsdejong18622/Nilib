@@ -1,4 +1,4 @@
-#include "Nilib/Core/LogPool.hpp"
+#include "Nilib/Logger/LogPool.hpp"
 
 using namespace Nilib;
 

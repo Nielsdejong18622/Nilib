@@ -17,7 +17,7 @@
 
 //#include "../lib/GLEW/glew.h"
 #include <GLFW/glfw3.h>
-#include "Nilib/Core/Log.hpp"
+#include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
 #include "Nilib/Math/Mat.hpp"
 

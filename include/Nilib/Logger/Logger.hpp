@@ -2,7 +2,7 @@
 #define _LOGGER_H
 
 #include <iostream>
-#include "Nilib/Core/BaseLogger.h"
+#include "Nilib/Logger/BaseLogger.h"
 
 namespace Nilib {
 

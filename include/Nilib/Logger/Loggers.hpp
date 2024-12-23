@@ -1,7 +1,7 @@
 #ifndef _FILE_LOGGER_H
 #define _FILE_LOGGER_H
 
-#include "Nilib/Core/Logger.h"
+#include "Nilib/Logger/Logger.hpp"
 #include <chrono>
 #include <fstream>
 

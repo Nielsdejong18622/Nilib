@@ -15,3 +15,6 @@ target_include_directories(Nilib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/../external/gurobi1103/include
 )
+
+# Precompiled header.
+target_precompile_headers(Nilib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include/Nilib/Nilibpch.h)
