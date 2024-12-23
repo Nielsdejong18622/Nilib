@@ -8,7 +8,8 @@
     #define ASSERT(condition, message) \
     { \
         if (!(condition)) { \
-            Log::error("Assertion failed: (") << #condition << ") " << message \
+            LOG_ERROR() << "Assertion failed: (" << #condition << ") " << message \
+                      << " in function " << __func__ \
                       << " in file " << __FILE__ \
                       << " at line " << __LINE__ << '\n'; \
             std::exit(EXIT_FAILURE); \

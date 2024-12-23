@@ -30,9 +30,9 @@ void Dropout::zeroGrad()
 }
 void Dropout::info() const
 {
-    Log::debug("DropoutNeuralLayer rate ") << d_rate << " mask " << d_mask << ".\n";
+    LOG_DEBUG() << "DropoutNeuralLayer rate " << d_rate << " mask " << d_mask << ".\n";
 }
 void Dropout::display() const
 {
-    Log::debug("DropoutNeuralLayer rate ") << d_rate << ".\n";
+    LOG_DEBUG() << "DropoutNeuralLayer rate " << d_rate << ".\n";
 }

@@ -35,7 +35,7 @@ void Instance::draw(Window &window) const
 {
     for (size_t idx = 0; idx < X.rows(); ++idx)
     {  
-        //Log::debug("Drawing node ") << idx << ' ' << X(idx, 0) << ',' << X(idx, 1) << " D:" << X(idx, 2) << '\n';
+        //LOG_DEBUG() << "Drawing node " << idx << ' ' << X(idx, 0) << ',' << X(idx, 1) << " D:" << X(idx, 2) << '\n';
         if (X(idx, 2) > 0.5)
         {
             window.drawColor(Colors::Grey);
@@ -77,17 +77,17 @@ size_t Instance::vehcapacity() const
 
 bool Instance::serialize(Serializer &serializer)
 {
-    Log::debug("Serializing Instance!\n");
+    LOG_DEBUG() << "Serializing Instance!\n";
     serializer.writeObject(A);
     serializer.writeObject(X);
     serializer.writeRaw(vehcap);
-    //Log::success("Serialized Instance!\n");
+    //LOG_SUCCESS("Serialized Instance!\n");
     return true;
 }
 
 bool Instance::deserialize(Deserializer &deserializer)
 {
-    Log::debug("Deserializing Instance!\n");
+    LOG_DEBUG() << "Deserializing Instance!\n";
     deserializer.readObject(A);
     deserializer.readObject(X);
     deserializer.readRaw(vehcap);

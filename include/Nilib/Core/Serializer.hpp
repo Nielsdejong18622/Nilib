@@ -33,7 +33,7 @@ public:
     {
         file.open(filename, std::ios::binary | std::ios::out);
         if (!file) {
-            Log::error("Serialization Error: Could not open file ") << filename << " for writing!\n";
+            LOG_ERROR() << "Serialization Error: Could not open file " << filename << " for writing!\n";
         }
     }
     
@@ -44,7 +44,7 @@ public:
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.write(reinterpret_cast<char const *>(&data), sizeof(T));
         if (!file) {
-           Log::error("Error: Failed to write raw data to file.\n");
+           LOG_ERROR() << "Error: Failed to write raw data to file.\n";
         }
         return !file;
     }
@@ -61,7 +61,7 @@ public:
             data.serialize(*this);
         }
         if (!file) {
-           Log::error("Error: Failed to write Object data to file.\n");
+           LOG_ERROR() << "Error: Failed to write Object data to file.\n";
         }
         return !file;
     }
@@ -70,7 +70,7 @@ public:
     // Specialization for matrix. 
     // template <typename T>
     // bool write(Matrix<T> const &data) {
-    //     Log::debug("Writing Matrix!\n");
+    //     LOG_DEBUG() << "Writing Matrix!\n";
     //     size_t n = data.rows();
     //     size_t m = data.cols();
     //     file.write(reinterpret_cast<char const *>(&n), sizeof(n));
@@ -87,7 +87,7 @@ public:
         file.write(data.c_str(), length);
         file.close();
         if (!file) {
-           Log::error("Error: Failed to write String data to file.\n");
+           LOG_ERROR() << "Error: Failed to write String data to file.\n";
         }
         return !file;
     }
@@ -109,7 +109,7 @@ public:
             }
         }
         if (!file) {
-           Log::error("Error: Failed to write Vector data to file.\n");
+           LOG_ERROR() << "Error: Failed to write Vector data to file.\n";
         }
         return !file;
     }

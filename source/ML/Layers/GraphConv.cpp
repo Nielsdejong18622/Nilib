@@ -56,10 +56,10 @@ void GraphConv::zeroGrad()
 }
 void GraphConv::info() const
 {
-    Log::debug("GraphConvLayer ") << d_inputdim << 'x' << d_outputdim << ".\n";
+    LOG_DEBUG() << "GraphConvLayer " << d_inputdim << 'x' << d_outputdim << ".\n";
 }
 void GraphConv::display() const
 {
-    Log::debug("GraphConvLayer ") << d_inputdim << 'x' << d_outputdim << ".\n";
-    Log::debug("Weights ") << d_weights << " acc grad " << d_weight_grads << ".\n";
+    LOG_DEBUG() << "GraphConvLayer " << d_inputdim << 'x' << d_outputdim << ".\n";
+    LOG_DEBUG() << "Weights " << d_weights << " acc grad " << d_weight_grads << ".\n";
 }

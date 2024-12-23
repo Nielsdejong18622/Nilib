@@ -3,7 +3,7 @@
 
 #include "Nilib/Core/Log.hpp"
 #include <unordered_map>
-#include "Nilib/Core/Assert.h"
+#include "Nilib/Core/Assert.hpp"
 #include <optional>
 
 class Config
@@ -58,13 +58,13 @@ public:
 
     // Display all config fields. 
     void display() const {
-        Log::info("Configuration ") << this << "-----\n";
+        LOG_INFO() << "Configuration " << this << "-----\n";
         for (auto &[sec, v]  : d_map)
         {
-            Log::info("----- ") << sec << " -----:\n";
+            LOG_INFO() << "----- " << sec << " -----:\n";
             for (auto &[key, value] : v) 
             {    
-                std::visit([&key, &sec, this](auto&& arg) { Log::info("\t") << sec << '.' << key << "=" << arg << '\n'; ; }, value);
+                std::visit([&key, &sec, this](auto&& arg) { LOG_INFO() << "\t" << sec << '.' << key << "=" << arg << '\n'; ; }, value);
             }
         }
         
@@ -83,12 +83,12 @@ public:
 
 
     static Config parse_from_ini(std::string const &filename) {
-        Log::info("Parsing ini file ") << filename << " for config.\n";
+        LOG_INFO() << "Parsing ini file " << filename << " for config.\n";
 
         Config config;
         std::ifstream file(filename);
         if (!file.is_open()) {
-            Log::warning("Could not open file: ") << filename << '\n';
+            LOG_WARNING() << "Could not open file: " << filename << '\n';
             return config;
         }
 
@@ -114,18 +114,18 @@ public:
                         std::string lowerStr = valueStr;
                         std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
                         value = (lowerStr == "true") ? true : false;
-                        //Log::debug("Parsing bool ") << currentSection << '.' << key << '=' << valueStr << '\n';
+                        //LOG_DEBUG() << "Parsing bool " << currentSection << '.' << key << '=' << valueStr << '\n';
                     } else if (is_uint(valueStr)) {
                         value = std::stoull(valueStr);
-                        //Log::debug("Parsing size_t ") << currentSection << '.' << key << '=' << valueStr << '\n';
+                        //LOG_DEBUG() << "Parsing size_t " << currentSection << '.' << key << '=' << valueStr << '\n';
                     } else if (is_int(valueStr)) {
                         value = std::stoi(valueStr);
-                        //Log::debug("Parsing int ") << currentSection << '.' << key << '=' << valueStr << '\n';
+                        //LOG_DEBUG() << "Parsing int " << currentSection << '.' << key << '=' << valueStr << '\n';
                     } else if (is_float(valueStr)) {
                         value = std::stof(valueStr);
-                        //Log::debug("Parsing float ") << currentSection << '.' << key << '=' << valueStr << '\n';
+                        //LOG_DEBUG() << "Parsing float " << currentSection << '.' << key << '=' << valueStr << '\n';
                     } else{
-                        //Log::debug("Parsing str ") << currentSection << '.' << key << '=' << valueStr << '\n';
+                        //LOG_DEBUG() << "Parsing str " << currentSection << '.' << key << '=' << valueStr << '\n';
                         value = valueStr;
                     }
                     config[currentSection][key] = value;

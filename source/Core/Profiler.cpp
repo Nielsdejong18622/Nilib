@@ -1,6 +1,7 @@
-#ifdef ENABLE_PROFILE
 #include "Nilib/Core/Profiler.hpp"
 
+
+#ifdef ENABLE_PROFILE
 using namespace Nilib;
 
 Profiler::Profiler(const char* func_name, const char* file_name, int line_num)
@@ -18,6 +19,6 @@ Profiler::~Profiler()
 void Profiler::printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const 
 {
     auto duration_casted = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-    Log::debug("PROFILED: __") << d_function_name << "__ in file " << d_file << ':' << d_line << " execution time: " << duration_casted << '\n';
+    LOG_DEBUG() << "PROFILED: __" << d_function_name << "__ in file " << d_file << ':' << d_line << " execution time: " << duration_casted << '\n';
 }
 #endif

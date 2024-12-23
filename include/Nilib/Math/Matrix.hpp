@@ -6,7 +6,7 @@
 #include <iostream> // For insertion into stream.
 #include <cmath> // For sqrt
 
-#include "Nilib/Core/Assert.h"
+#include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"
@@ -273,21 +273,21 @@ public:
 
 
     bool serialize(Serializer &serializer) {
-        Log::debug("Serializing Matrix!\n");
+        LOG_DEBUG() << "Serializing Matrix!\n";
         serializer.writeRaw(n);
         serializer.writeRaw(m);
         serializer.writeVector(d_data);
-        Log::success("Serialized Matrix!\n");
+        LOG_SUCCESS("Serialized Matrix!\n");
         return true;
     }
 
     
     bool deserialize(Deserializer &deserializer) {
-        Log::debug("Deserializing Matrix!\n");
+        LOG_DEBUG() << "Deserializing Matrix!\n";
         deserializer.readRaw(n);
         deserializer.readRaw(m);
         deserializer.readVector(d_data);
-        Log::debug("Deserialized Matrix!\n");
+        LOG_DEBUG() << "Deserialized Matrix!\n";
         return true;
     }
 };

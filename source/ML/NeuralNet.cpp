@@ -27,14 +27,14 @@ void NeuralNet::monitorWeights() const
 // Make a prediction based on some input features X.  
 Matrixf NeuralNet::feedforward(Matrixf const &X)
 {
-    //Log::info("Feedforward adjacency: ") << d_adjacency << '\n';
+    //LOG_INFO() << "Feedforward adjacency: " << d_adjacency << '\n';
     Matrixf X1 = X;
     for (auto &&layer : d_layers)
     {
         //layer->display();
-        //Log::info("Feedforward input: ") << X1 << '\n';
+        //LOG_INFO() << "Feedforward input: " << X1 << '\n';
         X1 = layer->forward(X1);
-        //Log::info("Feedforward output: ") << X1 << '\n';
+        //LOG_INFO() << "Feedforward output: " << X1 << '\n';
     }
     return X1;
 }
@@ -47,10 +47,10 @@ Matrixf NeuralNet::backward(Matrixf const &Loss)
     for (int lay = d_layers.size() - 1; lay >= 0; --lay)
     {
         //d_layers[lay]->display();
-        //Log::debug("Backward input: ") << X1 << '\n';
+        //LOG_DEBUG() << "Backward input: " << X1 << '\n';
         //if (X1 == Matrixf::all(X1.rows(), X1.cols(), 0.0)) break;
         X1 = d_layers[lay]->backward(X1);
-        //Log::debug("Backward output: ") << X1 << '\n';
+        //LOG_DEBUG() << "Backward output: " << X1 << '\n';
     }
     return X1;
 }

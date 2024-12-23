@@ -41,10 +41,10 @@ void BatchNorm::zeroGrad()
 }
 void BatchNorm::info() const
 {
-    Log::debug("BatchNorm ") << d_inputdim << ".\n";
+    LOG_DEBUG() << "BatchNorm " << d_inputdim << ".\n";
 }
 void BatchNorm::display() const
 {
-    Log::debug("BatchNorm ") << d_inputdim << ".\n";
-    Log::debug("Weights ") << d_weights << " acc grad " << d_weight_grads << ".\n";
+    LOG_DEBUG() << "BatchNorm " << d_inputdim << ".\n";
+    LOG_DEBUG() << "Weights " << d_weights << " acc grad " << d_weight_grads << ".\n";
 }

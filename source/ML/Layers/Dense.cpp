@@ -49,10 +49,10 @@ void Dense::zeroGrad()
 }
 void Dense::info() const
 {
-    Log::debug("DenseNeuralLayer ") << d_inputdim << 'x' << d_outputdim << ".\n";
+    LOG_DEBUG() << "DenseNeuralLayer " << d_inputdim << 'x' << d_outputdim << ".\n";
 }
 void Dense::display() const
 {
-    Log::debug("DenseNeuralLayer ") << d_inputdim << 'x' << d_outputdim << ".\n";
-    Log::debug("Weights ") << d_weights << " acc grad " << d_weight_grads << " Bias " << d_bias << " acc grad " << d_bias_grads << ".\n";
+    LOG_DEBUG() << "DenseNeuralLayer " << d_inputdim << 'x' << d_outputdim << ".\n";
+    LOG_DEBUG() << "Weights " << d_weights << " acc grad " << d_weight_grads << " Bias " << d_bias << " acc grad " << d_bias_grads << ".\n";
 }

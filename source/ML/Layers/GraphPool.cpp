@@ -18,9 +18,9 @@ void GraphPool::update(Optimizer &optim) {}
 void GraphPool::zeroGrad() {}
 void GraphPool::info() const
 {
-    Log::info("GraphNodePoolMean layer ") << this << ".\n";
+    LOG_INFO() << "GraphNodePoolMean layer " << this << ".\n";
 }
 void GraphPool::display() const
 {
-    Log::info("GraphNodePoolMean layer ") << this << ".\n";
+    LOG_INFO() << "GraphNodePoolMean layer " << this << ".\n";
 }

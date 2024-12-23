@@ -81,7 +81,7 @@ class Argparser
             try
             {
                 parse_internal(argc, argv);
-                Log::debug("Done parsing all the command line arguments.\n");
+                LOG_DEBUG() << "Done parsing all the command line arguments.\n";
                 this->argc = this->argv.size();
                 checkoptions();
             }
@@ -97,24 +97,24 @@ class Argparser
         void printHelpText()
         {
             // For every flag and option required. There is a description of correct usage. 
-            Log::info("Usage: ") << argv[0] 
+            LOG_INFO() << "Usage: " << argv[0] 
                                  << " " 
                                  << "[options] " 
                                  << "[flags] " 
                                  << d_argdescr 
                                  << '\n';
-            Log::info("Options:\n");
+            LOG_INFO() << "Options:\n";
             for (auto const& [key, val] : d_options)
             {
-                Log::info() << "\t-" << key << "\t\t\t" <<  d_optiondesc[key] << '\n';
+                LOG_INFO() << "\t-" << key << "\t\t\t" <<  d_optiondesc[key] << '\n';
             }
             
-            Log::info("Flags:\n");
+            LOG_INFO() << "Flags:\n";
             for (auto const& [key, val] : d_flags)
             {
-                Log::info() << "\t-" << key << "\t\t\t\t" <<  d_flagdesc[key] << '\n';
+                LOG_INFO() << "\t-" << key << "\t\t\t\t" <<  d_flagdesc[key] << '\n';
             }
-            Log::info(argv[0]) << " " << d_version << '\n'; 
+            LOG_INFO(argv[0]) << " " << d_version << '\n'; 
             exit(0);
         }
 
@@ -125,7 +125,7 @@ class Argparser
             {
                 if (val.empty()) 
                 {
-                    Log::error("Missing option:") << key << '\n';
+                    LOG_ERROR() << "Missing option:" << key << '\n';
                     throw std::runtime_error("Expected an missing option!");
                 }
             }
@@ -165,20 +165,20 @@ class Argparser
                 if (nextoptionarg)
                 {
                     if (arg[0] == '-'){
-                        Log::error('[') << arg << "] is not an argument for " << prarg << "!\n";
+                        LOG_ERROR('[') << arg << "] is not an argument for " << prarg << "!\n";
                         throw std::runtime_error("Incorrect argument!");
                     }
 
                     d_options[prarg] = arg;
                     nextoptionarg = false;
-                    Log::debug('[') << arg << "] is the argument of " << prarg << ".\n";
+                    LOG_DEBUG('[') << arg << "] is the argument of " << prarg << ".\n";
                     continue;
                 }
 
                 // Argument is the only remaining option. 
                 if (arg[0] != '-')
                 {
-                    Log::debug('[') << arg << "] is an argument.\n";
+                    LOG_DEBUG('[') << arg << "] is an argument.\n";
                     this->argv.push_back(arg);
                     continue;
                 }
@@ -196,7 +196,7 @@ class Argparser
                     std::string valueName = arg.substr(arg.find('=') + 1);
                     optionName = strtolower(optionName);
                     
-                    Log::debug('[') << arg 
+                    LOG_DEBUG('[') << arg 
                                     << "] is an equality option, name: " 
                                     << optionName 
                                     << " value: " 
@@ -214,12 +214,12 @@ class Argparser
                 else if (d_flags.find(arg) != d_flags.end())
                 {
                     // Check if it matches one of our flags.
-                    Log::debug('[') << arg << "] is a flag.\n";
+                    LOG_DEBUG('[') << arg << "] is a flag.\n";
                     d_flags[arg] = true; //We found a flag. 
                 }
                 else{
                     // Nothing mathches, hence it must be an argument. 
-                    Log::error('[') << arg << "] is not a flag, argument or option!\n";
+                    LOG_ERROR('[') << arg << "] is not a flag, argument or option!\n";
                     throw std::runtime_error("Processed not a flag, argument nor option!");
                 }
             }

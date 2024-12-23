@@ -87,7 +87,7 @@ public:
         {
             if (iter->first == A && iter->second == B)
             {
-                //Log::debug("Removing Edge ") << iter->first << " -- " << iter->second << ".\n";    
+                //LOG_DEBUG() << "Removing Edge " << iter->first << " -- " << iter->second << ".\n";    
                 iter = d_edges.erase(iter);
             }
             else
@@ -100,7 +100,7 @@ public:
         auto range = d_edges.equal_range(A);
         for (auto iter = range.first; iter != range.second; ++iter)
             if (iter->first == A && iter->second == B) {
-                //Log::debug("Removing Edge ") << A << " -- " << B << ".\n";
+                //LOG_DEBUG() << "Removing Edge " << A << " -- " << B << ".\n";
                 d_edges.erase(iter);
                 return;
             }
@@ -143,7 +143,7 @@ public:
     // Add a node with NodeData, returns an unique handle id. 
     node_id addNode(NodeData const &node)
     {
-        //Log::debug("Adding node:") << &node << " fragmentation status:" << d_fragmented << '\n';
+        //LOG_DEBUG() << "Adding node:" << &node << " fragmentation status:" << d_fragmented << '\n';
         if (d_fragmented > 0) 
         {
             // Loop through the nodes vector see if a spot is available. 
@@ -152,12 +152,12 @@ public:
             d_nodes[spot].occupied = true;
             d_nodes[spot].data = node;
             d_fragmented--;
-            //Log::debug("Adding node:") << spot << ':' << &node << '\n';
+            //LOG_DEBUG() << "Adding node:" << spot << ':' << &node << '\n';
             return spot;
         }
 
         d_nodes.emplace_back(true, node); 
-        Log::debug("Adding node:") << d_nodes.size() - 1 << ':' << &node << '\n';
+        LOG_DEBUG() << "Adding node:" << d_nodes.size() - 1 << ':' << &node << '\n';
         CORE_ASSERT(d_nodes.size() <= std::numeric_limits<node_id>::max())
         return d_nodes.size() - 1;
     }
@@ -169,7 +169,7 @@ public:
         {
             if (iter->first == idx || iter->second == idx)
             {
-                //Log::debug("Removing Edge ") << iter->first << " -- " << iter->second << ".\n"; 
+                //LOG_DEBUG() << "Removing Edge " << iter->first << " -- " << iter->second << ".\n"; 
                 iter = d_edges.erase(iter);
             }
             else
@@ -179,7 +179,7 @@ public:
         CORE_ASSERT(idx < d_nodes.size())
         ASSERT(d_nodes[idx].occupied, "Warning: Node was already removed!")
         d_fragmented += (idx < d_nodes.size() - 1); 
-        //Log::debug("Removed indx:") << idx << '\n';
+        //LOG_DEBUG() << "Removed indx:" << idx << '\n';
         d_nodes[idx].occupied = false;
     }
 
@@ -248,7 +248,7 @@ public:
     static Graph erdos_reini(std::vector<NodeData> nodes, float const p)
     {
         Graph<NodeData> g;
-        Log::debug("Constructing erdos_reini!\n");
+        LOG_DEBUG() << "Constructing erdos_reini!\n";
         auto handles = g.addNodes(nodes);
         
         for (node_id i : handles)
@@ -259,7 +259,7 @@ public:
                     g.addEdge(i, j);
             }
         }
-        Log::debug("Constructed erdos_reini!\n");
+        LOG_DEBUG() << "Constructed erdos_reini!\n";
         return g;
     }
         

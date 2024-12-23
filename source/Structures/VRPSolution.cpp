@@ -12,7 +12,7 @@ float Solution::optimalityGap() const
     float obj = objective();
     if (obj <= d_opt_objval) return 0.0;
     //CORE_ASSERT(obj >= d_opt_objval)
-    if (d_opt_objval == 0) Log::warning("Optimal Objective value not calculated!\n");
+    if (d_opt_objval == 0) LOG_WARNING() << "Optimal Objective value not calculated!\n";
     return (obj - d_opt_objval) / d_opt_objval;
 }
 
@@ -223,16 +223,16 @@ void Solution::draw(Window const &window) const
 
 bool Solution::serialize(Serializer &serializer)
 {
-    Log::debug("Serializing Solution!\n");
+    LOG_DEBUG() << "Serializing Solution!\n";
     serializer.writeObject(d_instance);
     serializer.writeObject(d_X);
-    //Log::success("Serialized Instance!\n");
+    //LOG_SUCCESS("Serialized Instance!\n");
     return true;
 }
 
 bool Solution::deserialize(Deserializer &deserializer)
 {
-    Log::debug("Deserializing Instance!\n");
+    LOG_DEBUG() << "Deserializing Instance!\n";
     deserializer.readObject(d_instance);
     deserializer.readObject(d_X);
     return true;

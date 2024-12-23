@@ -27,11 +27,11 @@ Matrixf Relu::backward(Matrixf const &error)
 
 void Relu::display() const
 {
-    Log::debug("LeakyRelu NeuralLayer leaky ") << d_leakyalpha << ".\n";
+    LOG_DEBUG() << "LeakyRelu NeuralLayer leaky " << d_leakyalpha << ".\n";
 }
 void Relu::info() const
 {
-    Log::debug("LeakyRelu NeuralLayer.\n");
+    LOG_DEBUG() << "LeakyRelu NeuralLayer.\n";
 }
 void Relu::update(Optimizer &)
 {
@@ -53,11 +53,11 @@ Matrixf Sigmoid::backward(Matrixf const &error)
 }
 void Sigmoid::display() const
 {
-    Log::debug("Sigmoid NeuralLayer.\n");
+    LOG_DEBUG() << "Sigmoid NeuralLayer.\n";
 }
 void Sigmoid::info() const
 {
-    Log::debug("Sigmoid NeuralLayer.\n");
+    LOG_DEBUG() << "Sigmoid NeuralLayer.\n";
 }
 void Sigmoid::update(Optimizer &)
 {

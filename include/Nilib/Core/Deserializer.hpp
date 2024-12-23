@@ -19,7 +19,7 @@ public:
         file.open(filename, std::ios::binary | std::ios::in);
         if (!file)
         {
-            Log::error("Deserialization Error: Could not open file ") << filename << " for reading!\n";
+            LOG_ERROR() << "Deserialization Error: Could not open file " << filename << " for reading!\n";
         }
     }
 
@@ -58,7 +58,7 @@ public:
             data.deserialize(*this);
         }
         if (!file) {
-           Log::error("Error: Failed to read Object data from file.\n");
+           LOG_ERROR() << "Error: Failed to read Object data from file.\n";
         }
         return !file;
     }
@@ -71,7 +71,7 @@ public:
         data.resize(length);
         file.read(&data[0], length);
         if (!file) {
-           Log::error("Error: Failed to read String data from file.\n");
+           LOG_ERROR() << "Error: Failed to read String data from file.\n";
         }
         return !file;
     }
@@ -96,7 +96,7 @@ public:
             }
         }
         if (!file) {
-           Log::error("Error: Failed to read Vector data from file.\n");
+           LOG_ERROR() << "Error: Failed to read Vector data from file.\n";
         }
         return !file;
     }

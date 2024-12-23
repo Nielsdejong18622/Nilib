@@ -36,7 +36,7 @@ void OuterDecoder::zeroGrad()
 }
 void OuterDecoder::info() const
 {
-    Log::debug("OuterDecoderLayer.\n");
+    LOG_DEBUG() << "OuterDecoderLayer.\n";
 }
 void OuterDecoder::display() const
 {

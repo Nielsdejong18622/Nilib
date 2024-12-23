@@ -5,7 +5,7 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
     /* Initialize the glfw library */
     if (!glfwInit()) 
         throw std::runtime_error("Failed to initialize the glfw libary!");
-    Log::debug("Initialized GLFW library.\n");
+    LOG_DEBUG() << "Initialized GLFW library.\n";
 
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_RESIZABLE, false);
@@ -37,7 +37,7 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
     glEnable     (GL_BLEND);
     glEnable     (GL_COLOR_MATERIAL);
     
-    Log::debug("Created window context.\n");
+    LOG_DEBUG() << "Created window context.\n";
 
     d_windowData.width = width;
     d_windowData.height = height;
@@ -54,7 +54,7 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
     glfwSetFramebufferSizeCallback(d_window, Window::framebuffer_size_callback);
 
     glfwSetWindowUserPointer(d_window, this);
-    Log::debug("Completed window construction.\n");
+    LOG_DEBUG() << "Completed window construction.\n";
 };
 
 
@@ -62,7 +62,7 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
 Window::~Window() {
     glfwDestroyWindow(this->d_window);
     glfwTerminate();
-    Log::debug("Window destroyed!\n");
+    LOG_DEBUG() << "Window destroyed!\n";
 };
 
 void Window::startScene() {
@@ -90,12 +90,12 @@ void Window::update() {
 
 void Window::close() {
     glfwSetWindowShouldClose(this->d_window, 1);
-    Log::debug("Closed window.\n");
+    LOG_DEBUG() << "Closed window.\n";
 };
 
 void Window::open() {
     glfwSetWindowShouldClose(this->d_window, 0);
-    Log::debug("Opened window.\n");
+    LOG_DEBUG() << "Opened window.\n";
 };
 
 bool Window::closed() const {
@@ -220,7 +220,7 @@ void Window::drawCubicBezier(Vec2D<float> const ,
 }
 
 void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
-    Log::debug("Resizing framebuffer new dimensions ") << width << 'x' << height << '\n';
+    LOG_DEBUG() << "Resizing framebuffer new dimensions " << width << 'x' << height << '\n';
     glViewport(0, 0, width, height);
 };
   
@@ -232,7 +232,7 @@ void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
 {
     // Convert scancode to non-platform specific.   
     int scancode = glfwGetKeyScancode(key);
-    Log::debug("Binding key ") << key << " bindfun: " << &bindfun << " scancode " << scancode << " mods " << mods << '\n';
+    LOG_DEBUG() << "Binding key " << key << " bindfun: " << &bindfun << " scancode " << scancode << " mods " << mods << '\n';
     KeyEvent keyevent = {key, scancode, action, mods};
     d_windowData.keybindings[keyevent] = bindfun;
 }
@@ -244,7 +244,7 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
     Window* win_ptr = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
     std::vector<char const *> const actionnames = {"release", "press", "hold"};
 
-    //Log::debug("Key ") << key << " action " << actionnames[action] << " scancode " << scancode << " mods " << mods << '\n';
+    //LOG_DEBUG() << "Key " << key << " action " << actionnames[action] << " scancode " << scancode << " mods " << mods << '\n';
 
     std::map<KeyEvent, Callback> keymap = win_ptr->d_windowData.keybindings;
     KeyEvent keyev = {key, scancode, action, mods};
@@ -273,7 +273,7 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
     if (key == GLFW_KEY_MINUS) {
         auto c_size = win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin;
         win_ptr->d_windowData.zoomlevel -= shift;
-        //Log::debug("Current width:") << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
+        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
         
         win_ptr->d_windowData.Fmin -= 0.5 * c_size * 0.01;
         win_ptr->d_windowData.Fmax += 0.5 * c_size * 0.01;
@@ -282,7 +282,7 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
         auto c_size =  win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin; 
         // auto cw = std::max(win_ptr->d_windowData.f2X - win_ptr->d_windowData.f1X, 0.0f);
         // auto ch = std::max(win_ptr->d_windowData.f2Y - win_ptr->d_windowData.f1Y, 0.0f);
-        //Log::debug("Current width:") << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
+        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
         win_ptr->d_windowData.Fmin += 0.5 * c_size * (0.01);
         win_ptr->d_windowData.Fmax -= 0.5 * c_size * (0.01);
         
@@ -313,7 +313,7 @@ void Window::ylim(float const min, float const max)
 }
 
 void Window::setFrustrum(Vec2D<float> const Fmin, Vec2D<float> const Fmax){
-    Log::debug("Setting Frustrum: ") << Fmin << " " << Fmax << '\n';
+    LOG_DEBUG() << "Setting Frustrum: " << Fmin << " " << Fmax << '\n';
     // auto F1 = transform2d(Fmin);
     // auto F2 = transform2d(Fmax);
 

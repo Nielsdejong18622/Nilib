@@ -12,7 +12,7 @@
 int main(int argc, char **argv)
 {
     if (argc != 3) {
-        Log::error("Usage: NeuralNet_XOR.exe max_iter batch_size!\n");
+        LOG_ERROR() << "Usage: NeuralNet_XOR.exe max_iter batch_size!\n";
         return EXIT_FAILURE;
     }
     RNG::seed(127);
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     for (size_t i = 0; i < 4; i++)
     {
         features[i] *= 10000;
-        Log::debug("Features ") << features[i] << '\n';
+        LOG_DEBUG() << "Features " << features[i] << '\n';
     }
     
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
             MSE_batch_loss += loss(0,0) * loss(0,0) * 0.5;
             
             /*
-            Log::debug("NN prediction: ") << 
+            LOG_DEBUG() << "NN prediction: " << 
                 std::fixed << std::setprecision(5) << pred(0,0) << 
                 " (" << features[sample_idx](0,0) << ',' << features[sample_idx](0,1) << ")=" << 
                 target(0,0) << "\tLoss:" << loss(0,0) * loss(0,0) << '\n'; 
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
         auto current_time = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
         if (elapsed.count() > 100) {
-            Log::info("Iteration ") << iteration << " Loss: " << std::fixed << std::setprecision(5) << avg_MSE_batch_loss << '|' << MSE_batch_loss << '\n';
+            LOG_INFO() << "Iteration " << iteration << " Loss: " << std::fixed << std::setprecision(5) << avg_MSE_batch_loss << '|' << MSE_batch_loss << '\n';
             start_time = current_time;
         }
 
@@ -102,13 +102,13 @@ int main(int argc, char **argv)
         
     }
     
-    Log::info("Iteration ") << iteration << " Loss: " << std::fixed << std::setprecision(5) << avg_MSE_batch_loss << '\n';
+    LOG_INFO() << "Iteration " << iteration << " Loss: " << std::fixed << std::setprecision(5) << avg_MSE_batch_loss << '\n';
 
     NN.display();
 
     for (size_t i = 0; i < 4; i++)
     {
-        Log::info("Input: ") << features[i] << " predict: " << NN.feedforward(features[i]) << '|' << output[i] << '\n';
+        LOG_INFO() << "Input: " << features[i] << " predict: " << NN.feedforward(features[i]) << '|' << output[i] << '\n';
     }
     
     

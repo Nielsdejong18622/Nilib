@@ -18,16 +18,16 @@ int main() {
     std::vector<Ndata> locations(20, Ndata());
     Graph<Ndata> erdos_reini;
     
-    Log::debug("G:") << erdos_reini << '\n';
+    LOG_DEBUG() << "G:" << erdos_reini << '\n';
     erdos_reini.reserve(100);
-    Log::debug("G:") << erdos_reini << '\n';
+    LOG_DEBUG() << "G:" << erdos_reini << '\n';
     erdos_reini = Graph<Ndata>::erdos_reini(254, 0.05);
 
-    Log::debug("G:") << erdos_reini << '\n';
+    LOG_DEBUG() << "G:" << erdos_reini << '\n';
     
-    Log::debug("Starting random walk\n");
+    LOG_DEBUG() << "Starting random walk\n";
     for (Graph<Ndata>::node_id v: erdos_reini.randomWalk(0, 10)) {
-        Log::debug("Random walk:") << +v << '\n';
+        LOG_DEBUG() << "Random walk:" << +v << '\n';
     }
     // Bounding box. 
     auto min = Vec2D<double>({win.windata().f1X, win.windata().f1Y});
@@ -46,7 +46,7 @@ int main() {
     {
         win.startScene();
         //layout.draw(win);
-        //Log::debug("") << erdos_reini << '\n'; 
+        //LOG_DEBUG("") << erdos_reini << '\n'; 
         win.endScene();
     }
     

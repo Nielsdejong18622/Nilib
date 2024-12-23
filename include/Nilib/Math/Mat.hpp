@@ -2,7 +2,7 @@
 #define _LINALG_H
 
 #include "Nilib/Core/Log.hpp"
-#include "Nilib/Core/Assert.h"
+#include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
 
 #include <array>

@@ -8,7 +8,7 @@ int main()
     for (size_t i = 0; i < 15; i++)
     {
         PROFILE_SCOPE(std::format("Loop {}", i).c_str());
-        Log::info("Loop ") << i << '\n';
+        LOG_INFO() << "Loop " << i << '\n';
         Sleep(40 * i);
     }
 
