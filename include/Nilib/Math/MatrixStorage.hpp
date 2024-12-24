@@ -10,30 +10,9 @@
 
 namespace Nilib{
 
-    // Abstract internal storage class. 
-    template <typename type = float>
-    struct MatrixData
-    {
-        virtual ~MatrixData() = default;
-
-        virtual type operator()(size_t const row, size_t col) const { return operator()(row * cols() + col); }
-        virtual type &operator()(size_t const row, size_t const col) { return operator()(row * cols() + col); }
-
-        virtual type operator()(size_t const idx) const = 0;
-        virtual type &operator()(size_t const idx) = 0;
-
-        virtual size_t cols() const = 0;
-        virtual size_t rows() const = 0;
-        size_t size() const { return rows() * cols(); }
-
-
-        virtual type sum() const = 0;
-        virtual void apply(std::function<type(type)> fun) = 0;
-    };
-
     // Stores dense matrix data on the stack. 
     template <size_t n, size_t m, typename type = float>
-    struct StaticMatrixData : public MatrixData<type>
+    struct StaticMatrixData
     {
         std::array<type, n * m> d_data;
         
@@ -70,11 +49,11 @@ namespace Nilib{
 
     // Stores dense matrix data on the heap. 
     template <typename type = float>
-    struct DynamicMatrixData : public MatrixData<type>
+    struct DynamicMatrixData
     {
         size_t d_rows = 0;
         //size_t d_cols = 0; // Can be infered from d_data.size() / d_rows.
-        std::valarray<type> d_data;
+        std::valarray<type> d_data; // Dynamically allocated on the heap. Internally stores three pointers. 
         
         DynamicMatrixData() = default;
         
@@ -107,6 +86,7 @@ namespace Nilib{
 
         size_t rows() const { return d_rows; }
         size_t cols() const { return (d_rows > 0) ? (d_data.size() / d_rows) : 0; }
+        size_t size() const { return d_data.size(); }
 
         type sum() const {return (d_rows > 0) ? d_data.sum() : 0; }
         void apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); }

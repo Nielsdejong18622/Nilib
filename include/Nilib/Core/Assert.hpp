@@ -1,9 +1,11 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
+// This header defines the ASSERT and CORE ASSERT macros.
 #include "Nilib/Logger/Log.hpp"
 
-// This header defines the ASSERT and CORE ASSERT macros.
+namespace Nilib{
+
 #ifndef ISABLE_ASSERT
     #define ASSERT(condition, message) \
     { \
@@ -23,4 +25,6 @@
 
     #define CORE_ASSERT(...)
 #endif
+
+}
 #endif
