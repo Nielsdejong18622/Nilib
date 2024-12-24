@@ -5,23 +5,20 @@ Window::Window(size_t width, size_t height, char const *title) {
     /* Initialize the glfw library */
     if (!glfwInit()) 
         throw std::runtime_error("Failed to initialize the glfw libary!");
-    LOG_DEBUG() << "Initialized GLFW library.\n";
+    LOG_DEBUG("Constructing window", title, width, 'x', height);
 
     /* Create a windowed mode window and its OpenGL context */
-    glfwWindowHint(GLFW_RESIZABLE, false);
+    glfwWindowHint(GLFW_RESIZABLE, true);
     glfwWindowHint(GLFW_DECORATED, true);
 
-    // Create the window.
-    d_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &d_data.screenposx, &d_data.screenposy, &d_data.width, &d_data.height);
+    d_data.width = width;
+    d_data.height = height;
+    d_data.title = title;
+    d_data.open = false;
+    d_data.current = false;
+    d_data.owner = this;
 
-    if (!d_window)
-    {
-        glfwTerminate();
-        throw std::runtime_error("Failed to open the window!");
-    }
-    
-    // Set up the window in preparation of rendering.
-    glfwMakeContextCurrent(d_window);
     glfwSwapInterval(1);
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -30,7 +27,7 @@ Window::Window(size_t width, size_t height, char const *title) {
     glDisable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
     glOrtho(0.0, width, 0.0, height, 0.0, 1.0); 
-
+    
     // Enable Alpha blending. 
     glBlendFunc  (GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
     glEnable     (GL_BLEND);
@@ -38,15 +35,55 @@ Window::Window(size_t width, size_t height, char const *title) {
     
     LOG_DEBUG() << "Created window context.\n";
 
-    d_windowData.width = width;
-    d_windowData.height = height;
-    d_windowData.owner = this;
 
+    LOG_DEBUG() << "Completed window construction.\n";
+}
+
+void Window::setCallbacks() const
+{
+    // Callbacks. 
     glfwSetKeyCallback(d_window, Window::key_callback);
     glfwSetFramebufferSizeCallback(d_window, Window::framebuffer_size_callback);
+    
+    //glfwSetCharCallback()
+    //glfwSetCharModsCallback();
+    glfwSetDropCallback();
+    glfwSetErrorCallback(Window::error_callback);
+    glfwSetScrollCallback()
+    glfwSetJoystickCallback();
+    glfwSetCursorPosCallback();
+    glfwSetCursorEnterCallback();
+    glfwSetWindowPosCallback();
+    glfwSetWindowSizeCallback();
+    glfwSetCursorEnterCallback();
+    
+    glfwSetMouseButtonCallback();
+    glfwSetWindowFocusCallback();
+    glfwSetWindowIconifyCallback();
+    glfwSetWindowMaximizeCallback();
+    glfwSetWindowContentScaleCallback();
 
+}
+
+void Window::open() {
+    if (d_data.open) return;
+
+    d_window = glfwCreateWindow(d_data.width, d_data.height, d_data.title, nullptr, nullptr);
+    
+    glfwMakeContextCurrent(d_window);
     glfwSetWindowUserPointer(d_window, this);
-    LOG_DEBUG() << "Completed window construction.\n";
+
+    // Create the window.
+    if (!d_window)
+    {
+        glfwDestroyWindow(d_window);
+        d_data.open = false;
+        return;
+    }
+    // Set up the window in preparation of rendering.
+    //glfwMakeContextCurrent(d_window);
+    LOG_DEBUG("Opened window", d_data.title);
+    d_data.open = true;
 };
 
 
@@ -80,17 +117,107 @@ void Window::close() {
     LOG_DEBUG() << "Closed window.\n";
 };
 
-void Window::open() {
-    glfwSetWindowShouldClose(this->d_window, 0);
-    LOG_DEBUG() << "Opened window.\n";
+
+bool Window::opened() const {
+    return d_data.open;
 };
 
-bool Window::closed() const {
-    return glfwWindowShouldClose(this->d_window);
+void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
+    LOG_DEBUG() << "Resizing framebuffer new dimensions " << width << 'x' << height << '\n';
+    glViewport(0, 0, width, height);
 };
-bool Window::opened() const {
-    return !glfwWindowShouldClose(this->d_window);
+  
+void Window::setTitle(char const *title) const{
+    glfwSetWindowTitle(d_window, title);
+}
+
+void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
+{
+    // Convert scancode to non-platform specific.   
+    int scancode = glfwGetKeyScancode(key);
+    LOG_DEBUG() << "Binding key " << key << " bindfun: " << &bindfun << " scancode " << scancode << " mods " << mods << '\n';
+    KeyEvent keyevent = {key, scancode, action, mods};
+    d_data.keybindings[keyevent] = bindfun;
+}
+
+void Window::error_callback(int code, char const*description) {
+    LOG_ERROR("GLFW Error callback", code, description);
+}
+// Required function by the glfw render library. Handles user key input. 
+void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    // Get the window from the glfw state machine. 
+    Window* win_ptr = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
+    std::vector<char const *> const actionnames = {"release", "press", "hold"};
+
+    //LOG_DEBUG() << "Key " << key << " action " << actionnames[action] << " scancode " << scancode << " mods " << mods << '\n';
+
+    std::map<KeyEvent, Callback> keymap = win_ptr->d_data.keybindings;
+    KeyEvent keyev = {key, scancode, action, mods};
+
+    // Translate the view frustum on WASD.
+    //float constexpr decrease = 0.9999;
+    float constexpr shift = 0.01;
+    //float constexpr increase = 1 / decrease; //1.0001;
+    if (key == GLFW_KEY_A) {
+        //win_ptr->d_windowData.Fmin.x() -= shift / win_ptr->d_windowData.zoomlevel; 
+        //win_ptr->d_windowData.Fmax.x() -= shift / win_ptr->d_windowData.zoomlevel;
+    }
+    if (key == GLFW_KEY_D) {
+        //win_ptr->d_windowData.Fmin.x() += shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmax.x() += shift / win_ptr->d_windowData.zoomlevel;
+    }
+    if (key == GLFW_KEY_W) {
+        //win_ptr->d_windowData.Fmin.y() += shift / win_ptr->d_windowData.zoomlevel; 
+        //win_ptr->d_windowData.Fmax.y() += shift / win_ptr->d_windowData.zoomlevel;
+    }
+    if (key == GLFW_KEY_S) {
+        //win_ptr->d_windowData.Fmin.y() -= shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmax.y() -= shift / win_ptr->d_windowData.zoomlevel;
+    }
+    // Zoom on X-axis or Y-axis.
+    if (key == GLFW_KEY_MINUS) {
+        //auto c_size = win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin;
+        //win_ptr->d_windowData.zoomlevel -= shift;
+        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
+        
+        //win_ptr->d_windowData.Fmin -= 0.5 * c_size * 0.01;
+        //win_ptr->d_windowData.Fmax += 0.5 * c_size * 0.01;
+    }
+    if (key == GLFW_KEY_EQUAL) {      
+        //auto c_size =  win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin; 
+        // auto cw = std::max(win_ptr->d_windowData.f2X - win_ptr->d_windowData.f1X, 0.0f);
+        // auto ch = std::max(win_ptr->d_windowData.f2Y - win_ptr->d_windowData.f1Y, 0.0f);
+        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
+        //win_ptr->d_windowData.Fmin += 0.5 * c_size * (0.01);
+        //win_ptr->d_windowData.Fmax -= 0.5 * c_size * (0.01);
+        
+        //win_ptr->d_windowData.zoomlevel += shift;     
+    }
+    if (keymap.find(keyev) != keymap.end()) 
+        win_ptr->d_data.keybindings.at(keyev)();
+    
 };
+
+
+void Window::xlim(float const min, float const max)
+{
+    //d_windowData.f1X = min;
+    //d_windowData.f2X = max;
+
+    //d_windowData.Fmin.x() = min;
+    //d_windowData.Fmax.x() = max;
+}
+
+void Window::ylim(float const min, float const max)
+{
+    //d_windowData.f1Y = min;
+    //d_windowData.f2Y = max;
+    
+    //d_windowData.Fmin.y() = min;
+    //d_windowData.Fmax.y() = max;
+}
+
 
 /*
 Vec2D<float> const Window::transform2d(Vec2D<float> const x) const
@@ -207,96 +334,3 @@ void Window::drawCubicBezier(Vec2D<float> const ,
     ASSERT(false, "Not implemented")
 }
 */
-
-void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
-    LOG_DEBUG() << "Resizing framebuffer new dimensions " << width << 'x' << height << '\n';
-    glViewport(0, 0, width, height);
-};
-  
-void Window::setTitle(char const *title) const{
-    glfwSetWindowTitle(d_window, title);
-}
-
-void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
-{
-    // Convert scancode to non-platform specific.   
-    int scancode = glfwGetKeyScancode(key);
-    LOG_DEBUG() << "Binding key " << key << " bindfun: " << &bindfun << " scancode " << scancode << " mods " << mods << '\n';
-    KeyEvent keyevent = {key, scancode, action, mods};
-    d_windowData.keybindings[keyevent] = bindfun;
-}
-
-// Required function by the glfw render library. Handles user key input. 
-void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    // Get the window from the glfw state machine. 
-    Window* win_ptr = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
-    std::vector<char const *> const actionnames = {"release", "press", "hold"};
-
-    //LOG_DEBUG() << "Key " << key << " action " << actionnames[action] << " scancode " << scancode << " mods " << mods << '\n';
-
-    std::map<KeyEvent, Callback> keymap = win_ptr->d_windowData.keybindings;
-    KeyEvent keyev = {key, scancode, action, mods};
-
-    // Translate the view frustum on WASD.
-    //float constexpr decrease = 0.9999;
-    float constexpr shift = 0.01;
-    //float constexpr increase = 1 / decrease; //1.0001;
-    if (key == GLFW_KEY_A) {
-        //win_ptr->d_windowData.Fmin.x() -= shift / win_ptr->d_windowData.zoomlevel; 
-        //win_ptr->d_windowData.Fmax.x() -= shift / win_ptr->d_windowData.zoomlevel;
-    }
-    if (key == GLFW_KEY_D) {
-        //win_ptr->d_windowData.Fmin.x() += shift / win_ptr->d_windowData.zoomlevel;
-        //win_ptr->d_windowData.Fmax.x() += shift / win_ptr->d_windowData.zoomlevel;
-    }
-    if (key == GLFW_KEY_W) {
-        //win_ptr->d_windowData.Fmin.y() += shift / win_ptr->d_windowData.zoomlevel; 
-        //win_ptr->d_windowData.Fmax.y() += shift / win_ptr->d_windowData.zoomlevel;
-    }
-    if (key == GLFW_KEY_S) {
-        //win_ptr->d_windowData.Fmin.y() -= shift / win_ptr->d_windowData.zoomlevel;
-        //win_ptr->d_windowData.Fmax.y() -= shift / win_ptr->d_windowData.zoomlevel;
-    }
-    // Zoom on X-axis or Y-axis.
-    if (key == GLFW_KEY_MINUS) {
-        //auto c_size = win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin;
-        //win_ptr->d_windowData.zoomlevel -= shift;
-        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
-        
-        //win_ptr->d_windowData.Fmin -= 0.5 * c_size * 0.01;
-        //win_ptr->d_windowData.Fmax += 0.5 * c_size * 0.01;
-    }
-    if (key == GLFW_KEY_EQUAL) {      
-        //auto c_size =  win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin; 
-        // auto cw = std::max(win_ptr->d_windowData.f2X - win_ptr->d_windowData.f1X, 0.0f);
-        // auto ch = std::max(win_ptr->d_windowData.f2Y - win_ptr->d_windowData.f1Y, 0.0f);
-        //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
-        //win_ptr->d_windowData.Fmin += 0.5 * c_size * (0.01);
-        //win_ptr->d_windowData.Fmax -= 0.5 * c_size * (0.01);
-        
-        //win_ptr->d_windowData.zoomlevel += shift;     
-    }
-    if (keymap.find(keyev) != keymap.end()) 
-        win_ptr->d_windowData.keybindings.at(keyev)();
-    
-};
-
-
-void Window::xlim(float const min, float const max)
-{
-    //d_windowData.f1X = min;
-    //d_windowData.f2X = max;
-
-    //d_windowData.Fmin.x() = min;
-    //d_windowData.Fmax.x() = max;
-}
-
-void Window::ylim(float const min, float const max)
-{
-    //d_windowData.f1Y = min;
-    //d_windowData.f2Y = max;
-    
-    //d_windowData.Fmin.y() = min;
-    //d_windowData.Fmax.y() = max;
-}

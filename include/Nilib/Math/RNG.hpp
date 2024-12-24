@@ -46,8 +46,9 @@ namespace Nilib {
             // Box-Muller
             scalar U = prob();
             scalar V = prob();
-            #define PI 3.1415926
+            scalar constexpr PI = 3.1415926;
             return std::sqrt(-2.0 * std::log(U)) * std::cos(2 * PI * V) * std::sqrt(var) + mean;
+
             // Irwin-Hall relies on CLT.
             scalar d1a = prob(), d2a = prob(), d3a = prob();
             scalar d1b = prob(), d2b = prob(), d3b = prob();

@@ -1,13 +1,24 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "Nilib/Logger/Log.hpp"
+
+#include <Nilib/Renderer/Window.hpp>
 
 int main(int argc, char** argv)
 {
+
+    Window win1(1024, 800, "Window1");
+    Window win2(1024, 800, "Window2");
+
+    win1.open();
+
+    while (win1.opened() || win2.opened())
+    {
+        glfwPollEvents();
+    }
+    
+    /**
     int xpos, ypos, height, width;
     const char* description;
 
@@ -89,4 +100,6 @@ int main(int argc, char** argv)
 
         glfwWaitEvents();
     }
+}
+*/
 }

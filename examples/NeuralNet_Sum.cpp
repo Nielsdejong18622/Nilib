@@ -90,7 +90,11 @@ int main(int argc, char **argv)
     for (size_t i = 0; i < 10; i++)
     {
         Matrixf input = Matrixf(1, 2, {RNG::normal(0.0f, 100.0f), RNG::normal(0.0f, 100.0f)});
-        LOG_INFO() << "Input: " << input << " predict: " << NN.feedforward(input) << '|' << input.sum() << '\n';
+        LOG_INFO("Input:");
+        input.print();
+        Matrixf pred = NN.feedforward(input);
+        LOG_INFO("Predict:", pred, input.sum());
+        pred.print();
     }
     
     
