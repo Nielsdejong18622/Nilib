@@ -7,6 +7,7 @@ add_executable(Profiler Profiler.cpp)
 add_executable(Logger Logger.cpp)
 add_executable(MultipleWindows MultipleWindows.cpp)
 add_executable(LinAlg LinAlg.cpp)
+add_executable(RNG2 RNG.cpp)
 
 # Link the static library to the example executable
 target_link_libraries(Triangle PUBLIC Nilib)
@@ -17,3 +18,4 @@ target_link_libraries(Profiler PUBLIC Nilib)
 target_link_libraries(Logger PUBLIC Nilib)
 target_link_libraries(MultipleWindows PUBLIC Nilib)
 target_link_libraries(LinAlg PUBLIC Nilib)
+target_link_libraries(RNG2 PUBLIC Nilib)

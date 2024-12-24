@@ -1,6 +1,7 @@
 #include "Nilib/Math/LinAlg.hpp"
 #include "Nilib/Math/LinAlgFunctions.hpp"
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Core/Profiler.hpp"
 
 #include <assert.h>
 
@@ -57,6 +58,9 @@ int main()
     auto b = Matrixd::rand(10, 1);
     auto c = Matrixd::rand(1, 10);
     auto p = Matrixd::all(10, 10, 10);
+    auto p2 = Matrixd::all(10);
+    
+    auto p1 = Mat<10,10>::all(10, 10, 10);
     LOG_INFO("P:", p);
     p.print();
     LOG_INFO("Random Matrix R", c * R * b);
@@ -64,7 +68,7 @@ int main()
 
     auto R1 = Mat<10,10>::rand(10,10);
     auto b1 = Mat<10,1>::rand();
-    auto c1 = Mat<1,10>::rand();
+    auto c1 = Mat<1,10>::randn(1, 10, 0.0, 1.0);
     LOG_INFO("Random Matrix R1", c1 * R1 * b1);
     auto res1 = (c1 * R1 * b1);
     res1.print();
@@ -76,4 +80,43 @@ int main()
     LOG_INFO("Size of b1", b1, sizeof(b1));
     LOG_INFO("Size of B", B, sizeof(B), sizeof(float), sizeof(std::array<float, 9>));
     LOG_INFO("Size of t(B)", transpose(B), sizeof(transpose(B)));
+
+    // Stress test.
+    // Dynamic memory.
+    RNG::seed(127);
+    size_t const tests = 1'000;
+    {
+        for (size_t j = 0; j < 10; j++)
+        {
+            float sum = 0;    
+            PROFILE_FUNCTION();
+            for (size_t i = 0; i < tests; i++)
+            {
+                    auto M = Matrixf::rand(10, 10);
+                    auto b = Matrixf::randn(10, 90, 10.0, 5.0);
+                    auto res = M * M * M * b;
+                    //LOG_DEBUG(i, res.sum() / 10000);    
+                    sum += res.sum();
+            }
+            LOG_INFO("Sum:", sum);
+        }
+    }
+    RNG::seed(127);
+    // Static (on the stack)
+    {
+        for (size_t j = 0; j < 10; j++)
+        {
+            float sum = 0;    
+            PROFILE_FUNCTION();
+            for (size_t i = 0; i < tests; i++)
+            {
+                    auto M = Mat<10,10>::rand();
+                    auto b = Mat<10, 90>::randn(10.0, 5.0);
+                    auto res = M * M * M * b;      
+                    sum += res.sum();
+            }   
+            LOG_INFO("Sum:", sum);
+        }
+    }
+        
 }

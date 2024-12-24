@@ -85,7 +85,7 @@ private:
     RNG() : gen(std::random_device()()) {}
 
     // Mersenne Twister pseudo-random number generator
-    std::mt19937 gen;
+    std::mt19937 gen{std::random_device()()};
 };
 
 //static RNG random = RNG::getInstance();

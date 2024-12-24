@@ -35,7 +35,9 @@ namespace Nilib {
 
     // Matrix Matrix Product.
     template<typename type>
-    Matrix<DynamicMatrixData<type>> operator*(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B) {
+    Matrix<DynamicMatrixData<type>> 
+    operator*(Matrix<DynamicMatrixData<type>> const &A, 
+              Matrix<DynamicMatrixData<type>> const &B) {
         CORE_ASSERT(A.cols() == B.rows());
         
         Matrix<DynamicMatrixData<type>> res(A.rows(), B.cols());
@@ -58,6 +60,25 @@ namespace Nilib {
                     res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
         return res;        
     }
+
+    // // Matrix Matrix Matrix.    '
+    // template<typename type>
+    // Matrix<DynamicMatrixData<type>> 
+    // times(Matrix<DynamicMatrixData<type>> const &lhs, 
+    //       Matrix<DynamicMatrixData<type>> const &mid,
+    //       Matrix<DynamicMatrixData<type>> const &rhs) {
+    //     Matrix<DynamicMatrixData<type>> res = lhs * mid * rhs;
+    //     return res;        
+    // }
+    // // Matrix Matrix Matrix.    '
+    // template<size_t n, size_t m, size_t p, size_t k, typename type>
+    // Matrix<StaticMatrixData<n,k,type>> 
+    // times(Matrix<StaticMatrixData<n,m,type>> const &lhs, 
+    //           Matrix<StaticMatrixData<m,p,type>> const &mid,
+    //           Matrix<StaticMatrixData<p,k,type>> const &rhs) {
+    //     Matrix<StaticMatrixData<n, k, type>> res = (lhs * mid) * rhs;
+    //     return res;        
+    // }
 
     template<typename data>
     Matrix<data> transpose(Matrix<data> const &A) {

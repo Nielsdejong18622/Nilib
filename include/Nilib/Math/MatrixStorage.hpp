@@ -17,14 +17,16 @@ namespace Nilib{
         std::array<type, n * m> d_data;
         
         StaticMatrixData() = default;
+
         StaticMatrixData(size_t const rows, size_t const cols) {
             CORE_ASSERT(rows == n);
             CORE_ASSERT(cols == m);
             d_data.fill(0);
         }
+        
         StaticMatrixData(std::initializer_list<type> const &list)
         {
-            std::copy(list.begin(), list.end(), d_data.begin());
+            std::move(list.begin(), list.end(), d_data.begin());
         }
 
         
@@ -52,19 +54,19 @@ namespace Nilib{
     struct DynamicMatrixData
     {
         size_t d_rows = 0;
-        //size_t d_cols = 0; // Can be infered from d_data.size() / d_rows.
+        size_t d_cols = 0; // Can be infered from d_data.size() / d_rows.
         std::valarray<type> d_data; // Dynamically allocated on the heap. Internally stores three pointers. 
         
         DynamicMatrixData() = default;
         
         DynamicMatrixData(std::initializer_list<type> const &list)
-        : d_data(list), d_rows(1) {}
+        : d_data(list), d_rows(1), d_cols(list.size()) {}
 
         DynamicMatrixData(size_t const rows, size_t const cols) 
-        : d_rows(rows), d_data(rows * cols) {}
+        : d_rows(rows), d_cols(cols), d_data(rows * cols) {}
 
         DynamicMatrixData(std::initializer_list<std::initializer_list<type>> const &list)
-        : d_rows(list.size()) 
+        : d_rows(list.size()), d_cols(list.begin()->size())
         {
             d_data.resize(d_rows * list.begin()->size(), 0);
             size_t idx = 0;
@@ -85,10 +87,11 @@ namespace Nilib{
         type &operator()(size_t const row, size_t const col) { return operator()(row * cols() + col); }
 
         size_t rows() const { return d_rows; }
-        size_t cols() const { return (d_rows > 0) ? (d_data.size() / d_rows) : 0; }
+        size_t cols() const { return d_cols; }
         size_t size() const { return d_data.size(); }
 
-        type sum() const {return (d_rows > 0) ? d_data.sum() : 0; }
+        //type sum() const {return std::accumulate(std::begin(d_data), std::end(d_data), 0.0); }
+        type sum() const {return d_data.sum(); }
         void apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); }
     };
 }

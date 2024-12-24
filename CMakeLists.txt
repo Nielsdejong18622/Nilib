@@ -17,7 +17,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_STANDALONE)
 
 # Definitons of Preprocessor directives. 
-target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=2)
+target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=1)
 
 # Default log levels (can be reordered
 # Only LEVELS higher than or equal to LOG_LEVEL are displayed. 

@@ -24,17 +24,15 @@ namespace Nilib {
         size_t rows() const {return d_data.rows(); }
         size_t cols() const {return d_data.cols(); }
 
-        // Inserts the matrix into a stream. 
-        
         friend std::ostream &operator<<(std::ostream &os, Matrix const &mat) {
             if constexpr (std::is_same_v<MatrixData, DynamicMatrixData<float>>)
-                return os << "<Matrixf " << mat.d_data.rows() << 'x' << mat.d_data.cols() << '>';
+                return os << "<Matrixf " << mat.rows() << 'x' << mat.cols() << '>';
             else if constexpr (std::is_same_v<MatrixData, DynamicMatrixData<double>>)
-                return os << "<Matrixd " << mat.d_data.rows() << 'x' << mat.d_data.cols() << '>';
-            else if constexpr (std::is_same_v<MatrixData, DynamicMatrixData<decltype(d_data.sum())>>)
-                return os << "<Matrix " << mat.d_data.rows() << 'x' << mat.d_data.cols() << '>';
-            else
-                return os << "<Mat " << mat.d_data.rows() << 'x' << mat.d_data.cols() << '>';
+                return os << "<Matrixd " << mat.rows() << 'x' << mat.cols() << '>';
+            else if constexpr (std::is_same_v<MatrixData, DynamicMatrixData<decltype(mat.sum())>>)
+                return os << "<Matrix " << mat.rows() << 'x' << mat.cols() << '>';
+            else // Must be static storage type. 
+                return os << "<Mat " << mat.rows() << 'x' << mat.cols() << '>';
         }
         void print() const {
             for (size_t ridx = 0; ridx < d_data.rows(); ++ridx)
@@ -63,57 +61,41 @@ namespace Nilib {
 
 
         // In place operators.
-        template<typename data>
-        void operator+=(Matrix<data> const &B) {
+        template<typename data> void operator+=(Matrix<data> const &B) {
             CORE_ASSERT(d_data.rows() == B.d_data.rows());
             CORE_ASSERT(d_data.cols() == B.d_data.cols());
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) += B.d_data(idx);
         }
         
-        template<typename data>
-        void operator-=(Matrix<data> const &B) {
+        template<typename data> void operator-=(Matrix<data> const &B) {
             CORE_ASSERT(d_data.rows() == B.d_data.rows());
             CORE_ASSERT(d_data.cols() == B.d_data.cols());
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) -= B.d_data(idx);
         }
 
-        template<typename scalar>
-        void operator*=(scalar const lambda) {
+        template<typename scalar> void operator*=(scalar const lambda) {
             //d_data *= lambda; // Is defined for valarray.
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) *= lambda;
         }
 
-        template<typename scalar>
-        void operator/=(scalar const lambda) {
+        template<typename scalar> void operator/=(scalar const lambda) {
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) /= lambda;
         }
 
-        // // Multiply by other inplace Matrix. (Only possible when square)
-        // template<typename data>
-        // void operator*=(Matrix<data> const &B) {
-        //     CORE_ASSERT(d_data.cols() == B.d_data.cols());
-        //     CORE_ASSERT(d_data.rows() == B.d_data.rows());
-        // }
-
-        // // In place transpose (only available for dynamic storage).
-        // template <typename type>
-        // std::enable_if<std::is_same<U, DynamicMatrixData<type>>::value>
-        // void T() const {
-
-        // }
-
 
         // static constructors.
-        static Matrix all(float const val) {
+        static Matrix all(float const val) 
+        requires (!std::is_same_v<MatrixData, DynamicMatrixData<float>>) 
+        {
             Matrix result;
             for (size_t idx = 0; idx < result.cols() * result.rows(); idx++)
                 result.d_data(idx) = val;
             return result;
-        }
+        } 
 
         // static constructors.
         static Matrix all(size_t const n, size_t const m, float const val) {
@@ -132,17 +114,33 @@ namespace Nilib {
         }
 
         // Creates a random matrix filled with [0-1]. 
-        //requires (MatrixData == decltype(DynamicMatrixData))
         static Matrix rand(size_t const n, size_t const m) {
             Matrix result(n, m);
             for (size_t idx = 0; idx < n * m; ++idx)
                     result.d_data(idx) = RNG::uniform(0.0, 1.0);
             return result;
         }
+
         static Matrix rand() {
             Matrix result;
             for (size_t idx = 0; idx < result.rows() * result.cols(); ++idx)
                 result.d_data(idx) = RNG::uniform(0.0, 1.0);
+            return result;    
+        }
+
+        // Creates a random matrix filled with N(mean, sd)
+        static Matrix randn(size_t const n, size_t const m, auto const mean, auto const sd) {
+            Matrix result(n, m);
+            for (size_t idx = 0; idx < n * m; ++idx)
+                    result.d_data(idx) = RNG::normal(mean, sd);
+            return result;
+        }
+
+        
+        static Matrix randn(auto const mean, auto const sd) {
+            Matrix result;
+            for (size_t idx = 0; idx < result.rows() * result.cols(); ++idx)
+                result.d_data(idx) = RNG::normal(mean, sd);
             return result;    
         }
 
