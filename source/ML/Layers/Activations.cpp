@@ -1,5 +1,7 @@
 #include "Nilib/ML/Layers/Activations.hpp"
 
+using namespace Nilib;
+
 Relu::Relu()
 : d_leakyalpha(0)
 {
@@ -15,14 +17,18 @@ Matrixf Relu::forward(Matrixf const &X)
 {
     float la = d_leakyalpha;
     d_input = X;
-    return Matrixf::apply(X, [la](float const t){ return (t > 0) ? t : la * t; } );
+    Matrixf res = X;
+    res.apply([la](float const t){ return (t > 0) ? t : la * t; });
+    return res;
 }
 Matrixf Relu::backward(Matrixf const &error)
 {
     float la = d_leakyalpha;
     CORE_ASSERT(error.rows() == d_input.rows())
     CORE_ASSERT(error.cols() == d_input.cols())
-    return hadamar(Matrixf::apply(d_input, [la](float const t){ return (t > 0) ? 1 : la; } ), error);
+    Matrixf res = d_input;
+    res.apply([la](float const t){ return (t > 0) ? 1 : la; } );
+    return hadamar(res, error);
 }
 
 void Relu::display() const
@@ -43,13 +49,17 @@ void Relu::zeroGrad()
 Matrixf Sigmoid::forward(Matrixf const &X)
 {
     d_input = X;
-    return Matrixf::apply(X,  [](float const t) {return (1 / ( 1 + std::exp(-t)));});
+    Matrixf res = X;
+    res.apply([](float const t) {return (1 / ( 1 + std::exp(-t)));});
+    return res;
 }
 Matrixf Sigmoid::backward(Matrixf const &error)
 {
     CORE_ASSERT(error.rows() == d_input.rows())
     CORE_ASSERT(error.cols() == d_input.cols())
-    return hadamar(Matrixf::apply(d_input, [](float const t) {return (1 / ( 1 + std::exp(-t))) * (1 - (1 / ( 1 + std::exp(-t))));}), error);
+    Matrixf res = d_input;
+    res.apply([](float const t) {return (1 / ( 1 + std::exp(-t))) * (1 - (1 / ( 1 + std::exp(-t))));});
+    return hadamar(res, error);
 }
 void Sigmoid::display() const
 {

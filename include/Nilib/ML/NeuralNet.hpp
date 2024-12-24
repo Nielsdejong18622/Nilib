@@ -17,7 +17,7 @@ protected:
     Optimizer d_optimizer;
     std::vector<NeuralLayer*> d_layers;
 
-    Matrixf d_adjacency;
+    Nilib::Matrixf d_adjacency;
 public:
 
     //NeuralNet();
@@ -37,10 +37,10 @@ public:
     }
 
     // Make a prediction based on some input features X.  
-    Matrixf feedforward(Matrixf const &X);
+    Nilib::Matrixf feedforward(Nilib::Matrixf const &X);
 
     // Calculates and accumulates gradient in all applicable neurallayers.  
-    Matrixf backward(Matrixf const &loss);
+    Nilib::Matrixf backward(Nilib::Matrixf const &loss);
 
     // Add an optimizer and loss function. 
     void compile(Optimizer const &optimizer);
@@ -52,8 +52,8 @@ public:
     void zeroGrad();
 
     // Get and set the adjacency matrix. 
-    Matrixf const &adjacency() const { return d_adjacency; };
-    void adjacency(Matrixf const &A) { d_adjacency = A; }
+    Nilib::Matrixf const &adjacency() const { return d_adjacency; };
+    void adjacency(Nilib::Matrixf const &A) { d_adjacency = A; }
 };
 
 

@@ -11,7 +11,7 @@ struct Ndata
 
 int main() {
     RNG::seed(127);
-    Window win(1024, 812, "Graph window!", false, true);
+    Window win(1024, 812, "Graph window!");
     win.bindkey(std::bind(&Window::close, &win), GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
     
     // Tests. 
@@ -30,9 +30,6 @@ int main() {
         LOG_DEBUG() << "Random walk:" << +v << '\n';
     }
     // Bounding box. 
-    auto min = Vec2D<double>({win.windata().f1X, win.windata().f1Y});
-    auto max = Vec2D<double>({win.windata().f2X, win.windata().f2Y});
-
     /*
     GraphLayout layout = GraphLayout<Ndata>::random(erdos_reini, min, max);
     win.bindkey(std::bind(&GraphLayout<Ndata>::update, &layout), GLFW_KEY_U, GLFW_PRESS, 0);

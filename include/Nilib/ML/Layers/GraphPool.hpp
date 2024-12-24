@@ -6,8 +6,8 @@
 class GraphPool : public NeuralLayer
 {
 public:
-    Matrixf forward(Matrixf const &X);
-    Matrixf backward(Matrixf const &X);
+    Nilib::Matrixf forward(Nilib::Matrixf const &X);
+    Nilib::Matrixf backward(Nilib::Matrixf const &X);
     void update(Optimizer &optim);
     void zeroGrad();
     void info() const;

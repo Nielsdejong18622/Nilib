@@ -1,4 +1,4 @@
-#include "Nilib/Math/RNG2.hpp"
+#include "Nilib/Math/RNG.hpp"
 
 namespace Nilib
 {

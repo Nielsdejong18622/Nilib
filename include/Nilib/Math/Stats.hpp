@@ -59,15 +59,15 @@ namespace Nilib
         float kurtosis() const { return static_cast<float>(d_n) * M4 / (M2 * M2) - 3.0;}
 
         friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats) {
-            return os << std::fixed << std::setprecision(4)  
+            return os << std::fixed <<std::setprecision(4)  
                       << "Mean:" << stats.mean() 
                       << '(' << stats.stddev()
                       << ") Min:" << stats.min()  
                       << " Max:" << stats.max() 
-                      << " sum:" << stats.sum() 
                       << " skew:" << stats.skewness() 
                       << " kurtosis:" << stats.kurtosis() 
-                      << " n:" << stats.n();
+                      << " n:" << stats.n()
+                      << " sum:" << stats.sum(); 
         }
     };
 

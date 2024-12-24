@@ -7,6 +7,8 @@
 #include "Nilib/Math/RNG.hpp"
 #include <map>
 
+using namespace Nilib;
+
 template<typename NodeData, typename CoordPrec>
 class GraphLayout;
 
@@ -205,7 +207,7 @@ public:
         {
             res.emplace_back(+a);
             if (down_stream(a).size() == 0) return res;
-            a = RNG::sample(down_stream(a));
+            a = down_stream(a)[RNG::index(down_stream(a).size())];
         }
         return res;
     }

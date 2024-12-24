@@ -19,7 +19,7 @@
 #include <GLFW/glfw3.h>
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
-#include "Nilib/Math/Mat.hpp"
+#include "Nilib/Math/Matrix.hpp"
 
 // Typedefs. 
 typedef std::function<void(void)> Callback;
@@ -30,28 +30,22 @@ class Window;
 struct Windowdata {
     size_t width;
     size_t height;
-    //size_t screenposx;
-    //size_t screenposy;
+    size_t screenposx;
+    size_t screenposy;
     //size_t framebufx;
     //size_t framebufy;
-    Vec2D<float> Fmin;
-    Vec2D<float> Fmax;
     std::string title;
-    bool eventbased;
     bool open;
+    bool current;
     Window* owner;
     std::map<KeyEvent, Callback> keybindings;
-
-    float f1X, f1Y;
-    float f2X, f2Y;
-    float zoomlevel;
 };
 
 class Window
 {
 public:
 
-    Window(size_t width, size_t height, char const *title, bool eventbased, bool startopened);
+    Window(size_t width, size_t height, char const *title);
     ~Window();
     Window(Window& win)=delete;
 	Window(Window&& win)=delete;
@@ -63,6 +57,8 @@ public:
 
     // Start the scene. After this we can draw. 
 	void startScene();
+
+    /*
 
     // Set color. 
     void drawColor(Color const &col) const;
@@ -79,6 +75,7 @@ public:
     void drawUpTriangle(Vec2D<float> const x, float const size) const;
     void drawDownTriangle(Vec2D<float> const x, float const size) const;
 	void drawCubicBezier(Vec2D<float> const x1, Vec2D<float> const x2, Vec2D<float> const x3, Vec2D<float> const x4) const;
+    */
     // Submit all the drawings to the GPU. 
     void endScene();
     
@@ -93,24 +90,20 @@ public:
     void setTitle(char const *title) const;
 
     // Set View Frustrum bounds. F1 is left uppercorner, F2 right lower corner (in world coordinates).
-    void setFrustrum(Vec2D<float> const F1, Vec2D<float> const F2);
     void xlim(float const minx, float const max);
     void ylim(float const minx, float const max);
 
     Windowdata &windata() {return d_windowData; }
+
 protected:
 
-
-	GLFWwindow *d_window;
+    GLFWwindow *d_window;
 	GLFWmonitor* d_monitor;
 	static size_t s_windowsactive;
 	Windowdata d_windowData;
 
-    
     void static key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
-    
-    Vec2D<float> const transform2d(Vec2D<float> const x) const;
 };
 
 #endif

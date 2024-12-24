@@ -1,5 +1,7 @@
 #include "Nilib/ML/Layers/Dropout.hpp"
 
+using namespace Nilib;
+
 Dropout::Dropout(float const rate)
 : d_rate(rate)
 {
@@ -9,7 +11,7 @@ Dropout::Dropout(float const rate)
 Matrixf Dropout::forward(Matrixf const &X)
 {    
     float const rate = d_rate;
-    d_mask = Matrixf::create_rand(X.rows(), X.cols());
+    d_mask = Matrixf::rand(X.rows(), X.cols());
     d_mask.apply([rate](float const t) {return (t > rate) ? 1.0 / (1.0 - rate) : 0.0;});;
 
     return hadamar(d_mask, X);

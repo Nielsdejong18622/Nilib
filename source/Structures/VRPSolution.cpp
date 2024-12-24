@@ -1,6 +1,9 @@
 #include "Nilib/Structures/VRPSolution.hpp"
 #include "gurobi_c++.h"
 
+
+using namespace Nilib;
+
 bool Solution::feasible() const 
 {
 
@@ -31,19 +34,19 @@ float Solution::objective() const
     }
     return objval;
 }
-Solution::Solution(Instance const &inst, Matrix<float> const &X, float const opt_objval)
+Solution::Solution(Instance const &inst, Matrixf const &X, float const opt_objval)
  : d_instance(inst), d_X(X), d_opt_objval(opt_objval)
 {
 }
 
-Solution::Solution(Instance const &inst, Matrix<float> const &X)
+Solution::Solution(Instance const &inst, Matrixf const &X)
  : Solution(inst, X, 0.0)
 {
 }
 
 void Solution::random()
 {
-    d_X = Matrix<float>::create_rand(d_X.rows(), d_X.cols());
+    d_X = Matrixf::rand(d_X.rows(), d_X.cols());
     d_X.apply( [](float const t) {return (t > 0.8);} );
 }
 
@@ -52,17 +55,17 @@ Solution Solution::feasibleSolution(Instance const &inst)
     size_t const numLocations = inst.numlocations();
     if (numLocations == 1)
     {
-        return Solution(inst, Matrixf::create_ones(1, 1));
+        return Solution(inst, Matrixf::ones(1, 1));
     }
     CORE_ASSERT(numLocations > 1)
     
     size_t const VEHICLE_CAP = inst.vehcap;
 
-    Matrixf d_X = Matrix<float>::create_zeros(numLocations, numLocations);
+    Matrixf d_X = Matrixf::zeros(numLocations, numLocations);
 
     std::vector<int> customers(numLocations - 1);
 
-    for (int i = 0; i < numLocations - 1; ++i) {
+    for (size_t i = 0; i < numLocations - 1; ++i) {
         customers.at(i) = i + 1; // Customers are indexed from 1 to numCustomers
     }
 
@@ -102,7 +105,7 @@ Solution Solution::randomSolution(Instance const &inst)
     size_t const numnodes = inst.numlocations();
 
     // Really random.
-    Matrix<float> X = Matrix<float>::create_rand(numnodes, numnodes);
+    Matrixf X = Matrixf::rand(numnodes, numnodes);
     X.apply( [](float const t) {return (t > 0.8);} );
 
     // Feasible random. 
@@ -113,14 +116,15 @@ Solution Solution::randomSolution(Instance const &inst)
 
 bool Solution::operator==(Solution const &other) const
 {
-    return (d_X == other.d_X);
+    ASSERT(false, "Comparison of Solutions is not yet available!");
+    return false; //(d_X == other.d_X);
 }
 
 Solution Solution::optimalSolution(Instance const &inst)
 {
     // 0 is the depot. 
     int n = inst.numlocations();  // Number of nodes
-    Matrix<float> d_X = Matrix<float>(n, n);
+    Matrixf d_X = Matrixf(n, n);
     double objValue = 0.0;
     try {
         static GRBEnv env = GRBEnv(true);
@@ -207,8 +211,10 @@ Solution Solution::optimalSolution(Instance const &inst)
     
 void Solution::draw(Window const &window) const
 {
+    ASSERT(false, "Reimplement Solution::draw, please.");
+    /*
     size_t const numnodes = d_instance.numlocations();
-    window.drawColor(Colors::Black);
+    //window.drawColor(Colors::Black);
     for (size_t from = 0; from < numnodes; ++from)
     {
         for (size_t to = 0; to < numnodes; ++to)
@@ -219,13 +225,14 @@ void Solution::draw(Window const &window) const
             window.drawArc(from_pos, to_pos, 2.0f);
         }    
     }
+    */
 }
 
 bool Solution::serialize(Serializer &serializer)
 {
     LOG_DEBUG() << "Serializing Solution!\n";
-    serializer.writeObject(d_instance);
-    serializer.writeObject(d_X);
+    //serializer.writeObject(d_instance);
+    //serializer.writeObject(d_X);
     //LOG_SUCCESS("Serialized Instance!\n");
     return true;
 }
@@ -233,7 +240,7 @@ bool Solution::serialize(Serializer &serializer)
 bool Solution::deserialize(Deserializer &deserializer)
 {
     LOG_DEBUG() << "Deserializing Instance!\n";
-    deserializer.readObject(d_instance);
-    deserializer.readObject(d_X);
+    //deserializer.readObject(d_instance);
+    //deserializer.readObject(d_X);
     return true;
 }

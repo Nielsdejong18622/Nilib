@@ -1,6 +1,6 @@
 #include "Nilib/ML/NeuralNet.hpp"
 
-
+using namespace Nilib;
 
 void NeuralNet::display() const
 {

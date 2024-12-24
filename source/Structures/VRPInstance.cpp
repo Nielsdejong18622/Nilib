@@ -1,7 +1,10 @@
 #include "Nilib/Structures/VRPInstance.hpp"
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
-Instance::Instance(size_t const nnodes, size_t const vehcap, Matrix<float> const &A, Matrix<float> const &X)
+using namespace Nilib;
+
+Instance::Instance(size_t const nnodes, size_t const vehcap, Matrixf const &A, Matrixf const &X)
     : A(A), X(X), vehcap(vehcap)
 {
 
@@ -12,18 +15,18 @@ Instance Instance::createRandom(size_t const nnodes, size_t const vehcap)
     CORE_ASSERT(vehcap >= 1);
     // Feature matrix X;
     // (x, y, isdepot, nnodes, vehcap)
-    Matrix<float> Pos = Matrix<float>::create_randn(nnodes, 2, 0, 1);
-    Matrix<float> isdepot = Matrix<float>::create_zeros(nnodes, 1);
-    Matrix<float> Nodes = Matrix<float>::all(nnodes, 1, nnodes);
-    Matrix<float> V = Matrix<float>::all(nnodes, 1, vehcap);
-    //Matrix<float> numnodes = Matrix<float>::all(nnodes, 1, nnodes);
+    Matrixf Pos = Matrixf::randn(nnodes, 2, 0, 1);
+    Matrixf isdepot = Matrixf::zeros(nnodes, 1);
+    Matrixf Nodes = Matrixf::all(nnodes, 1, nnodes);
+    Matrixf V = Matrixf::all(nnodes, 1, vehcap);
+    //Matrixf numnodes = Matrixf::all(nnodes, 1, nnodes);
     isdepot(0, 0) = 1.0;
-    Matrix<float> X = cbind(Pos, isdepot); 
+    Matrixf X = cbind(Pos, isdepot); 
     X = cbind(X, Nodes); 
     X = cbind(X, V); 
     
     // Adjacency matrix A;
-    Matrix<float> A = Matrix<float>::create_ones(nnodes, nnodes) - Matrix<float>::diag(nnodes, nnodes, 1.0);
+    Matrixf A = Matrixf::ones(nnodes, nnodes) - Matrixf::diag(nnodes, nnodes, 1.0);
     A.apply([](float const t) {return t > 0.5;});
 
     // Make sure that depot is reachable.
@@ -36,24 +39,25 @@ void Instance::draw(Window &window) const
     for (size_t idx = 0; idx < X.rows(); ++idx)
     {  
         //LOG_DEBUG() << "Drawing node " << idx << ' ' << X(idx, 0) << ',' << X(idx, 1) << " D:" << X(idx, 2) << '\n';
+        ASSERT(false, "Drawing of instance not yet implemented!");
         if (X(idx, 2) > 0.5)
         {
-            window.drawColor(Colors::Grey);
-            window.drawSquare(Vec2D<float>({X(idx,0), X(idx, 1)}), 10);
+            //window.drawColor(Colors::Grey);
+            //window.drawSquare(Vec2D<float>({X(idx,0), X(idx, 1)}), 10);
         }
         else
         {
-            window.drawColor(Colors::Blue);
-            window.drawCircle(Vec2D<float>({X(idx, 0), X(idx, 1)}), 10);
+            // window.drawColor(Colors::Blue);
+            // window.drawCircle(Vec2D<float>({X(idx, 0), X(idx, 1)}), 10);
         }
     }
     
 }
 
 // Return a matrix containing the distance between every node.
-Matrix<float> Instance::distances() const
+Matrixf Instance::distances() const
 {   
-    Matrix<float> dist(A);
+    Matrixf dist(A);
     for (size_t i = 0; i < A.rows(); i++)
     {
         for (size_t j = 0; j < A.cols(); j++)
@@ -78,8 +82,8 @@ size_t Instance::vehcapacity() const
 bool Instance::serialize(Serializer &serializer)
 {
     LOG_DEBUG() << "Serializing Instance!\n";
-    serializer.writeObject(A);
-    serializer.writeObject(X);
+    // serializer.writeObject(A);
+    // serializer.writeObject(X);
     serializer.writeRaw(vehcap);
     //LOG_SUCCESS("Serialized Instance!\n");
     return true;
@@ -88,8 +92,8 @@ bool Instance::serialize(Serializer &serializer)
 bool Instance::deserialize(Deserializer &deserializer)
 {
     LOG_DEBUG() << "Deserializing Instance!\n";
-    deserializer.readObject(A);
-    deserializer.readObject(X);
+    // deserializer.readObject(A);
+    // deserializer.readObject(X);
     deserializer.readRaw(vehcap);
     return true;
 }

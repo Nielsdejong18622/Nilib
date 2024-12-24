@@ -1,9 +1,11 @@
 #include "Nilib/ML/Layers/BatchNorm.hpp"
 
+using namespace Nilib;
+
 BatchNorm::BatchNorm(size_t const inputdim, float const momentum)
     : d_inputdim(inputdim),  
     d_momentum(momentum),
-    d_weights(Matrixf::create_randn(inputdim, 2, 0.0, 1.0)), d_weight_grads(inputdim, 2)
+    d_weights(Matrixf::randn(inputdim, 2, 0.0, 1.0)), d_weight_grads(inputdim, 2)
 {
 }
 
@@ -19,7 +21,7 @@ Matrixf BatchNorm::forward(Matrixf const &X)
     //Matrixf normX = (X - d_running_mean) / d_running_var;
 
     // Multiply by scale and shift by shift.
-    return X * d_weights(0,0) + d_weights(0, 1);
+    return X; // * d_weights(0,0) + d_weights(0, 1);
 }
 
 // We receive an error matrix.
@@ -32,12 +34,13 @@ Matrixf BatchNorm::backward(Matrixf const &error)
 void BatchNorm::update(Optimizer &optim)
 {
     // Gradient clipping. 
-    d_weights -= optim.lr * Matrixf::apply(d_weight_grads, [](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weight_grads.apply([](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weights -= optim.lr * d_weight_grads;
 }
 
 void BatchNorm::zeroGrad()
 {
-    d_weight_grads.zeros();
+    d_weight_grads.zero();
 }
 void BatchNorm::info() const
 {

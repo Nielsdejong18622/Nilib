@@ -10,14 +10,14 @@
 class Instance
 {
 public:
-    Matrix<float> A; // Adjacency matrix.
-    Matrix<float> X; // Attributes
+    Nilib::Matrixf A; // Adjacency matrix.
+    Nilib::Matrixf X; // Attributes
     size_t vehcap; // vehicle capacity. (Assume all nodes have demand 1).
 
     friend class Solution;
     Instance() = default;
     
-    Instance(size_t const nnodes, size_t const vehcap, Matrix<float> const &A, Matrix<float> const &X);
+    Instance(size_t const nnodes, size_t const vehcap, Nilib::Matrixf const &A, Nilib::Matrixf const &X);
 
     // Draw the instance to a window. 
     // - Uses the first two features of X matrix as x and y coordinates.
@@ -34,7 +34,7 @@ public:
     size_t numlocations() const;
     size_t vehcapacity() const;
 
-    Matrix<float> distances() const;
+    Nilib::Matrixf distances() const;
     
     //static bool serialize(Serializer &serializer. Instance &inst);
     //static Instance deserialize(Deserializer &deserializer);

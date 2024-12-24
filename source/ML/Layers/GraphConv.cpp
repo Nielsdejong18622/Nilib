@@ -1,9 +1,11 @@
 #include "Nilib/ML/Layers/GraphConv.hpp"
 #include "Nilib/ML/NeuralNet.hpp"
 
+using namespace Nilib;
+
 GraphConv::GraphConv(size_t const inputdim, size_t const outputdim)
     : d_inputdim(inputdim), d_outputdim(outputdim), 
-    d_weights(Matrixf::create_randn(inputdim, outputdim, 0.0, 1.0)), d_weight_grads(inputdim, outputdim)
+    d_weights(Matrixf::randn(inputdim, outputdim, 0.0, 1.0)), d_weight_grads(inputdim, outputdim)
 {
 }
 
@@ -32,9 +34,7 @@ Matrixf GraphConv::backward(Matrixf const &error)
     // Find out which weights are responsible.
     // dL/dW    
     d_weight_grads += transpose(A * d_input) * error;
-    
-    
-    CORE_ASSERT(!d_weight_grads.containsNA())
+
     // Return deriv to input. dL/dX
     CORE_ASSERT(A.rows() == A.cols())
     CORE_ASSERT(error.cols() == d_weights.cols());
@@ -47,12 +47,13 @@ Matrixf GraphConv::backward(Matrixf const &error)
 void GraphConv::update(Optimizer &optim)
 {
     // Gradient clipping. 
-    d_weights -= optim.lr * Matrixf::apply(d_weight_grads, [](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weight_grads.apply([](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weights -= optim.lr * d_weight_grads;
 }
 
 void GraphConv::zeroGrad()
 {
-    d_weight_grads.zeros();
+    d_weight_grads.zero();
 }
 void GraphConv::info() const
 {

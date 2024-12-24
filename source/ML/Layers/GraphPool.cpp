@@ -1,9 +1,11 @@
 #include "Nilib/ML/Layers/GraphPool.hpp"
 
+using namespace Nilib;
+
 Matrixf GraphPool::forward(Matrixf const &X)
 {
     d_input = X;
-    Matrixf ones = Matrixf::create_ones(1, X.rows());
+    Matrixf ones = Matrixf::ones(1, X.rows());
     return (1.0f / X.rows()) * ones * X;
 }
 

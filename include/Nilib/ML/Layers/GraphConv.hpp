@@ -11,14 +11,14 @@ protected:
     size_t const d_outputdim;
 
     // Holds the current weights. 
-    Matrixf d_weights;
+    Nilib::Matrixf d_weights;
     // Holds the accumulated gradients.
-    Matrixf d_weight_grads;
+    Nilib::Matrixf d_weight_grads;
 public:
     GraphConv(size_t const inputdim, size_t const outputdim);
 
-    Matrixf forward(Matrixf const &X);
-    Matrixf backward(Matrixf const &X);
+    Nilib::Matrixf forward(Nilib::Matrixf const &X);
+    Nilib::Matrixf backward(Nilib::Matrixf const &X);
     void update(Optimizer &optim);
     void zeroGrad();
     void info() const;

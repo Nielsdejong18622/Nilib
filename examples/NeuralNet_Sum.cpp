@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <chrono>
 
+using namespace Nilib;
+
 int main(int argc, char **argv)
 {
 //     if (argc != 2) {
@@ -42,7 +44,7 @@ int main(int argc, char **argv)
         MSE_batch_loss = 0.0;
         for (size_t batch_idx = 0; batch_idx < batch_size; ++batch_idx)
         {
-            size_t sample_idx = RNG::uniform(0, 3);
+            size_t sample_idx = RNG::index(3);
             
             Matrix input = Matrixf(1, 2, {RNG::normal(0.0f, 100.0f), RNG::normal(0.0f, 100.0f)});
             Matrixf pred = NN.feedforward(input);

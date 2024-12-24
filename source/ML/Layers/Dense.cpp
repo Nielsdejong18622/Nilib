@@ -1,9 +1,11 @@
 #include "Nilib/ML/Layers/Dense.hpp"
 
+using namespace Nilib;
+
 Dense::Dense(size_t const inputdim, size_t const outputdim)
     : d_inputdim(inputdim), d_outputdim(outputdim), 
-    d_weights(Matrixf::create_randn(inputdim, outputdim, 0.0, 1.0)), d_weight_grads(inputdim, outputdim),
-    d_bias(Matrixf::create_randn(1, outputdim, 0.0, 1.0)), d_bias_grads(1, outputdim)
+    d_weights(Matrixf::randn(inputdim, outputdim, 0.0, 1.0)), d_weight_grads(inputdim, outputdim),
+    d_bias(Matrixf::randn(1, outputdim, 0.0, 1.0)), d_bias_grads(1, outputdim)
 {
 }
 
@@ -15,7 +17,6 @@ Matrixf Dense::forward(Matrixf const &X)
 
     auto output = X * d_weights + d_bias;
 
-    CORE_ASSERT(!output.containsNA());
     return output;
 }
 // We receive an error matrix.
@@ -30,7 +31,6 @@ Matrixf Dense::backward(Matrixf const &error)
     // dL/dbias
     d_bias_grads += error;
     
-    CORE_ASSERT(!d_weight_grads.containsNA())
     // Return deriv to input. dL/dX
     return  error * transpose(d_weights);
 }
@@ -38,14 +38,16 @@ Matrixf Dense::backward(Matrixf const &error)
 void Dense::update(Optimizer &optim)
 {
     // Gradient clipping. 
-    d_weights -= optim.lr * Matrixf::apply(d_weight_grads, [](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
-    d_bias -= optim.lr * Matrixf::apply(d_bias_grads, [](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weights.apply([](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_weights -= optim.lr * d_weight_grads;
+    d_bias_grads.apply([](float const t) { return std::min(std::max(t, -1.0f), 1.0f);});
+    d_bias -= optim.lr * d_bias_grads;
 }
 
 void Dense::zeroGrad()
 {
-    d_weight_grads.zeros();
-    d_bias_grads.zeros();
+    d_weight_grads.zero();
+    d_bias_grads.zero();
 }
 void Dense::info() const
 {

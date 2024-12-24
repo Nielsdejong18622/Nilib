@@ -10,7 +10,7 @@ Color::Color(float R, float G, float B) :
 
 Color Color::random()
 { 
-    return Color(RNG::prob(), RNG::prob(), RNG::prob());
+    return Color(Nilib::RNG::prob(), Nilib::RNG::prob(), Nilib::RNG::prob());
 }
 
 // Static constructors.

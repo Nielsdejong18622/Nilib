@@ -1,7 +1,7 @@
 //Own headers
 #include "Nilib/Renderer/Window.hpp"
 
-Window::Window(size_t width, size_t height, char const *title, bool eventbased=true, bool startopen=true) {
+Window::Window(size_t width, size_t height, char const *title) {
     /* Initialize the glfw library */
     if (!glfwInit()) 
         throw std::runtime_error("Failed to initialize the glfw libary!");
@@ -19,7 +19,6 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
         glfwTerminate();
         throw std::runtime_error("Failed to open the window!");
     }
-    if (!startopen) glfwHideWindow(d_window);
     
     // Set up the window in preparation of rendering.
     glfwMakeContextCurrent(d_window);
@@ -42,13 +41,6 @@ Window::Window(size_t width, size_t height, char const *title, bool eventbased=t
     d_windowData.width = width;
     d_windowData.height = height;
     d_windowData.owner = this;
-    d_windowData.eventbased = eventbased;
-
-    d_windowData.f1X = 0;
-    d_windowData.f1Y = 0;
-    d_windowData.f2X = width;
-    d_windowData.f2Y = height;
-    d_windowData.zoomlevel = 1;
 
     glfwSetKeyCallback(d_window, Window::key_callback);
     glfwSetFramebufferSizeCallback(d_window, Window::framebuffer_size_callback);
@@ -73,13 +65,8 @@ void Window::startScene() {
 
 void Window::endScene() {
     glfwSwapBuffers(this->d_window);
-    if (!d_windowData.eventbased)
-        updateidletasks();
-    else
-        update();
 };
 
-/// @brief Poll the event queue. 
 void Window::updateidletasks() {
     glfwWaitEvents();
 };
@@ -105,6 +92,7 @@ bool Window::opened() const {
     return !glfwWindowShouldClose(this->d_window);
 };
 
+/*
 Vec2D<float> const Window::transform2d(Vec2D<float> const x) const
 {
     auto const size = d_windowData.Fmax - d_windowData.Fmin; 
@@ -218,6 +206,7 @@ void Window::drawCubicBezier(Vec2D<float> const ,
 {
     ASSERT(false, "Not implemented")
 }
+*/
 
 void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
     LOG_DEBUG() << "Resizing framebuffer new dimensions " << width << 'x' << height << '\n';
@@ -254,39 +243,39 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
     float constexpr shift = 0.01;
     //float constexpr increase = 1 / decrease; //1.0001;
     if (key == GLFW_KEY_A) {
-        win_ptr->d_windowData.Fmin.x() -= shift / win_ptr->d_windowData.zoomlevel; 
-        win_ptr->d_windowData.Fmax.x() -= shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmin.x() -= shift / win_ptr->d_windowData.zoomlevel; 
+        //win_ptr->d_windowData.Fmax.x() -= shift / win_ptr->d_windowData.zoomlevel;
     }
     if (key == GLFW_KEY_D) {
-        win_ptr->d_windowData.Fmin.x() += shift / win_ptr->d_windowData.zoomlevel;
-        win_ptr->d_windowData.Fmax.x() += shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmin.x() += shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmax.x() += shift / win_ptr->d_windowData.zoomlevel;
     }
     if (key == GLFW_KEY_W) {
-        win_ptr->d_windowData.Fmin.y() += shift / win_ptr->d_windowData.zoomlevel; 
-        win_ptr->d_windowData.Fmax.y() += shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmin.y() += shift / win_ptr->d_windowData.zoomlevel; 
+        //win_ptr->d_windowData.Fmax.y() += shift / win_ptr->d_windowData.zoomlevel;
     }
     if (key == GLFW_KEY_S) {
-        win_ptr->d_windowData.Fmin.y() -= shift / win_ptr->d_windowData.zoomlevel;
-        win_ptr->d_windowData.Fmax.y() -= shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmin.y() -= shift / win_ptr->d_windowData.zoomlevel;
+        //win_ptr->d_windowData.Fmax.y() -= shift / win_ptr->d_windowData.zoomlevel;
     }
     // Zoom on X-axis or Y-axis.
     if (key == GLFW_KEY_MINUS) {
-        auto c_size = win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin;
-        win_ptr->d_windowData.zoomlevel -= shift;
+        //auto c_size = win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin;
+        //win_ptr->d_windowData.zoomlevel -= shift;
         //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
         
-        win_ptr->d_windowData.Fmin -= 0.5 * c_size * 0.01;
-        win_ptr->d_windowData.Fmax += 0.5 * c_size * 0.01;
+        //win_ptr->d_windowData.Fmin -= 0.5 * c_size * 0.01;
+        //win_ptr->d_windowData.Fmax += 0.5 * c_size * 0.01;
     }
     if (key == GLFW_KEY_EQUAL) {      
-        auto c_size =  win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin; 
+        //auto c_size =  win_ptr->d_windowData.Fmax - win_ptr->d_windowData.Fmin; 
         // auto cw = std::max(win_ptr->d_windowData.f2X - win_ptr->d_windowData.f1X, 0.0f);
         // auto ch = std::max(win_ptr->d_windowData.f2Y - win_ptr->d_windowData.f1Y, 0.0f);
         //LOG_DEBUG() << "Current width:" << c_size.x() << " current height:" << c_size.y() << " current zoom: " << win_ptr->d_windowData.zoomlevel << '\n';
-        win_ptr->d_windowData.Fmin += 0.5 * c_size * (0.01);
-        win_ptr->d_windowData.Fmax -= 0.5 * c_size * (0.01);
+        //win_ptr->d_windowData.Fmin += 0.5 * c_size * (0.01);
+        //win_ptr->d_windowData.Fmax -= 0.5 * c_size * (0.01);
         
-        win_ptr->d_windowData.zoomlevel += shift;     
+        //win_ptr->d_windowData.zoomlevel += shift;     
     }
     if (keymap.find(keyev) != keymap.end()) 
         win_ptr->d_windowData.keybindings.at(keyev)();
@@ -296,31 +285,18 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 
 void Window::xlim(float const min, float const max)
 {
-    d_windowData.f1X = min;
-    d_windowData.f2X = max;
+    //d_windowData.f1X = min;
+    //d_windowData.f2X = max;
 
-    d_windowData.Fmin.x() = min;
-    d_windowData.Fmax.x() = max;
+    //d_windowData.Fmin.x() = min;
+    //d_windowData.Fmax.x() = max;
 }
 
 void Window::ylim(float const min, float const max)
 {
-    d_windowData.f1Y = min;
-    d_windowData.f2Y = max;
+    //d_windowData.f1Y = min;
+    //d_windowData.f2Y = max;
     
-    d_windowData.Fmin.y() = min;
-    d_windowData.Fmax.y() = max;
-}
-
-void Window::setFrustrum(Vec2D<float> const Fmin, Vec2D<float> const Fmax){
-    LOG_DEBUG() << "Setting Frustrum: " << Fmin << " " << Fmax << '\n';
-    // auto F1 = transform2d(Fmin);
-    // auto F2 = transform2d(Fmax);
-
-    d_windowData.Fmin = Fmin;
-    d_windowData.Fmax = Fmax;
-    d_windowData.f1X = Fmin.x();
-    d_windowData.f2X = Fmax.x();
-    d_windowData.f1Y = Fmin.y();
-    d_windowData.f2Y = Fmax.y();
+    //d_windowData.Fmin.y() = min;
+    //d_windowData.Fmax.y() = max;
 }

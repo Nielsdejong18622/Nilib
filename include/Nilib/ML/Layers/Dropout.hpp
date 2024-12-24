@@ -10,14 +10,14 @@ protected:
     // The chance that individual inputs will be disabled. 
     float const d_rate;
     // Holds the last applied mask weights. 
-    Matrixf d_mask;
+    Nilib::Matrixf d_mask;
     
 
 public:
     Dropout(float const rate);
 
-    Matrixf forward(Matrixf const &X);
-    Matrixf backward(Matrixf const &X);
+    Nilib::Matrixf forward(Nilib::Matrixf const &X);
+    Nilib::Matrixf backward(Nilib::Matrixf const &X);
     void update(Optimizer &optim);
     void zeroGrad();
     void info() const;

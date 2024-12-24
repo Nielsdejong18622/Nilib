@@ -1,6 +1,8 @@
 #include "Nilib/ML/Layers/OuterDecoder.hpp"
 #include "Nilib/ML/NeuralNet.hpp"
 
+using namespace Nilib;
+
 OuterDecoder::OuterDecoder()
 {
 }

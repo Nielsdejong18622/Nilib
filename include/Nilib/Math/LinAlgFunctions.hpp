@@ -14,9 +14,14 @@ namespace Nilib {
         result += B;
         return result;
     }
-    // Subtract two matrices. 
+    // Subtract two matrices.     
     template<typename data>
-    Matrix<data> operator-(Matrix<data> const &A, Matrix<data> const &B) { return operator+(A, -1.0 * B);}
+    Matrix<data> operator-(Matrix<data> const &A, Matrix<data> const &B)
+    {
+        Matrix<data> result(A);
+        result -= B;
+        return result;
+    }
 
     // Multiplication/Division by scalar. 
     template<typename data, typename scalar>
@@ -97,8 +102,30 @@ namespace Nilib {
         CORE_ASSERT(A.cols() == B.cols());
         Matrix<data> res(A.rows(), B.cols());
 
-        for (size_t nridx = 0; nridx < A.rows() * A.cols(); ++nridx)
-            res.d_data(nridx) = A.d_data(nridx) * B.d_data(nridx);
+        for (size_t ridx = 0; ridx < A.rows(); ++ridx)
+        for (size_t cidx = 0; cidx < A.cols(); ++cidx)
+            res(ridx, cidx) = A(ridx, cidx) * B(ridx, cidx);
+        return res;        
+    }
+
+
+    // Cbind. 
+    template<size_t n, size_t m, size_t p, typename type>
+    Matrix<StaticMatrixData<n+p,m,type>> cbind(Matrix<StaticMatrixData<n,m,type>> const &A, Matrix<StaticMatrixData<p,m,type>> const &B) {
+        CORE_ASSERT(A.cols() == B.cols());
+        Matrix<StaticMatrixData<n+p,m,type>> res;
+        for (size_t nridx = 0; nridx < A.rows() + B.rows(); ++nridx)
+            for (size_t ncidx = 0; ncidx < A.cols(); ++ncidx)
+                res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
+        return res;        
+    }
+    template<typename type> 
+    Matrix<DynamicMatrixData<type>> cbind(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B) {
+        CORE_ASSERT(A.cols() == B.cols());
+        Matrix<DynamicMatrixData<type>> res(A.rows() + B.rows(), B.cols());
+        for (size_t nridx = 0; nridx < A.rows() + B.rows(); ++nridx)
+            for (size_t ncidx = 0; ncidx < A.cols(); ++ncidx)
+                res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
         return res;        
     }
 

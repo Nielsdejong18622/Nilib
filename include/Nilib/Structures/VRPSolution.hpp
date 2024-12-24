@@ -14,11 +14,11 @@ public:
     Instance d_instance;
 
     // The route matrix. 
-    Matrix<float> d_X;
+    Nilib::Matrixf d_X;
     float d_opt_objval = 0.0;
     
-    Solution(Instance const &inst, Matrix<float> const &X, float const opt_objval);
-    Solution(Instance const &inst, Matrix<float> const &X);
+    Solution(Instance const &inst, Nilib::Matrixf const &X, float const opt_objval);
+    Solution(Instance const &inst, Nilib::Matrixf const &X);
 
     // Shuffle the solution. 
     void random();

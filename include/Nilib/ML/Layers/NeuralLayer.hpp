@@ -1,7 +1,7 @@
 #ifndef _INEURAL_LAYER_H
 #define _INEURAL_LAYER_H
 
-#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 #include "Nilib/ML/Optimizer.hpp"
 #include <vector>
 
@@ -15,14 +15,14 @@ protected:
     NeuralNet *d_model = nullptr;
 
     // Feedforward input cache. 
-    Matrixf d_input;
+    Nilib::Matrixf d_input;
 public:
     friend class NeuralNet;
     //NeuralLayer();
     virtual ~NeuralLayer() {};
 
-    virtual Matrixf forward(Matrixf const &X) = 0; 
-    virtual Matrixf backward(Matrixf const &output_error) = 0;
+    virtual Nilib::Matrixf forward(Nilib::Matrixf const &X) = 0; 
+    virtual Nilib::Matrixf backward(Nilib::Matrixf const &output_error) = 0;
     virtual void info() const = 0;
     
     virtual void update(Optimizer &optim) = 0;
