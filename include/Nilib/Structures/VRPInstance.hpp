@@ -21,7 +21,7 @@ public:
 
     // Draw the instance to a window. 
     // - Uses the first two features of X matrix as x and y coordinates.
-    void draw(Window &win) const;
+    void draw(Nilib::Window &win) const;
 
     // Creates a simple random instance. 
     static Instance createRandom(size_t const nnodes, size_t const vehcap);

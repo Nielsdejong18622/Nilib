@@ -27,7 +27,7 @@ public:
     static Solution optimalSolution(Instance const &inst);
     static Solution feasibleSolution(Instance const &inst);
     
-    void draw(Window const &window) const;
+    void draw(Nilib::Window const &window) const;
 
     // Returns information about the solution. 
     bool feasible() const;

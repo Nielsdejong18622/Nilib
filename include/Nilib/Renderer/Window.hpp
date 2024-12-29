@@ -19,7 +19,12 @@
 #include <GLFW/glfw3.h>
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
+#include "Nilib/Renderer/Keys.h"
 #include "Nilib/Math/Matrix.hpp"
+
+
+namespace Nilib {
+
 
 // Typedefs. 
 typedef std::function<void(void)> Callback;
@@ -28,14 +33,17 @@ typedef std::tuple<int, int, int, int> KeyEvent;
 class Window;
 
 struct Windowdata {
-    int width, height;
-    int screenposx, screenposy;
+    int width = 800;
+    int height = 800;
+    int screenposx = 0;
+    int screenposy = 0;
     //size_t framebufx;
     //size_t framebufy;
+    int minwidth = 0; 
+    int minheight = 0;
+    Color clearColor;
     char const *title;
-    bool open;
-    bool current;
-    Window* owner;
+    Window* owner = nullptr;
     std::map<KeyEvent, Callback> keybindings;
 };
 
@@ -44,10 +52,18 @@ class Window
 public:
 
     Window(size_t width, size_t height, char const *title);
+    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight);
+    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen);
+    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen, bool decorated);
     ~Window();
+    
     Window(Window& win)=delete;
 	Window(Window&& win)=delete;
 	
+    // Set Windowtitle.
+    void title(char const *title) const;
+    char const* title() const;
+
     // Open/close the window.
 	void open();
 	void close();
@@ -59,52 +75,52 @@ public:
     // Submit all the drawings to the GPU. 
     void endScene();
     
-    // Poll events in queue. 
-    void updateidletasks();
-    void update();
+    // Ping the user. 
+    void requestAttention() const;
 
     // Bind Key Callback. 
     void bindkey(Callback const &fun, int key, int action, int mods);
 
-    // Set Windowtitle.
-    void setTitle(char const *title) const;
-
-    // Set View Frustrum bounds. F1 is left uppercorner, F2 right lower corner (in world coordinates).
-    void xlim(float const minx, float const max);
-    void ylim(float const minx, float const max);
-
-    Windowdata const &windata() {return d_data; }
-
 protected:
 
-    GLFWwindow *d_window;
-	GLFWmonitor* d_monitor;
+    GLFWwindow *d_window = nullptr;
+	GLFWmonitor* d_monitor = nullptr;
 	static size_t s_windowsactive;
+
 	Windowdata d_data;
 
     void setCallbacks() const;
     void static key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void static drop_callback(GLFWwindow* window, int path_count, const char* paths[]);
+    void static cursorPos_callback(GLFWwindow* window, double xpos, double ypos);
     void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    void static windowPos_callback(GLFWwindow *window, int xpos, int ypos);
+    void static windowSize_callback(GLFWwindow *window, int width, int height);
+    void static mouseButton_callback(GLFWwindow *window, int button, int action, int mods);
+    void static windowFocus_callback(GLFWwindow *window, int focused);
+    void static windowMaximize_callback(GLFWwindow *window, int maximized);
+    void static windowContentScale_callback(GLFWwindow *window, float xscale, float yscale);
+    void static windowIconify_callback(GLFWwindow *window, int iconified);
+    void static cursorEnter_callback(GLFWwindow *window, int entered);
+    void static scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
     void static error_callback(int code, char const*description);
-    
+    void static windowClose_callback(GLFWwindow *window);
+
+    // Utility function.
+    static Window &windowFromPtr(GLFWwindow *window);
 public:
-    /*
-    // Set color. 
-    void drawColor(Color const &col) const;
 
-    // Draw arc.
-    void drawArc(Vec2D<float> const x1, Vec2D<float> const x2, float const linewidth) const;
+    // Poll and handle events and block the calling thread. 
+    void static updateidletasks();
+    
+    // Poll and handle events.
+    void static update();
 
-    // Draw shapes. 
-    void drawSquare(Vec2D<float> const x1, float size) const;
-    void drawDiamond(Vec2D<float> const x1, float const radius) const;
-    void drawCircle(Vec2D<float> const x, float const radius) const;
-    void drawCircle(Vec2D<float> const x1, float const radius, int sides) const;
-    void drawCross(Vec2D<float> const x, float const size) const;
-    void drawUpTriangle(Vec2D<float> const x, float const size) const;
-    void drawDownTriangle(Vec2D<float> const x, float const size) const;
-	void drawCubicBezier(Vec2D<float> const x1, Vec2D<float> const x2, Vec2D<float> const x3, Vec2D<float> const x4) const;
-    */
+    void clearColor(Color const &color);
+
+    // Draw functions.
+    void drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const;
 };
 
+} // Nilib;
 #endif

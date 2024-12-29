@@ -22,6 +22,16 @@ namespace Nilib {
                     static_cast<float>(std::numeric_limits<uint64_t>::max()));
         }
 
+        // Uniform random variable between [min, max]
+        static float uniform(float const min, float const max) {
+            //ASSERT(max > min, "Degenerate uniform!");
+            return min + RNG::prob() * (max - min);
+        }
+
+        static uint64_t rand() {
+            return wyhash(&state);
+        }
+
         // Returns a random index [0, size)
         static size_t index(size_t const size) {
             return wyhash(&state) % size;
