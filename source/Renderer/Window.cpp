@@ -32,6 +32,7 @@ Window::Window(size_t width,
     glfwWindowHint(GLFW_RESIZABLE, resizeable);
     glfwWindowHint(GLFW_DECORATED, decorated);
     glfwWindowHint(GLFW_MAXIMIZED, fullscreen);
+    glfwWindowHint(GLFW_CENTER_CURSOR, fullscreen);
     d_data.width = width;
     d_data.height = height;
     d_data.minheight = minheight;
@@ -287,11 +288,5 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 
 void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const
 {
-    // Line segment from this to adjacent. 
-    //glLineWidth(linewidth);
     
-    // glBegin(GL_LINES);
-    // glVertex3f(x1, y1, 0.0);
-	// glVertex3f(x2, y2, 0.0);
-	// glEnd();
 };

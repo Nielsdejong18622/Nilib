@@ -16,7 +16,8 @@ int main(int argc, char** argv)
     win1.bindkey(std::bind(&Window::open, &win2), Key::A, 0, 0);
 
     win2.bindkey(std::bind(&Window::close, &win2), Key::Escape, 0, 0);
-    win2.bindkey([&]() { win2.clearColor(Color::RandomHSL()); }, Key::R, 0, 0);
+    win2.bindkey([&]() { win2.clearColor(Color::RandomHSL()); }, Key::R, Key::Hold, 0);
+    win2.bindkey([&]() { win2.clearColor(Color::RandomHSL()); }, Key::R, Key::Press, 0);
     
 
     //win1.open();

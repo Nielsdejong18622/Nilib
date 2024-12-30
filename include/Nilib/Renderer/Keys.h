@@ -1,8 +1,16 @@
 namespace Nilib {
 	using KeyCode = uint16_t;
+	using KeyAction = uint8_t;
 	
 	namespace Key
 	{
+		enum : KeyAction
+		{
+			Release = 0,
+			Press = 1,
+			Hold = 2
+		};
+
 		enum : KeyCode
 		{
 			// From glfw3.h

@@ -52,12 +52,10 @@ struct Windowdata {
 class Window
 {
 public:
+
     Window(size_t width, size_t height, char const *title);
-    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen, bool decorated, bool resizeable);
+    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool , bool decorated, bool resizeable);
     ~Window();
-    
-    Window(Window& win)=delete;
-	Window(Window&& win)=delete;
 	
     // Set Windowtitle.
     void title(char const *title) const;
