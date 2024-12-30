@@ -255,9 +255,7 @@ struct L2Loss: public CNode
     {
         for (auto &weight : weights)
         {
-            auto tmp = weight->value;
-            tmp.apply([](float t) { return (t == 0.0)?0.0:((t > 0.0)?1.0:-1.0);});
-            weight->derive(labda * tmp);
+            weight->derive(labda * weight->value);
         }        
     }
 };
@@ -298,7 +296,7 @@ int main () {
 
     // Weights and biases to train.
     size_t const inputdim = 2; 
-    size_t const neurons1 = 4;
+    size_t const neurons1 = 2;
     size_t const neurons2 = 1;
     size_t const outputdim= 1;
 
@@ -362,7 +360,7 @@ int main () {
             auto out = Tanh(&H3);
             
             auto MSE = MSELoss(&out, &y);
-            auto REG = L2Loss(weights, 0.001);
+            auto REG = L1Loss(weights, 0.001);
             auto TOTLOS = Plus(&MSE, &REG);
             // Forward.
             TOTLOS.evaluate();
