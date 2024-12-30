@@ -10,7 +10,7 @@ using namespace Nilib;
 int main()
 {
     Matrixf A{{4}};
-    /*
+    
     Matrixd D({{1,1,1},{-1,2,3}});
     Matrixd D1({{-1,-1,-1},{-1,2,3}});
     Matrixd D2({{-1,-1,-1},{-1,2,3},{0,0,0}});
@@ -81,7 +81,6 @@ int main()
     LOG_INFO("Size of B", B, sizeof(B), sizeof(float), sizeof(std::array<float, 9>));
     LOG_INFO("Size of t(B)", transpose(B), sizeof(transpose(B)));
 
-    */
     // Stress test.
     // Dynamic memory.
     RNG::seed(127);

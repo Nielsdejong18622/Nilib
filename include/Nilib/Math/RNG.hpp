@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <numeric>
+#include <chrono>
 
 namespace Nilib {
 
@@ -13,6 +14,13 @@ namespace Nilib {
     public:
         static void seed(uint64_t const seed) {
             state = seed;
+        }
+        // Seed with time. 
+        static void seed() {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = now.time_since_epoch();
+            
+            state = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
         }
 
         // Returns a probability [0, 1]
@@ -29,6 +37,7 @@ namespace Nilib {
         }
 
         static uint64_t rand() {
+            if (state == 0) seed(); // If the state has not been set. Init it with current time. 
             return wyhash(&state);
         }
 

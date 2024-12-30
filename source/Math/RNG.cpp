@@ -2,5 +2,5 @@
 
 namespace Nilib
 {
-    uint64_t RNG::state;
+    uint64_t RNG::state = 0;
 } // namespace Nilib

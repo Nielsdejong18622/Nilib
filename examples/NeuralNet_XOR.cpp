@@ -18,6 +18,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     RNG::seed(127);
+
     // Create XOR data.
     std::vector<Matrixf> features;
     std::vector<Matrixf> output;
@@ -32,12 +33,7 @@ int main(int argc, char **argv)
     output.push_back(Matrixf(1, 1, {1.0}));
     output.push_back(Matrixf(1, 1, {0.0}));
 
-    for (size_t i = 0; i < 4; i++)
-    {
-        features[i] *= 10000;
-        LOG_DEBUG() << "Features " << features[i] << '\n';
-    }
-    
+    return EXIT_SUCCESS;
 
     NeuralNet NN;
     NN.addLayer<Dense>(2, 200);
