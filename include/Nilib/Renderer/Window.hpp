@@ -15,8 +15,10 @@
 #include <map>
 #include <functional>
 
-//#include "../lib/GLEW/glew.h"
+// In this order!
+#include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
+
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
 #include "Nilib/Renderer/Keys.h"
@@ -50,11 +52,8 @@ struct Windowdata {
 class Window
 {
 public:
-
     Window(size_t width, size_t height, char const *title);
-    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight);
-    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen);
-    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen, bool decorated);
+    Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool fullscreen, bool decorated, bool resizeable);
     ~Window();
     
     Window(Window& win)=delete;

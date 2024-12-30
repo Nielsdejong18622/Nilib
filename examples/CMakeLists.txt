@@ -9,6 +9,8 @@ add_executable(MultipleWindows MultipleWindows.cpp)
 add_executable(LinAlg LinAlg.cpp)
 add_executable(RNG2 RNG.cpp)
 
+target_compile_options(LinAlg PRIVATE -Wextra -Ofast)
+
 # Link the static library to the example executable
 target_link_libraries(Triangle PUBLIC Nilib)
 target_link_libraries(NeuralNet_XOR PUBLIC Nilib)

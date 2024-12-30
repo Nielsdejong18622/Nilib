@@ -10,7 +10,7 @@ using namespace Nilib;
 int main()
 {
     Matrixf A{{4}};
-
+    /*
     Matrixd D({{1,1,1},{-1,2,3}});
     Matrixd D1({{-1,-1,-1},{-1,2,3}});
     Matrixd D2({{-1,-1,-1},{-1,2,3},{0,0,0}});
@@ -81,20 +81,24 @@ int main()
     LOG_INFO("Size of B", B, sizeof(B), sizeof(float), sizeof(std::array<float, 9>));
     LOG_INFO("Size of t(B)", transpose(B), sizeof(transpose(B)));
 
+    */
     // Stress test.
     // Dynamic memory.
     RNG::seed(127);
     size_t const tests = 1'000;
+    size_t const prints = 5;
+    constexpr size_t const m_size = 50;
     {
-        for (size_t j = 0; j < 10; j++)
+        for (size_t j = 0; j < prints; j++)
         {
             float sum = 0;    
             PROFILE_FUNCTION();
             for (size_t i = 0; i < tests; i++)
             {
-                    auto M = Matrixf::rand(10, 10);
-                    auto b = Matrixf::randn(10, 90, 10.0, 5.0);
-                    auto res = M * M * M * b;
+                    auto M = Matrixf::rand(m_size, m_size);
+                    auto b = Matrixf::rand(m_size, 90);
+                    auto M2 = M * M;
+                    auto res = M2 * M2 * b;
                     //LOG_DEBUG(i, res.sum() / 10000);    
                     sum += res.sum();
             }
@@ -104,15 +108,16 @@ int main()
     RNG::seed(127);
     // Static (on the stack)
     {
-        for (size_t j = 0; j < 10; j++)
+        for (size_t j = 0; j < prints; j++)
         {
             float sum = 0;    
             PROFILE_FUNCTION();
             for (size_t i = 0; i < tests; i++)
             {
-                    auto M = Mat<10,10>::rand();
-                    auto b = Mat<10, 90>::randn(10.0, 5.0);
-                    auto res = M * M * M * b;      
+                    auto M = Mat<m_size, m_size>::rand();
+                    auto b = Mat<m_size, 90>::rand();
+                    auto M2 = M * M;
+                    auto res = M2 * M2 * b; 
                     sum += res.sum();
             }   
             LOG_INFO("Sum:", sum);

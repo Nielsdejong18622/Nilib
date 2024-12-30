@@ -72,13 +72,18 @@ namespace Nilib {
                 d_data(idx) -= B.d_data(idx);
         }
 
-        template<typename scalar> void operator*=(scalar const lambda) {
+
+        template<typename scalar> void operator*=(scalar const lambda) 
+        requires (std::is_arithmetic_v<scalar>) 
+        {
             //d_data *= lambda; // Is defined for valarray.
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) *= lambda;
         }
 
-        template<typename scalar> void operator/=(scalar const lambda) {
+        template<typename scalar> void operator/=(scalar const lambda) 
+        requires (std::is_arithmetic_v<scalar>) 
+        {
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) /= lambda;
         }

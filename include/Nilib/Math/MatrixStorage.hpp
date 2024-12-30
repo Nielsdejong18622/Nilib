@@ -93,6 +93,7 @@ namespace Nilib{
         //type sum() const {return std::accumulate(std::begin(d_data), std::end(d_data), 0.0); }
         type sum() const {return d_data.sum(); }
         void apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); }
+
     };
 }
 #endif

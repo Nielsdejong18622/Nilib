@@ -5,50 +5,73 @@ using namespace Nilib;
 
 size_t Window::s_windowsactive = 0;
 
-Window::Window(size_t width, size_t height, char const *title) {
+
+Window::Window(size_t width, 
+               size_t height, 
+               char const *title, 
+               size_t minwidth, 
+               size_t minheight, 
+               bool fullscreen, 
+               bool decorated, 
+               bool resizeable)
+{
     /* Initialize the glfw library */
     if (!glfwInit()) 
-        throw std::runtime_error("Failed to initialize the glfw libary!");
+        throw std::runtime_error("Failed to initialize the GLFW libary!");
 
-    // If this is the first window.
+    // If this is the first active window.
     if (s_windowsactive == 0) {
-        LOG_INFO("Initialized GLFW");
         int major, minor, rev;
         glfwGetVersion(&major, &minor, &rev);
-        LOG_INFO() << "GLFW version " << major << '.' <<  minor << '.' << rev << ".\n";
+        LOG_INFO() << "Initialized GLFW version " << major << '.' <<  minor << '.' << rev << ".\n";
         
         glfwSetErrorCallback(Window::error_callback);
-        
-        //glViewport(0, 0, width, height);
-        //glMatrixMode(GL_PROJECTION);
-        //glLoadIdentity();
-        //glDisable(GL_LINE_SMOOTH);
-        glLineWidth(2.0);
-        //glOrtho(0.0, width, 0.0, height, 0.0, 1.0); 
-        
-        // Enable Alpha blending. 
-        glEnable     (GL_BLEND);
-        glEnable     (GL_COLOR_MATERIAL);
-        glBlendFunc  (GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
     }
-    
-    LOG_DEBUG("Constructing window", title, width, 'x', height);
 
-    /* Create a windowed mode window and its OpenGL context */
-    glfwWindowHint(GLFW_RESIZABLE, true);
-    glfwWindowHint(GLFW_DECORATED, true);
-    //glfwWindowHint(GLFW_MAXIMIZED, true);
-
-    glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &d_data.screenposx, &d_data.screenposy, &d_data.width, &d_data.height);
+    glfwWindowHint(GLFW_VISIBLE, false); // By default start hidden.
+    glfwWindowHint(GLFW_RESIZABLE, resizeable);
+    glfwWindowHint(GLFW_DECORATED, decorated);
+    glfwWindowHint(GLFW_MAXIMIZED, fullscreen);
     d_data.width = width;
     d_data.height = height;
+    d_data.minheight = minheight;
+    d_data.minwidth = minwidth;
     d_data.title = title;
     d_data.owner = this;
 
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    GLFWvidmode const *mode = glfwGetVideoMode(monitor);
+    
+    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    
+    if (fullscreen)
+        d_window = glfwCreateWindow(mode->width, mode->height, d_data.title, monitor, nullptr);
+    else
+        d_window = glfwCreateWindow(d_data.width, d_data.height, d_data.title, nullptr, nullptr);
+    // Window creation failed.
+    if (!d_window)
+    {
+        glfwDestroyWindow(d_window);
+        throw std::runtime_error("Failed to create Window!");
+    }
+    glfwSetWindowShouldClose(d_window, GLFW_TRUE);
+    glfwSetWindowUserPointer(d_window, this);
+    setCallbacks();
+
     Window::s_windowsactive++;
-    LOG_DEBUG("Completed window construction");;
+    LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
+}
+    
+
+Window::Window(size_t width, size_t height, char const *title) 
+: Window(width, height, title, width, height, false, true, true)
+{    
 }
 
+// Utility function.
 Window &Window::windowFromPtr(GLFWwindow *window)
 {
     return *reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -156,21 +179,6 @@ void Window::cursorPos_callback(GLFWwindow* window, double xpos, double ypos)
 
 void Window::open() 
 {
-    // If a window instance has not been created yet. 
-    if (!d_window) {
-        d_window = glfwCreateWindow(d_data.width, d_data.height, d_data.title, nullptr, nullptr);
-        // Window creation failed.
-        if (!d_window)
-        {
-            LOG_WARNING("Failed to create Window!");
-            glfwDestroyWindow(d_window);
-            return;
-        }
-        LOG_SUCCESS("Created window", title());
-        glfwSetWindowUserPointer(d_window, this);
-        setCallbacks();
-        return;
-    }
     // If already open.
     if (!glfwWindowShouldClose(d_window)) {
         LOG_WARNING("Window", title(), "already open!");
@@ -212,6 +220,13 @@ void Window::startScene() {
     }
     // Render parameters.
     glfwMakeContextCurrent(d_window);
+    
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        LOG_ERROR("GLAD initialization failed!");
+        return;
+    }
+    glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapInterval(1);
 
@@ -273,10 +288,10 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const
 {
     // Line segment from this to adjacent. 
-    glLineWidth(linewidth);
+    //glLineWidth(linewidth);
     
-    glBegin(GL_LINES);
-    glVertex3f(x1, y1, 0.0);
-	glVertex3f(x2, y2, 0.0);
-	glEnd();
+    // glBegin(GL_LINES);
+    // glVertex3f(x1, y1, 0.0);
+	// glVertex3f(x2, y2, 0.0);
+	// glEnd();
 };
