@@ -1,48 +1,50 @@
-#include "Nilib/ML/ML.h"
+#include "Nilib/ML/CNode.h"
 
-#include "Nilib/Core/Profiler.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 int main () {
 
-    Nilib::RNG::seed(126);
-    
     using namespace Nilib;
-    std::vector<Matrixf> features;
-    std::vector<Matrixf> output;
+    RNG::seed(126);
+    
+    std::vector<Mat<1,2>> features;
+    std::vector<Mat<1,1>> output;
 
     // Create XOR data.
-    features.push_back(Matrixf(1, 2, {0.0, 0.0}));
-    features.push_back(Matrixf(1, 2, {1.0, 0.0}));
-    features.push_back(Matrixf(1, 2, {0.0, 1.0}));
-    features.push_back(Matrixf(1, 2, {1.0, 1.0}));
+    features.push_back(Mat<1,2>(1, 2, {0.0, 0.0}));
+    features.push_back(Mat<1,2>(1, 2, {1.0, 0.0}));
+    features.push_back(Mat<1,2>(1, 2, {0.0, 1.0}));
+    features.push_back(Mat<1,2>(1, 2, {1.0, 1.0}));
     
-    output.push_back(Matrixf(1, 1, {0.0}));
-    output.push_back(Matrixf(1, 1, {1.0}));
-    output.push_back(Matrixf(1, 1, {1.0}));
-    output.push_back(Matrixf(1, 1, {0.0}));
+    output.push_back(Mat<1,1>(1, 1, {0.0}));
+    output.push_back(Mat<1,1>(1, 1, {1.0}));
+    output.push_back(Mat<1,1>(1, 1, {1.0}));
+    output.push_back(Mat<1,1>(1, 1, {0.0}));
 
     size_t const epochs = 250'000;
 
     // Weights and biases to train.
     size_t const inputdim = 2; 
-    size_t const neurons1 = 20;
+    size_t const neurons1 = 2;
     size_t const neurons2 = 1;
     size_t const outputdim= 1;
 
-    Weight W1(inputdim, neurons1);
-    Weight b1(neurons2, neurons1);
+    Weight<Mat<inputdim, neurons1>> W1(inputdim, neurons1);
+    Weight<Mat<neurons2, neurons1>> b1(neurons2, neurons1);
 
-    Weight W2(neurons1, neurons2);
-    Weight b2(neurons2, outputdim);
+    Weight<Mat<neurons1, neurons2>> W2(neurons1, neurons2);
+    Weight<Mat<neurons2, outputdim>> b2(neurons2, outputdim);
+
+    L1Loss<Mat<1,1>> weights({&W1, &b1, &W2, &b2}, 0.01);
 
 
     // For momentum updates.
     float const momentum = 0.2;
-    Nilib::Matrixf uW1 = Nilib::Matrixf::zeros(inputdim, neurons1);
-    Nilib::Matrixf ub1 = Nilib::Matrixf::zeros(neurons2, neurons1);
-
-    Nilib::Matrixf uW2 = Nilib::Matrixf::zeros(neurons1, neurons2);
-    Nilib::Matrixf ub2 = Nilib::Matrixf::zeros(neurons2, outputdim);
+    auto uW1 = W1; uW1.value.zero();
+    auto ub1 = b1; ub1.value.zero();
+    
+    auto uW2 = W2; uW2.value.zero();
+    auto ub2 = b2; ub2.value.zero();
 
     float tolerance = 0.001;
     float epoch_loss = tolerance + 1.0;
@@ -50,10 +52,6 @@ int main () {
     float MSE_loss = 0;
 
     size_t i;
-
-    LOG_DEBUG("Network Starting Weights:");
-    for (auto &&weight : {&W1, &b1, &W2, &b2})
-        LOG_DEBUG(*weight);
 
     {
         PROFILE_SCOPE("Network Training");
@@ -76,23 +74,20 @@ int main () {
                 Input x(features[sample]);
                 Input y(output[sample]);
 
-                // Regularizer penalty.
-                Param labda(0.01f);
-                Input A(Matrixf(1,1,{1.0f}));
-
                 // Dense Layer 1. 
-                auto H1 = DenseGraphLayer(&A, &x, &W1, &b1);
-                auto H2 = Relu(&H1, 0.01f);
-                //auto H2 = Tanh(&H1);
+                auto H1 = DenseLayer<Mat<2, 4>>(&x, &W1, &b1);
+                //auto H2 = Relu(&H1, 0.01f);
+                auto H2 = Tanh(&H1);
 
                 // Dense Layer 2. 
-                auto H3 = DenseGraphLayer(&A, &H2, &W2, &b2);
+                auto H3 = DenseLayer(&H2, &W2, &b2);
                 // auto out = Relu(&H3, 0.01f);
                 auto out = Tanh(&H3);
                 
-                auto MSE = MSELoss(&out, &y);
-                auto REG = L2({&W1, &b1, &W2, &b2}, &labda);
-                auto TOTLOS = Plus(&MSE, &REG);
+                //auto MSE = MSELoss(&out, &y);
+                //auto REG = L1Loss(weights, 0.001);
+                //auto TOTLOS = Plus(&MSE, &REG);
+                /*
                 // Forward.
                 TOTLOS.evaluate();
                 
@@ -126,6 +121,7 @@ int main () {
                 W1.value -= uW1;
                 b1.value -= ub1;
                 b2.value -= ub2;
+                */
             }
             
             auto current_time = std::chrono::steady_clock::now();
@@ -137,10 +133,11 @@ int main () {
         }
     } // Profile scope. 
     
+    /*
     
     
     LOG_DEBUG("Network Final Weights:");
-    for (auto &&weight : {&W1, &b1, &W2, &b2} )
+    for (auto &&weight : weights)
         LOG_DEBUG(*weight);
     // After training, do some prediction. 
     for (size_t sample = 0; sample < features.size(); ++sample)
@@ -164,5 +161,6 @@ int main () {
         LOG_INFO("MLP(", features[sample](0,0), features[sample](0,1), ")=", std::fixed, std::setprecision(4), out.value(0,0), "target", output[sample](0,0));
     }
     
+    */
     return 0;
 }

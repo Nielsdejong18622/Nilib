@@ -4,6 +4,7 @@
 #include <ostream>
 #include <sstream>
 #include "Nilib/Math/MatrixStorage.hpp"
+
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
@@ -11,7 +12,7 @@
 
 namespace Nilib {
 
-    template <typename MatrixData>
+    template <typename MatrixData = DynamicMatrixData<float>>
     class Matrix
     {
         MatrixData d_data;
@@ -33,6 +34,7 @@ namespace Nilib {
             else // Must be static storage type. 
                 return os << "<Mat " << mat.rows() << 'x' << mat.cols() << '>';
         }
+        
         void print() const {
             for (size_t ridx = 0; ridx < d_data.rows(); ++ridx)
             {
@@ -61,14 +63,14 @@ namespace Nilib {
         template<typename data> void operator+=(Matrix<data> const &B) {
             CORE_ASSERT(d_data.rows() == B.d_data.rows());
             CORE_ASSERT(d_data.cols() == B.d_data.cols());
-            for (size_t idx = 0; idx < d_data.size(); idx++)
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) += B.d_data(idx);
         }
         
         template<typename data> void operator-=(Matrix<data> const &B) {
             CORE_ASSERT(d_data.rows() == B.d_data.rows());
             CORE_ASSERT(d_data.cols() == B.d_data.cols());
-            for (size_t idx = 0; idx < d_data.size(); idx++)
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) -= B.d_data(idx);
         }
 
@@ -77,14 +79,14 @@ namespace Nilib {
         requires (std::is_arithmetic_v<scalar>) 
         {
             //d_data *= lambda; // Is defined for valarray.
-            for (size_t idx = 0; idx < d_data.size(); idx++)
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) *= lambda;
         }
 
         template<typename scalar> void operator/=(scalar const lambda) 
         requires (std::is_arithmetic_v<scalar>) 
         {
-            for (size_t idx = 0; idx < d_data.size(); idx++)
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) /= lambda;
         }
 
@@ -92,9 +94,18 @@ namespace Nilib {
             fill(0.0);        
         }
         
+        void setrandn(float const mean, float const var) {
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
+                d_data(idx) = RNG::normal(mean, var);            
+        }
+
+        void setrand() {
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
+                d_data(idx) = RNG::prob();            
+        }
         // TODO: replace float with storage::type.
         void fill(float const value) {
-            for (size_t idx = 0; idx < rows() * cols(); idx++)
+            for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) = value;            
         }
 
