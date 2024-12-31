@@ -9,6 +9,13 @@ namespace Nilib {
     struct DenseLayer : public CNode {
         CNode *input, *W, *b;
 
+
+        DenseLayer(CNode *input, size_t neurons)
+        : input(input)
+        {    
+            ASSERT(false, "Not implemented yet!");
+        }
+
         DenseLayer(CNode *input, CNode *W, CNode *b)
         : input(input), W(W), b(b)
         {    

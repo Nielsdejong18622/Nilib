@@ -9,10 +9,15 @@ namespace Nilib {
     struct Input: public CNode 
     {
         Matrixf partial;
+        Input() = default;
         Input(Matrixf const &value);
+        
+        void set(Nilib::Matrixf const &value);
         void evaluate() override;
         void derive(Matrixf const &seed) override;
     };
+
+
 }
 
 
