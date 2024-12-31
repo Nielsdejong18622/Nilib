@@ -19,5 +19,5 @@
 #include "Nilib/ML/CNodes/Activation/Relu.h"
 #include "Nilib/ML/CNodes/Activation/Tanh.h"
 
-#include "Nilib/ML/Data.h"
+#include "Nilib/ML/MLData.h"
 #include "Nilib/ML/Model.h"

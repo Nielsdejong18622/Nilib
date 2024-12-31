@@ -4,7 +4,8 @@
 #include "Nilib/ML/CNodes/CNode.h"
 #include "Nilib/ML/CNodes/Weight.h"
 #include "Nilib/ML/CNodes/Target.h"
-#include "Nilib/ML/Data.h"
+
+class MLData;
 
 namespace Nilib {
 
@@ -41,12 +42,12 @@ namespace Nilib {
         Matrixf &predict(MLData const &data, size_t const idx);
         Matrixf &predict(Matrixf const &x);
 
-        // Fit the model.
-
         // Zero all gradients.
         void zeroGrad();
+
         void updateGrad();
 
+        // Fit the model.
         void train(MLData const &data, size_t numepochs);
         //void train(MLEnv);
 

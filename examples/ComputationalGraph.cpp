@@ -1,6 +1,7 @@
 #include "Nilib/ML/ML.h"
 
 #include "Nilib/Core/Profiler.hpp"
+#include "Nilib/ML/MLData.h"
 
 int main () {
 
@@ -70,10 +71,6 @@ int main () {
 
     
     
-    
-    LOG_DEBUG("Network Final Weights:");
-    for (auto &&weight : {&W1, &b1, &W2, &b2} )
-        LOG_DEBUG(*weight);
     // After training, do some prediction on the test dataset. 
     for (size_t sample = data.validation_end; sample < data.obs(); ++sample)
     {
