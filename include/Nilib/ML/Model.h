@@ -50,7 +50,7 @@ namespace Nilib {
         void updateGrad();
 
         // Fit the model.
-        void train(MLData const &data, size_t numepochs);
+        void train(MLData const &data, size_t numepochs, size_t batch_size);
         //void train(MLEnv);
 
 

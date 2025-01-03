@@ -33,8 +33,7 @@ namespace Nilib {
 
         void insertColor(LogLevel const)
         {
-        };
-
+        }
     };
 
 

@@ -12,22 +12,22 @@ int main () {
 
 
     // Set up the data to learn from.
-    MLData data = MLData::XOR();
+    MLData data = MLData::CIRCLE(70);
 
     // Define the Computational Graph. 
 
-    MLP model(1,2, 10, 1, 1);
+    MLP model(1,2, 25, 1, 1);
     MLP model_start = model;
 
 
     // Make the model fit the data in 250'000 epochs. 
-    model.train(data, 150'000);
+    model.train(data, 5'000, 10);
     
     // LOG_DEBUG("Network Final Weights:");
     // for (auto &&weight : model.weights)
     //     LOG_DEBUG(*weight);
 
-    for (size_t sample = 0; sample < data.test_obs(); ++sample)
+    for (size_t sample = data.test_obs(); sample < data.obs(); ++sample)
     {
         auto [x, y] = std::tie(data.X[sample], data.Y[sample]); 
         auto pred = model.predict(x);

@@ -28,8 +28,8 @@ namespace Nilib
         Weight b1, b2;
 
         DenseLayer H1, H3;
-        Tanh H2;
-        Tanh out;
+        Sigmoid H2;
+        Sigmoid out;
 
         MSELoss MSE;
         L2 REG;

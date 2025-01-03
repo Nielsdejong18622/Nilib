@@ -34,6 +34,8 @@ namespace Nilib
         // The XOR classification dataset.
         static MLData XOR();
 
+        static MLData CIRCLE(size_t ntrain_points);
+
 
         // Dimensions of the data.
         size_t Xrows() const { return X.front().rows(); }

@@ -43,53 +43,67 @@ void Model::zeroGrad()
     }
 }
 
-void Model::train(MLData const &data, size_t numepochs)
+void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
 {
+    MLData data_copy = data;
     Matrixf const seed = Nilib::Matrixf(1, 1, {1.0f});
     auto start_time = std::chrono::steady_clock::now();
 
-    PROFILE_SCOPE("Model training.");
-
+    PROFILE_SCOPE("Model training");
+    ASSERT(data.training_end >= batch_size, "Not enough training data.");
     RunningStats train, batch, validation;
 
     size_t epoch;
+    // Zero the gradients.
+    zeroGrad();
+
+    // Output logger.
+    Nilib::BasicFileLogger customlogger2("ModelTraining.log");
+    REGISTER_LOGGER("MyLogger2", &customlogger2);
+    // Header. 
+    LOG_PROGRESS_TO("MyLogger2") << "epoch,avg_loss,std_loss,val_loss\n";
+
     for (epoch = 0; epoch < numepochs; ++epoch)
     {
         batch.reset(); validation.reset();
-        for (size_t sample = 0; sample < data.training_end; ++sample)
+        data_copy.shuffle(0, data_copy.training_end);
+        for (size_t sample = 0; sample < data_copy.training_end; ++sample)
         {
-            // Zero the gradients.
-            zeroGrad();
 
             // Set the inputs.
-            inputs[0]->set(data.X[sample]);
+            inputs[0]->set(data_copy.X[sample]);
             //inputs[1]->set(data.A[sample]);
             
             // Set the target. 
-            target->set(data.Y[sample]);
+            target->set(data_copy.Y[sample]);
             
             // Forward.
             loss->evaluate();
             
             // Backward.
             loss->derive(seed);
-                        
-            // (Vanilla) Update rule. 
-            updateGrad();
+
+
+            if (sample % batch_size == 0) {
+                // (Vanilla) Update rule. 
+                updateGrad();
+                zeroGrad();
+            }        
+
 
             // Logging. 
             batch.push(loss->value.sum());
         }
 
         // Validation.
-        for (size_t sample = data.training_end; sample < data.validation_end; ++sample)
+        for (size_t sample = data_copy.training_end; sample < data_copy.validation_end; ++sample)
         {
             // Set the inputs.
-            inputs[0]->set(data.X[sample]);
+            inputs[0]->set(data_copy.X[sample]);
             //inputs[1]->set(data.A[sample]);
             
             // Set the target. 
-            target->set(data.Y[sample]);
+            target->set(data_copy.Y[sample]);
             
             // Forward.
             loss->evaluate();
@@ -97,10 +111,18 @@ void Model::train(MLData const &data, size_t numepochs)
             // Logging. 
             validation.push(loss->value.sum());
         }
-        
+        LOG_PROGRESS_TO("MyLogger2") << epoch + 1 
+                << ',' 
+                << batch.mean()
+                << ','   
+                << batch.variance()
+                << ',' 
+                << validation.mean() 
+                << "\n";
         auto current_time = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
         if (elapsed.count() > 100 || epoch == numepochs - 1) {
+
             LOG_PROGRESS() << "Epoch " 
                            << epoch + 1 
                            << " loss " 

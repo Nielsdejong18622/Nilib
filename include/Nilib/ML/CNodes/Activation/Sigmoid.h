@@ -13,7 +13,7 @@ namespace Nilib {
                      std::bind(&Sigmoid::sigmoid, this, std::placeholders::_1), 
                      std::bind(&Sigmoid::sigmoid_deriv, this, std::placeholders::_1)) {}
 
-        float sigmoid(float const t) { return 1.0 / (1.0 + std::exp(-1.0 * t)); }
+        float sigmoid(float const t) { return 1.0f / (1.0f + std::exp(-1.0f * t)); }
 
         float sigmoid_deriv(float const t) { float tmp =  sigmoid(t); return tmp * (1.0f - tmp); }
     };
