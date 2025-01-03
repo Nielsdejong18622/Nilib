@@ -7,7 +7,7 @@
 namespace Nilib {
 
     struct DenseLayer : public CNode {
-        CNode *input, *W, *b;
+        CNode *input = nullptr, *W = nullptr, *b = nullptr;
 
 
         DenseLayer(CNode *input, size_t neurons)
@@ -23,6 +23,7 @@ namespace Nilib {
 
         void evaluate() 
         {
+            CORE_ASSERT(input && W && b);
             input->evaluate();
             W->evaluate();
             b->evaluate();
@@ -31,6 +32,7 @@ namespace Nilib {
 
         void derive(Matrixf const &seed)
         {
+            CORE_ASSERT(input && W && b);
             input->derive(seed * transpose(W->value));
             W->derive(transpose(input->value) * seed);
             b->derive(seed);

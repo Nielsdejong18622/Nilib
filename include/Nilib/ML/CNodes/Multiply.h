@@ -9,7 +9,7 @@ namespace Nilib{
     // Multiply Gate. 
     struct Multiply: public CNode 
     {
-        CNode *lhs, *rhs;
+        CNode *lhs = nullptr, *rhs = nullptr;
         Multiply(CNode *lhs, CNode *rhs): lhs(lhs), rhs(rhs) {}
 
         void evaluate() 

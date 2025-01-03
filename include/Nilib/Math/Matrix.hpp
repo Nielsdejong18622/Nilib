@@ -18,8 +18,8 @@ namespace Nilib {
         MatrixData d_data;
 
     public:
-        auto operator()(size_t const row, size_t const col) const { return d_data(row, col); }
-        auto &operator()(size_t const row, size_t const col) { return d_data(row, col); }
+        auto operator()(size_t const row, size_t const col) const { return d_data(row * d_data.cols() + col); }
+        auto &operator()(size_t const row, size_t const col) { return d_data(row * d_data.cols() + col); }
 
         size_t rows() const {return d_data.rows(); }
         size_t cols() const {return d_data.cols(); }
@@ -61,8 +61,8 @@ namespace Nilib {
 
         // In place operators.
         template<typename data> void operator+=(Matrix<data> const &B) {
-            CORE_ASSERT(d_data.rows() == B.d_data.rows());
-            CORE_ASSERT(d_data.cols() == B.d_data.cols());
+            ASSERT(d_data.rows() == B.d_data.rows(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
+            ASSERT(d_data.cols() == B.d_data.cols(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
             for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) += B.d_data(idx);
         }

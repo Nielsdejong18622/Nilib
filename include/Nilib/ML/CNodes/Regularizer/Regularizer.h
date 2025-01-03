@@ -10,7 +10,7 @@ namespace Nilib {
     struct Regularizer : public CNode
     {
         std::vector<CNode*> reg_nodes;
-        Param *labda; // Hyper parameter enalty term.
+        Param *labda = nullptr; // Hyper parameter enalty term.
 
         Regularizer(std::initializer_list<CNode *> const &weights, Param *labda)
         : reg_nodes(weights), labda(labda)

@@ -7,7 +7,7 @@
 namespace Nilib {
 
     struct Activation : public Nilib::CNode {
-        CNode *input;
+        CNode *input = nullptr;
         using ActFun = std::function<float(float)>;
         using ActFunDeriv = std::function<float(float)>;
         ActFun actfun;
@@ -20,6 +20,7 @@ namespace Nilib {
         
         void evaluate()
         {
+            CORE_ASSERT(input);
             input->evaluate();
             this->value = input->value; // Copy the input. 
             this->value.apply(actfun);
@@ -27,6 +28,7 @@ namespace Nilib {
 
         void derive(Nilib::Matrixf const &seed)
         {
+            CORE_ASSERT(input);
             auto tmp = input->value; // Get a copy of the input. 
             tmp.apply(deriv);
             input->derive(Nilib::hadamar(seed, tmp));
