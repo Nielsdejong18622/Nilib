@@ -3,6 +3,7 @@
 #include "Nilib/ML/MLData.h"
 #include "Nilib/Core/Profiler.hpp"
 #include "Nilib/Math/Stats.hpp"
+#include "Nilib/Core/Signal.hpp"
 
 using namespace Nilib;
 
@@ -51,7 +52,7 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
 
     PROFILE_SCOPE("Model training");
     ASSERT(data.training_end >= batch_size, "Not enough training data.");
-    RunningStats train, batch, validation;
+    RunningStats batch, validation;
 
     size_t epoch;
     // Zero the gradients.
@@ -61,15 +62,17 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
     Nilib::BasicFileLogger customlogger2("ModelTraining.log");
     REGISTER_LOGGER("MyLogger2", &customlogger2);
     // Header. 
-    LOG_PROGRESS_TO("MyLogger2") << "epoch,avg_loss,std_loss,val_loss\n";
+    LOG_PROGRESS_TO("MyLogger2") << "epoch,avg_loss,std_loss,val_loss,std_vall_loss\n";
 
     for (epoch = 0; epoch < numepochs; ++epoch)
     {
+        if (Signal::receivedCtrlC()) break;
         batch.reset(); validation.reset();
         data_copy.shuffle(0, data_copy.training_end);
         for (size_t sample = 0; sample < data_copy.training_end; ++sample)
         {
 
+            if (Signal::receivedCtrlC()) break;
             // Set the inputs.
             inputs[0]->set(data_copy.X[sample]);
             //inputs[1]->set(data.A[sample]);
@@ -93,6 +96,7 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
 
             // Logging. 
             batch.push(loss->value.sum());
+
         }
 
         // Validation.
@@ -115,9 +119,11 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
                 << ',' 
                 << batch.mean()
                 << ','   
-                << batch.variance()
+                << batch.stddev()
                 << ',' 
                 << validation.mean() 
+                << ',' 
+                << validation.stddev()
                 << "\n";
         auto current_time = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);

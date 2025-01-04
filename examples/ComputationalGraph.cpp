@@ -3,6 +3,8 @@
 #include "Nilib/Core/Profiler.hpp"
 #include "Nilib/ML/MLData.h"
 #include "Nilib/ML/MLP.h"
+#include "Nilib/Core/Signal.hpp"
+
 
 int main () {
 
@@ -12,16 +14,16 @@ int main () {
 
 
     // Set up the data to learn from.
-    MLData data = MLData::CIRCLE(70);
+    MLData data = MLData::CIRCLE(700);
 
     // Define the Computational Graph. 
 
-    MLP model(1,2, 25, 1, 1);
+    MLP model(1,2, 500, 1, 1);
     MLP model_start = model;
 
 
     // Make the model fit the data in 250'000 epochs. 
-    model.train(data, 5'000, 10);
+    model.train(data, 500, 4);
     
     // LOG_DEBUG("Network Final Weights:");
     // for (auto &&weight : model.weights)
