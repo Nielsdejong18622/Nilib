@@ -43,6 +43,7 @@ Window::Window(size_t width,
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     GLFWvidmode const *mode = glfwGetVideoMode(monitor);
     
+    glfwWindowHint(GLFW_SAMPLES, 4); // Enable Multisampling.
     glfwWindowHint(GLFW_RED_BITS, mode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
@@ -120,7 +121,7 @@ void Window::setCallbacks() const
 
 void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
     LOG_DEBUG("[WEVENT] Resizing framebuffer ", width, 'x', height);
-    //glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 };
 
 void Window::drop_callback(GLFWwindow* window, int path_count, const char* paths[])

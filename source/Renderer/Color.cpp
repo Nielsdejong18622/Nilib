@@ -20,7 +20,7 @@ void Color::RGBf(float *R, float *G, float *B) const
 
 Color Color::RGBf(float R, float G, float B)
 {
-    return Color::RGBAf(R, G, B, 0.9f);
+    return Color::RGBAf(R, G, B, 0.8f);
 }
 
 Color Color::RGBAf(float R, float G, float B, float A)
