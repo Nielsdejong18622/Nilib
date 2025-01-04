@@ -1,7 +1,8 @@
 #version 330 core
-out vec4 FragColor;
 
-void main() 
-{
-    FragColor = vec4(0.5, 0.25, 0.0, 0.5);  // Green color
+in vec4 fragColor;  // Input color from vertex shader (including alpha)
+out vec4 finalColor;  // Final color of the fragment (pixel)
+
+void main() {
+    finalColor = fragColor;  // Use the input color directly (including alpha)
 }

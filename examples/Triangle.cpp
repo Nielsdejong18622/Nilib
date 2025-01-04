@@ -48,28 +48,43 @@ int main()
         return -1;  // Shader program creation failed
     }
 
-    
-    // Set up a simple triangle
-    float vertices[] = {
-        0.0f,  0.5f, 0.0f,
-       -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f
+
+    struct TriangleVertex 
+    {
+        Vec3f position;
+        Vec4f color;
+        // Texture coordinate. 
     };
-    GLuint VBO, VAO;
-    glGenVertexArrays(1, &VAO);
+
+    TriangleVertex triangle_vertices[] = {
+       {{ 0.0f, 0.5f, 0.0f}, Colors::Blue},
+       {{-0.5f,-0.5f, 0.0f}, Colors::Blue},
+       {{ 0.5f,-0.5f, 0.0f}, Colors::Blue},
+
+       {{-1.0f, -1.0f, 0.0f}, Colors::Red},
+       {{-0.5f, -0.5f, 0.0f}, Colors::Red},
+       {{ 0.0f, -1.0f, 0.0f}, Colors::Red}
+    };
+
+    GLuint VBO, VAO_triangles;
+    glGenVertexArrays(1, &VAO_triangles);
     glGenBuffers(1, &VBO);
 
-    glBindVertexArray(VAO);
-
+    glBindVertexArray(VAO_triangles);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
+
+    // Attribute position.
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), (void*)0);
+    // Attribute color.
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), (void*)(3 * sizeof(float)));
+
     glEnableVertexAttribArray(0);
-
+    glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind VBO
 
-    glBindVertexArray(0); // Unbind VAO
+    glBindVertexArray(0); // Unbind VAO_triangles
 
     while (window.opened())
     {
@@ -79,8 +94,8 @@ int main()
         // Use our shaderprogram. 
         shaderprogram.bind();
         
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAO_triangles);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         window.endScene(); // Renders the geometry. 
 
@@ -88,7 +103,7 @@ int main()
     }
 
     // Cleanup
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &VAO_triangles);
     glDeleteBuffers(1, &VBO);
 
     LOG_SUCCESS("Termination of Example!");

@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <ostream>
 
+#include "Nilib/Math/Matrix.hpp"
+
 namespace Nilib
 {
     
@@ -46,6 +48,12 @@ namespace Nilib
             float R, G, B, A;
             color.RGBAf(&R, &G, &B, &A);
             return os << "<Color " << R << ' ' << G << ' ' << B << ' '<< A << '>';
+        }
+
+        // Convert to Vec4f.
+        operator Vec4f() const
+        {
+            return Vec4f({store.rgba[0] / 255.0f, store.rgba[1] / 255.0f, store.rgba[2] / 255.0f, store.rgba[3]/ 255.0f});
         }
 
     };

@@ -58,6 +58,9 @@ namespace Nilib {
         Matrix(MatrixData const &data) 
         :   d_data(data) { }
 
+        Matrix(std::initializer_list<float> const &data) 
+        :   d_data(data) { }
+
 
         // In place operators.
         template<typename data> void operator+=(Matrix<data> const &B) {
@@ -197,6 +200,9 @@ namespace Nilib {
     using Matrixd = Matrix<DynamicMatrixData<double>>;
 
     // Special Matrices. (Rotation, Random, Identity, Diagonal, all, etc.)
+    using Vec4f = Matrix<StaticMatrixData<4, 1, float>>;
+    using Vec3f = Matrix<StaticMatrixData<3, 1, float>>;
+    using Vec2f = Matrix<StaticMatrixData<2, 1, float>>;
 
 
 
