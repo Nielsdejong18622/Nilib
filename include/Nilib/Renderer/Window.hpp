@@ -22,6 +22,7 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
 #include "Nilib/Renderer/Keys.h"
+#include "Nilib/Renderer/Camera.h"
 #include "Nilib/Math/Matrix.hpp"
 
 
@@ -47,6 +48,8 @@ struct Windowdata {
     char const *title;
     Window* owner = nullptr;
     std::map<KeyEvent, Callback> keybindings;
+
+    Camera camera;
 };
 
 class Window

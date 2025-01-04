@@ -2,6 +2,7 @@
 #define _RENDERER_H
 
 #include "Nilib/Math/Matrix.hpp"
+#include "Nilib/Math/Stats.hpp"
 
 namespace Nilib
 {
@@ -29,6 +30,8 @@ namespace Nilib
         void drawCalls();
 
     private:
+        // For bound detection. 
+        RunningStats submitted_x, submitted_y, submitted_z;
 
         static size_t const maxTriangles = 128;
         size_t triangle_count = 0;

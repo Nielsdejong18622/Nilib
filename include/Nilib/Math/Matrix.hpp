@@ -190,6 +190,11 @@ namespace Nilib {
             return diag(n, n, 1.0);
         }
 
+        // Special access. 
+        auto x() const { return d_data(0); }
+        auto y() const { return d_data(1); }
+        auto z() const { return d_data(2); }
+        auto a() const { return d_data(3); }
         
 
     };

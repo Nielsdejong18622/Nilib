@@ -13,13 +13,15 @@ Renderer::Renderer()
     // Enable Anti-aliasing
     glEnable(GL_MULTISAMPLE);  
 
+
+
+    // Set up the VAO and VBO.
     glGenVertexArrays(1, &VAO_triangles);
     glGenBuffers(1, &VBO_triangles);
 
-    // Set up the VAO and VBO.
     glBindVertexArray(VAO_triangles);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_triangles);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(this->triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
     
     // Attribute position.
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), (void*)0);
@@ -51,13 +53,28 @@ void Renderer::submitTriangle(TriangleVertex const &v1, TriangleVertex const &v2
         LOG_WARNING("Not enough space for triangle on Renderer!");
         return;
     }
+    // For bounds. 
+    submitted_x.push(v1.position.x());
+    submitted_x.push(v2.position.x());
+    submitted_x.push(v3.position.x());
+
+    submitted_y.push(v1.position.y());
+    submitted_y.push(v2.position.y());
+    submitted_y.push(v3.position.y());
+    
+    submitted_z.push(v1.position.z());
+    submitted_z.push(v2.position.z());
+    submitted_z.push(v3.position.z());
+
     LOG_DEBUG("Pushing triangle vertex", v1.position, v1.color);
     v1.position.print(); v1.color.print();
     triangle_vertices[triangle_count++] = v1;
     triangle_vertices[triangle_count++] = v2;
-    triangle_vertices[triangle_count++] = v3;
+    triangle_vertices[triangle_count++] = v3; 
+
+    // TODO: Perhaps use subbufferdata?
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
-    
+
 }
 
 
