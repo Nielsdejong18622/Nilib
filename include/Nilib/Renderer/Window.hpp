@@ -75,8 +75,9 @@ public:
     // Ping the user. 
     void requestAttention() const;
 
-    // Bind Key Callback. 
+    // Bind Key Callbacks. 
     void bindkey(Callback const &fun, int key, int action, int mods);
+    void bindkey(Callback const &bindfun, int key);
 
 protected:
 

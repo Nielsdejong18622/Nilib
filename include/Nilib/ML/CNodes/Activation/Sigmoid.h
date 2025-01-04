@@ -1,4 +1,3 @@
-
 #ifndef _CNODE_SIGMOID_H
 #define _CNODE_SIGMOID_H
 

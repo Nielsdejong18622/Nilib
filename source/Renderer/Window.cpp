@@ -260,6 +260,11 @@ bool Window::opened() const {
     return !glfwWindowShouldClose(d_window);
 };
 
+// Default bindkey for Key::Press / No modifications.
+void Window::bindkey(Callback const &bindfun, int key)
+{
+    bindkey(bindfun, key, Key::Press, 0);
+}
 
 void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
 {

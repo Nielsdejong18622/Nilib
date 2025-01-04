@@ -3,28 +3,20 @@
 
 int main()
 {
-/*
-    Window window = Window(width, height, "WindowTitle")
+    using namespace Nilib;
+    Window window = Window(1024, 812, "RenderTest");
 
-    Window window2 = Window(width, height, "Another window");
+    window.bindkey(std::bind(&Window::close, window), Key::Escape, 0, 0);
 
-    window.bindkey(KEYCODE::ESCAPE, &Window::close(), window);
-    window2.bindkey(KEYCODE::ESCAPE, &Window::close(), window2);
 
-    window.setClearColor(Color::LightGray);
-    window.setClearColor(Color::Gray);
+    window.clearColor(Colors::Gray);
 
-    while (window.opened() || window2.opened())
+    while (window.opened())
     {
         // Window 1.
         window.startScene(); // Check if window is open.
 
         window.endScene(); // Renders the geometry. 
-
-        // Window 2.
     }
-
-
-*/
 
 }
