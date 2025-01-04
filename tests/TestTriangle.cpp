@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// Shader source code as string literals
+// ShaderProgram source code as string literals
 const char* vertexShaderSource = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
@@ -92,7 +92,7 @@ int main() {
     // Create and compile the shader program
     GLuint shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
     if (shaderProgram == 0) {
-        return -1;  // Shader program creation failed
+        return -1;  // ShaderProgram program creation failed
     }
 
     // Set up a simple triangle

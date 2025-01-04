@@ -51,27 +51,27 @@ namespace Nilib
     };
 
     namespace Colors {
-        Color const Grey = Color::HSL(0.411, 0.411, 0.411);
-        Color const Gray = Color::HSL(0.411, 0.411, 0.411);
-        Color const Red = Color::HSL(1.000, 0.000, 0.000);
-        Color const Blue = Color::HSL(0.000, 0.000, 1.000);
-        Color const Green = Color::HSL(0.000, 1.000, 0.000);
-        Color const Yellow = Color::HSL(1.000, 1.000, 0.000);
-        Color const Orange = Color::HSL(1.000, 0.647, 0.000);
-        Color const Purple = Color::HSL(0.502, 0.000, 0.502);
-        Color const Pink = Color::HSL(1.000, 0.753, 0.796);
-        Color const Black = Color::HSL(0.000, 0.000, 0.000);
-        Color const White = Color::HSL(1.000, 1.000, 1.000);
-        Color const Brown = Color::HSL(0.647, 0.165, 0.165);
-        Color const Cyan = Color::HSL(0.000, 1.000, 1.000);
-        Color const Magenta = Color::HSL(1.000, 0.000, 1.000);
-        Color const Turquoise = Color::HSL(0.251, 0.878, 0.816);
-        Color const Indigo = Color::HSL(0.294, 0.000, 0.510);
-        Color const Maroon = Color::HSL(0.502, 0.000, 0.000);
-        Color const Olive = Color::HSL(0.502, 0.502, 0.000);
-        Color const Teal = Color::HSL(0.000, 0.502, 0.502);
-        Color const Lavender = Color::HSL(0.902, 0.902, 0.980);
-        Color const Coral = Color::HSL(1.000, 0.498, 0.314);
+        Color const Grey =      Color::RGBf(0.411, 0.411, 0.411);
+        Color const Gray =      Color::RGBf(0.411, 0.411, 0.411);
+        Color const Red =       Color::RGBf(1.000, 0.000, 0.000);
+        Color const Blue =      Color::RGBf(0.000, 0.000, 1.000);
+        Color const Green =     Color::RGBf(0.000, 1.000, 0.000);
+        Color const Yellow =    Color::RGBf(1.000, 1.000, 0.000);
+        Color const Orange =    Color::RGBf(1.000, 0.647, 0.000);
+        Color const Purple =    Color::RGBf(0.502, 0.000, 0.502);
+        Color const Pink =      Color::RGBf(1.000, 0.753, 0.796);
+        Color const Black =     Color::RGBf(0.000, 0.000, 0.000);
+        Color const White =     Color::RGBf(1.000, 1.000, 1.000);
+        Color const Brown =     Color::RGBf(0.647, 0.165, 0.165);
+        Color const Cyan =      Color::RGBf(0.000, 1.000, 1.000);
+        Color const Magenta =   Color::RGBf(1.000, 0.000, 1.000);
+        Color const Turquoise = Color::RGBf(0.251, 0.878, 0.816);
+        Color const Indigo =    Color::RGBf(0.294, 0.000, 0.510);
+        Color const Maroon =    Color::RGBf(0.502, 0.000, 0.000);
+        Color const Olive =     Color::RGBf(0.502, 0.502, 0.000);
+        Color const Teal =      Color::RGBf(0.000, 0.502, 0.502);
+        Color const Lavender =  Color::RGBf(0.902, 0.902, 0.980);
+        Color const Coral =     Color::RGBf(1.000, 0.498, 0.314);
     };
 } // namespace Nilib
 

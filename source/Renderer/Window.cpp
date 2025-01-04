@@ -62,6 +62,15 @@ Window::Window(size_t width,
     glfwSetWindowUserPointer(d_window, this);
     setCallbacks();
 
+    // Render parameters.
+    glfwMakeContextCurrent(d_window);
+    
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        LOG_ERROR("GLAD initialization failed!");
+        return;
+    }
+
     Window::s_windowsactive++;
     LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
 }
@@ -180,6 +189,7 @@ void Window::cursorPos_callback(GLFWwindow* window, double xpos, double ypos)
 
 void Window::open() 
 {
+    CORE_ASSERT(d_window);
     // If already open.
     if (!glfwWindowShouldClose(d_window)) {
         LOG_WARNING("Window", title(), "already open!");
@@ -187,20 +197,21 @@ void Window::open()
     }
 
     // If window already exists but is hidden. 
-    glfwShowWindow(d_window);
     glfwSetWindowShouldClose(d_window, GLFW_FALSE);
+    glfwShowWindow(d_window);
     LOG_DEBUG("Showing window", title());
 };
 
 
 
 Window::~Window() {
-    LOG_DEBUG("Window", title(), "destruction!");
+    CORE_ASSERT(d_window);
     glfwDestroyWindow(d_window);
+    LOG_DEBUG("Window", title(), "destructed!");
     d_window = nullptr;
     if (--Window::s_windowsactive == 0) {
         glfwTerminate();
-        LOG_DEBUG("Destruction of GLFW library");
+        LOG_DEBUG("Destructed GLFW library");
     }
 };
 
@@ -219,15 +230,7 @@ void Window::startScene() {
         LOG_WARNING("Starting scene on unopened Window", title());
         return;
     }
-    // Render parameters.
     glfwMakeContextCurrent(d_window);
-    
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        LOG_ERROR("GLAD initialization failed!");
-        return;
-    }
-    glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapInterval(1);
 
@@ -268,6 +271,10 @@ void Window::bindkey(Callback const &bindfun, int key)
 
 void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
 {
+    if (!glfwInit()) { 
+        LOG_ERROR("Binding key while GLFW is not initialized!");
+        return;
+    }
     // Convert scancode to non-platform specific.   
     int scancode = glfwGetKeyScancode(key);
     LOG_DEBUG("[WEVENT] Binding key", key, "scancode", scancode, "mods", mods);

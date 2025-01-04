@@ -18,6 +18,16 @@ void Color::RGBf(float *R, float *G, float *B) const
     *B = static_cast<float>(store.rgba[2] / 255.0f);
 }
 
+Color Color::RGBf(float R, float G, float B)
+{
+    return Color::RGBAf(R, G, B, 0.9f);
+}
+
+Color Color::RGBAf(float R, float G, float B, float A)
+{
+    return Color(R * 255, G * 255, B * 255, A * 255);
+}
+
 Color::Color(uint8_t R, uint8_t G, uint8_t B, uint8_t A)
 : store{R, G, B, A} {}
 
