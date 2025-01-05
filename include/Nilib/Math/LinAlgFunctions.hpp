@@ -154,25 +154,25 @@ namespace Nilib {
     template<typename type>
     type euclidean(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
     {
-        return minkowski<type, 2.0>(A, B);
+        return minkowski<type, 2.0f>(A, B);
     }
 
     template<typename type, size_t n, size_t m>
     type euclidean(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
     {
-        return minkowski<type, 2.0>(A, B);
+        return minkowski<type, 2.0f>(A, B);
     }
 
     template<typename type>
     type manhattan(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
     {
-        return minkowski<type, 1.0>(A, B);
+        return minkowski<type, 1.0f>(A, B);
     }
 
     template<typename type, size_t n, size_t m>
     type manhattan(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
     {
-        return minkowski<type, 2.0>(A, B);
+        return minkowski<type, 2.0f>(A, B);
     }
 
     template<typename type>

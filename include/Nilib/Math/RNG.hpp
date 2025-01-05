@@ -90,7 +90,7 @@ namespace Nilib {
         template<typename scalar = float>
         static scalar weibull(scalar const scale, scalar const shape)
         {
-            // TODO: Check weibull!
+            // TODO: Check !
             return scale * std::pow(-1 * std::log(1 - RNG::prob()), 1.0f / shape);
         }
 
