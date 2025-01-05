@@ -25,7 +25,7 @@ int main()
     A *= 2;
     A.print();
 
-    auto Asin = apply(A, [](float const t) { return std::sin(t + 1);});
+    auto Asin = apply(D1 - D, [](float const t) { return std::sin(t + 1);});
     
     LOG_INFO("Asin: ", Asin);
     Asin.print();

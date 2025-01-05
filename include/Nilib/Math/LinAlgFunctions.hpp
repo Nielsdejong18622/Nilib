@@ -129,11 +129,13 @@ namespace Nilib {
         return res;        
     }
 
-
     template<typename data>
-    Matrix<data> apply(Matrix<data> &A, std::function<float(float)> const &fun)
-    {
-        return A.apply(fun);
+    Matrix<data> apply(Matrix<data> const &A, std::function<float(float)> const &fun)
+    {        
+        // TODO: make more efficient by using Move :).
+        auto tmp = A; 
+        tmp.apply(fun);
+        return tmp;
     }
 
     // Distance functions between Matrices/Vectors. 

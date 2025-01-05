@@ -45,7 +45,7 @@ namespace Nilib{
         size_t cols() const { return m; }
 
         type sum() const {return std::accumulate(d_data.begin(), d_data.end(), 0.0); }
-        StaticMatrixData apply(std::function<type(type)> fun) { std::transform(d_data.begin(), d_data.end(), d_data.begin(), fun); return *this; }
+        StaticMatrixData &apply(std::function<type(type)> fun) { std::transform(d_data.begin(), d_data.end(), d_data.begin(), fun); return *this; }
 
     };
 
