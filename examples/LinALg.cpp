@@ -24,7 +24,11 @@ int main()
     LOG_INFO("Multiplying A by 2");
     A *= 2;
     A.print();
+
+    auto Asin = apply(A, [](float const t) { return std::sin(t + 1);});
     
+    LOG_INFO("Asin: ", Asin);
+    Asin.print();
 
     LOG_INFO("Dynamic Matrix D:", D, D.sum());
     D.print();

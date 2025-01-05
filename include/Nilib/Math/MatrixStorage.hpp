@@ -92,7 +92,7 @@ namespace Nilib{
 
         //type sum() const {return std::accumulate(std::begin(d_data), std::end(d_data), 0.0); }
         type sum() const {return d_data.sum(); }
-        DynamicMatrixData apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); return *this; }
+        DynamicMatrixData &apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); return *this; }
 
     };
 }
