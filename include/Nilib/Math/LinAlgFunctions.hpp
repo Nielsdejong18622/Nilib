@@ -129,6 +129,54 @@ namespace Nilib {
         return res;        
     }
 
-}
+    // Distance functions between Matrices/Vectors. 
+    template<typename type, float p>
+    type minkowski(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    {
+        return std::pow(apply(A - B, [](type t){ return std::pow(std::abs(t), p); } ).sum(), 1 / p);
+    }
 
+    template<typename type, float p, size_t n, size_t m>
+    type minkowski(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
+    {
+        return std::pow(apply(A - B, [](type t){ return std::pow(std::abs(t), p); } ).sum(), 1 / p);
+    }
+
+    template<typename type>
+    type euclidean(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    {
+        return minkowski<type, 2.0>(A, B);
+    }
+
+    template<typename type, size_t n, size_t m>
+    type euclidean(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
+    {
+        return minkowski<type, 2.0>(A, B);
+    }
+
+    template<typename type>
+    type manhattan(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    {
+        return minkowski<type, 1.0>(A, B);
+    }
+
+    template<typename type, size_t n, size_t m>
+    type manhattan(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
+    {
+        return minkowski<type, 2.0>(A, B);
+    }
+
+    template<typename type>
+    type euclidean2(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    {
+        return apply(A - B, [](type t){ return t * t; } ).sum();
+    }
+
+    template<typename type, size_t n, size_t m>
+    type euclidean2(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n,m,type>> const &B)
+    {
+        return apply(A - B, [](type t){ return t * t; } ).sum();
+    }
+
+}
 #endif
