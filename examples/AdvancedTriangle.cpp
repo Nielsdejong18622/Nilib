@@ -48,7 +48,8 @@ int main()
         renderer.drawCalls();
 
         // Some immediate mode rendering.
-        window.drawArc(0.0, -1.0, 1.0, 0.0, 5.0);
+        window.color(Colors::Magenta);
+        window.drawArc({0.0, -1.0}, {1.0, 0.0}, 5.0);
 
         window.endScene(); // Renders the geometry. 
 

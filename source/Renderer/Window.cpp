@@ -213,11 +213,7 @@ Window::~Window()
     }
 };
 
-void Window::clearColor(Color const &color)
-{
-    d_data.clearColor = color;
-    LOG_DEBUG("Set clear color:", color);
-}
+
 void Window::requestAttention() const
 {
     ASSERT(d_window, "Window not init!");
@@ -234,7 +230,7 @@ void Window::startScene()
     glfwMakeContextCurrent(d_window);
     glfwSwapInterval(1);
 
-    // // Renderer. 
+    // // Renderer.
     float R, G, B, A;
     d_data.clearColor.RGBAf(&R, &G, &B, &A);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -303,14 +299,152 @@ void Window::key_callback(GLFWwindow *window, int key, int scancode, int action,
         win.d_data.keybindings.at(keyev)();
 };
 
-void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const 
+void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) const
 {
-    // Line segment from this to adjacent. 
+    // Line segment from this to adjacent.
     glLineWidth(linewidth);
     glBegin(GL_LINES);
-	glVertex3f(x1, y1, 0.0f);
-	glVertex3f(x2, y2, 0.0f);
-	glVertex3f(x1, y1, 0.0f);
-	glVertex3f(x2, y2, 0.0f);
+    float ax = A.x();
+    float ay = A.y();
+    float bx = B.x();
+    float by = B.y();
+    
+    transform2D(ax, ay);
+    transform2D(bx, by);
+    glVertex3f(A.x(), A.y(), 0.0f);
+    glVertex3f(B.x(), B.y(), 0.0f);
+    glEnd();
+}
+
+void Window::drawCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
+{
+    float arc = 0.0f;
+    // Start on the right. 
+    float cx = centre.x();
+    float cy = centre.y();
+    float arcx = centre.x() + radius;
+    float arcy = centre.y();
+
+    glBegin(GL_TRIANGLE_FAN);
+    while (arc <= 360.0f)
+    {
+        float warcx = arcx;
+        float warcy = arcy;
+        transform2D(warcx, warcy);
+        glVertex3f(warcx, warcy, 0.0f);
+        arc += 360.0f / sides;
+        arcx = cx + radius * cos(arc * 3.14159265f / 180.0f);
+        arcy = cy + radius * sin(arc * 3.14159265f / 180.0f);
+        float nwarcx = arcx;
+        float nwarcy = arcy;
+        transform2D(nwarcx, nwarcy);
+        glVertex3f(nwarcx, nwarcy, 0.0f);
+    }
+    glEnd();
+}
+
+void Window::drawDiamond(Vec2f const &center, float const radius, float const linewidth) const
+{
+    return drawCircle(center, radius, linewidth, 4);
+}
+
+void Window::drawTriangleUp(Vec2f const &centre, float const size) const
+{
+    glBegin(GL_TRIANGLES);
+    float ax = centre.x();       
+    float ay = centre.y() + size;
+    float bx = centre.x() + size;
+    float by = centre.y() - size;
+    float cx = centre.x() - size;
+    float cy = centre.y() - size;
+    transform2D(ax, ay); transform2D(bx, by); transform2D(cx, cy);
+
+    glVertex3f(ax, ay, 0.0f);   // Top
+    glVertex3f(bx, by, 0.0f);   // Bottom right
+    glVertex3f(cx, cy, 0.0f);   // Bottom left
+    glEnd();
+}
+
+void Window::drawSquare(Vec2f const &centre, float const size) const
+{
+    glBegin(GL_QUADS);
+    float a = centre.x() - size;
+    float c = centre.x() + size;
+    float b = centre.y() + size;
+    float d = centre.y() - size;
+    transform2D(a, b);
+    transform2D(c, d);
+    glVertex3f(a, b, 0.0f);
+    glVertex3f(c, b, 0.0f);
+    glVertex3f(c, d, 0.0f);
+    glVertex3f(a, d, 0.0f);
+    glEnd();
+}
+
+void Window::drawRectangle(Vec2f const &leftup, Vec2f const &rightdown) const
+{
+    CORE_ASSERT("Not yet implemented!");
+}
+
+void Window::drawCross(Vec2f const &centre, float const size) const
+{
+    glBegin(GL_LINES);
+    float a = centre.x() - size;
+    float c = centre.x() + size;
+    float b = centre.y() + size;
+    float d = centre.y() - size;
+    transform2D(a, b);
+    transform2D(c, d);
+    glVertex3f(a, d, 0.0f);
+    glVertex3f(c, b, 0.0f);
+    glVertex3f(a, b, 0.0f);
+    glVertex3f(c, d, 0.0f);
     glEnd();
 };
+
+void Window::drawTriangleDown(Vec2f const &centre, float const size) const
+{
+    glBegin(GL_TRIANGLES);
+    float ax = centre.x();       
+    float ay = centre.y() + size;
+    float bx = centre.x() + size;
+    float by = centre.y() - size;
+    float cx = centre.x() - size;
+    float cy = centre.y() - size;
+    transform2D(ax, ay); transform2D(bx, by); transform2D(cx, cy);
+
+    glVertex3f(ax, by, 0.0f);   // Top
+    glVertex3f(bx, ay, 0.0f);   // Bottom right
+    glVertex3f(cx, ay, 0.0f);   // Bottom left
+    glEnd();
+}
+
+// For immediate mode drawing. 
+void Window::color(Color const &color)
+{
+    float r, g, b, a;
+    color.RGBAf(&r, &g, &b, &a);
+    glColor4f(r, g, b, a);
+}
+
+void Window::clearColor(Color const &color)
+{
+    d_data.clearColor = color;
+    LOG_DEBUG("Set clear color:", color);
+}
+
+void Window::transform2D(float &x, float &y) const
+{
+    x = (x - d_data.xmin) * 2.0f / (d_data.xmax - d_data.xmin) - 1.0f;
+    y = (y - d_data.ymin) * 2.0f / (d_data.ymax - d_data.ymin) - 1.0f;
+}
+
+void Window::setXlim(float const xmin, float const xmax)
+{
+    d_data.xmin = xmin; d_data.xmax = xmax;
+}
+
+void Window::setYlim(float const ymin, float const ymax)
+{
+    d_data.ymin = ymin; d_data.ymax = ymax;
+}

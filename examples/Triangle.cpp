@@ -38,13 +38,18 @@ int main()
     //                         {{-0.5f, -0.5f, 0.0f}, Colors::Grey},
     //                         {{ 0.0f, -1.0f, 0.0f}, Colors::Purple});
 
-
+    window.setXlim(-12.0f,   200.0f);
+    window.setYlim(-10.0f, 10.0f);
+    // Check if window is open.
     while (window.opened())
     {
         // Window 1. 
-        window.startScene(); // Check if window is open.
+        window.startScene(); 
         
-        window.drawArc(0.0, -1.0, 1.0, 0.0, 5.0);
+        window.color(Colors::Magenta);
+        window.drawArc({0.0, -1.0}, {1.0, 0.0});
+        window.drawTriangleUp({1.0f, 2.0f});
+        window.drawCross({10.0f, 10.0f});
 
         window.endScene(); // Renders the geometry. 
 

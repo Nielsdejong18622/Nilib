@@ -43,7 +43,15 @@ namespace Nilib
             Window *owner = nullptr;
             std::map<KeyEvent, Callback> keybindings;
 
+            // Advanced mode rendering. 
             Camera camera;
+
+            // Immediate mode rendering. 
+            float xmin = -1.0f;
+            float xmax = +1.0f;
+            
+            float ymin = -1.0f;
+            float ymax = +1.0f;
         };
 
     public:
@@ -107,10 +115,30 @@ namespace Nilib
         // Poll and handle events.
         void static update();
 
+        // Below is all for immediate mode.
+        // Calling these functions while shaders/Render exist might not give the expected result.
+        // Immediate mode 2D Draw functions.
+        
+        void setXlim(float const xmin, float const xmax);
+        void setYlim(float const ymin, float const ymax);
+
+        // Set the background color.
         void clearColor(Color const &color);
 
-        // Draw functions.
-        void drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const;
+        void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
+        void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f, unsigned int sides = 12) const;
+        void drawFilledCircle(Vec2f const &centre, float const radius = 1.0f) const;
+        void drawTriangleUp(Vec2f const &centre, float const size = 1.0f) const;
+        void drawSquare(Vec2f const &centre, float const size = 1.0f) const;
+        void drawRectangle(Vec2f const &leftup, Vec2f const &rightdown) const;
+        void drawDiamond(Vec2f const &center, float const radius = 1.0f, float const linewidth = 1.0f) const;
+        void drawCross(Vec2f const &centre, float const size = 1.0f) const;
+        void drawTriangleDown(Vec2f const &centre, float const size = 1.0f) const;
+        void color(Color const &color);
+
+    private:
+        void transform2D(float &x, float &y) const;
+        void transform2DDist(float &dist) const;
     };
 
 } // Nilib;
