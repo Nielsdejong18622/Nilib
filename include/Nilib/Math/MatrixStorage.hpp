@@ -45,7 +45,7 @@ namespace Nilib{
         size_t cols() const { return m; }
 
         type sum() const {return std::accumulate(d_data.begin(), d_data.end(), 0.0); }
-        void apply(std::function<type(type)> fun) { std::transform(d_data.begin(), d_data.end(), d_data.begin(), fun); }
+        StaticMatrixData apply(std::function<type(type)> fun) { std::transform(d_data.begin(), d_data.end(), d_data.begin(), fun); return *this; }
 
     };
 
@@ -92,7 +92,7 @@ namespace Nilib{
 
         //type sum() const {return std::accumulate(std::begin(d_data), std::end(d_data), 0.0); }
         type sum() const {return d_data.sum(); }
-        void apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); }
+        DynamicMatrixData apply(std::function<type(type)> fun) { std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun); return *this; }
 
     };
 }

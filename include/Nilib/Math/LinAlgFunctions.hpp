@@ -129,6 +129,7 @@ namespace Nilib {
         return res;        
     }
 
+
     // Distance functions between Matrices/Vectors. 
     template<typename type, float p>
     type minkowski(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
