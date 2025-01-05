@@ -9,7 +9,7 @@
 namespace Nilib
 {
 
-    // Running statistics. 
+    // Running statistics.
     // See https://www.johndcook.com/skewness_kurtosis.html
     class RunningStats
     {
@@ -17,13 +17,13 @@ namespace Nilib
         size_t d_n;
 
     public:
-        RunningStats() { reset(); } 
+        RunningStats() { reset(); }
 
-        void push(float const obs) 
+        void push(float const obs)
         {
             float delta, delta_n, delta_n2, term1;
             size_t n1 = d_n;
-            
+
             d_n++;
 
             delta = obs - M1;
@@ -41,7 +41,8 @@ namespace Nilib
             Msum += obs;
         }
 
-        void reset() {
+        void reset()
+        {
             M1 = M2 = M3 = M4 = Msum = 0;
             Mmax = std::numeric_limits<float>::min();
             Mmin = std::numeric_limits<float>::max();
@@ -49,30 +50,28 @@ namespace Nilib
         }
 
         size_t n() const { return d_n; }
-        float mean() const { return M1;}
-        float variance() const { return M2/(d_n - 1.0);}
-        float stddev() const { return std::sqrt(variance());}
-        float skewness() const { return std::sqrt(static_cast<float>(d_n)) * M3 / std::pow(M2, 1.5);}
-        float sum() const { return Msum;}
-        float min() const { return Mmin;}
-        float max() const { return Mmax;}
-        float kurtosis() const { return static_cast<float>(d_n) * M4 / (M2 * M2) - 3.0;}
+        float mean() const { return M1; }
+        float variance() const { return M2 / (d_n - 1.0); }
+        float stddev() const { return std::sqrt(variance()); }
+        float skewness() const { return std::sqrt(static_cast<float>(d_n)) * M3 / std::pow(M2, 1.5); }
+        float sum() const { return Msum; }
+        float min() const { return Mmin; }
+        float max() const { return Mmax; }
+        float kurtosis() const { return static_cast<float>(d_n) * M4 / (M2 * M2) - 3.0; }
 
-        friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats) {
-            return os << std::fixed <<std::setprecision(4)  
-                      << "Mean:" << stats.mean() 
+        friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats)
+        {
+            return os << std::fixed << std::setprecision(4)
+                      << "Mean:" << stats.mean()
                       << '(' << stats.stddev()
-                      << ") Min:" << stats.min()  
-                      << " Max:" << stats.max() 
-                      << " skew:" << stats.skewness() 
-                      << " kurtosis:" << stats.kurtosis() 
+                      << ") Min:" << stats.min()
+                      << " Max:" << stats.max()
+                      << " skew:" << stats.skewness()
+                      << " kurtosis:" << stats.kurtosis()
                       << " n:" << stats.n()
-                      << " sum:" << stats.sum(); 
+                      << " sum:" << stats.sum();
         }
     };
-
-
-
 
 } // namespace Nilib
 

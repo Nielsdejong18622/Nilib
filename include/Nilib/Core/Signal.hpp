@@ -9,10 +9,10 @@
 namespace Nilib
 {
     // Singleton.
-    class Signal 
+    class Signal
     {
         static std::atomic<bool> running;
-        Signal() 
+        Signal()
         {
             running = true;
             std::signal(SIGINT, Signal::signal_handler);
@@ -22,18 +22,19 @@ namespace Nilib
         {
             LOG_ERROR("Received signal:", signal);
             if (signal == SIGINT)
-            {   
+            {
                 running = false;
             }
         }
 
     public:
-        static Signal getInstance() { static Signal signal; return signal; }
+        static Signal getInstance()
+        {
+            static Signal signal;
+            return signal;
+        }
         static bool receivedCtrlC() { return !getInstance().running; }
-
-        
     };
-
 
 }
 

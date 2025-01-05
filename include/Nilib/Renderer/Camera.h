@@ -7,7 +7,6 @@
 namespace Nilib
 {
 
-
     struct Camera
     {
         Vec3f position = {0.0f, 0.0f, 0.0f};
@@ -26,7 +25,7 @@ namespace Nilib
         }
         void move_left()
         {
-            //position += 0.1 * Nilib::norm(direction);
+            // position += 0.1 * Nilib::norm(direction);
         }
         void move_up()
         {
@@ -35,6 +34,5 @@ namespace Nilib
     };
 
 } // namespace Nilib
-
 
 #endif

@@ -4,24 +4,25 @@
 
 #include "Nilib/ML/CNodes/CNode.h"
 
-namespace Nilib {
+namespace Nilib
+{
 
-    struct DenseLayer : public CNode {
+    struct DenseLayer : public CNode
+    {
         CNode *input = nullptr, *W = nullptr, *b = nullptr;
 
-
         DenseLayer(CNode *input, size_t neurons)
-        : input(input)
-        {    
+            : input(input)
+        {
             ASSERT(false, "Not implemented yet!");
         }
 
         DenseLayer(CNode *input, CNode *W, CNode *b)
-        : input(input), W(W), b(b)
-        {    
+            : input(input), W(W), b(b)
+        {
         }
 
-        void evaluate() 
+        void evaluate()
         {
             CORE_ASSERT(input && W && b);
             input->evaluate();
@@ -37,19 +38,18 @@ namespace Nilib {
             W->derive(transpose(input->value) * seed);
             b->derive(seed);
         }
-
     };
 
-    
-    struct DenseGraphLayer : public CNode {
+    struct DenseGraphLayer : public CNode
+    {
         CNode *A, *input, *W, *b;
 
         DenseGraphLayer(CNode *A, CNode *input, CNode *W, CNode *b)
-        : A(A), input(input), W(W), b(b)
-        {    
+            : A(A), input(input), W(W), b(b)
+        {
         }
 
-        void evaluate() 
+        void evaluate()
         {
             A->evaluate();
             input->evaluate();
@@ -65,7 +65,6 @@ namespace Nilib {
             W->derive(transpose(A->value * input->value) * seed);
             b->derive(seed);
         }
-
     };
 
 }

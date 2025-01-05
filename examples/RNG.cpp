@@ -12,10 +12,8 @@ int main()
     // Generate a number between 0-1.
     RNG::prob();
 
-
-    // Generate a lognormal number. 
+    // Generate a lognormal number.
     RNG::lognormal(2.38, 0.683);
-
     RNG::weibull(2.38, 0.683);
 
     for (size_t test = 0; test < 1; ++test)
@@ -26,7 +24,7 @@ int main()
             probstat.push(RNG::normal(0.0, 1.0));
         LOG_INFO("Observed Probs:", probstat);
     }
-    
+
     Nilib::RNG::seed(127);
 
     for (size_t test = 0; test < 1; ++test)
@@ -37,5 +35,4 @@ int main()
             probstat.push(Nilib::RNG::normal());
         LOG_INFO("Observed Probs:", probstat);
     }
-
 }

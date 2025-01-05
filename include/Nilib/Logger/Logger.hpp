@@ -4,26 +4,29 @@
 #include <iostream>
 #include "Nilib/Logger/BaseLogger.h"
 
-namespace Nilib {
+namespace Nilib
+{
 
-    enum class LogLevel {
-        Info = 0, // Default
-        Success = 2, // ON SUCCESS
+    enum class LogLevel
+    {
+        Info = 0,     // Default
+        Success = 2,  // ON SUCCESS
         Warning = 14, // WARNING
-        Error = 4, // ERROR
-        Debug = 8,//DEBUG
-        
-        Trace = 8, // Most detailed debug. 
-        Progress = 0 // To show to the end user. 
+        Error = 4,    // ERROR
+        Debug = 8,    // DEBUG
+
+        Trace = 8,   // Most detailed debug.
+        Progress = 0 // To show to the end user.
     };
 
-    // Can be derived from to support custom behaviour. 
-    class Logger : public BaseLogger {
+    // Can be derived from to support custom behaviour.
+    class Logger : public BaseLogger
+    {
     protected:
         LogLevel d_log;
         std::ostream &d_stream;
-    public:
 
+    public:
         Logger(std::ostream &stream)
             : d_stream(stream)
         {
@@ -40,24 +43,30 @@ namespace Nilib {
             return *this;
         }
 
-        Logger &output() {
+        Logger &output()
+        {
             return *this;
         }
 
         // Recursive case: Print the first argument and then recurse with the rest
         template <typename T, typename... Args>
-        void output(T&& first, Args&&... args) {
-            d_stream << first;  // Print the first argument
-            if constexpr (sizeof...(args) > 0) {  // Check if there are more arguments
-                d_stream << ' ';  // Print separator
-                output(std::forward<Args>(args)...);  // Template recurse
-            } else {
+        void output(T &&first, Args &&...args)
+        {
+            d_stream << first; // Print the first argument
+            if constexpr (sizeof...(args) > 0)
+            {                                        // Check if there are more arguments
+                d_stream << ' ';                     // Print separator
+                output(std::forward<Args>(args)...); // Template recurse
+            }
+            else
+            {
                 d_stream << '\n';
             }
         }
 
-        template<typename T>    
-        Logger &operator<<(T const &message) {
+        template <typename T>
+        Logger &operator<<(T const &message)
+        {
             (d_stream) << message;
             return *this;
         }

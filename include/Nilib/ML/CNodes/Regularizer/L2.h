@@ -5,10 +5,10 @@
 
 namespace Nilib
 {
-    struct L2: public Regularizer
+    struct L2 : public Regularizer
     {
         L2(std::initializer_list<CNode *> const &weights, Param *labda)
-        : Regularizer(weights, labda) {}
+            : Regularizer(weights, labda) {}
 
         float penalty(float t, Matrixf const &w) override { return 0.5 * t * t; }
         float penalty_deriv(float t, Matrixf const &w) override { return t; }

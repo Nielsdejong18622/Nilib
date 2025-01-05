@@ -9,7 +9,8 @@
 #include "windows.h"
 #endif
 
-namespace Nilib {
+namespace Nilib
+{
 
     // Log to file.
     class BasicFileLogger : public Logger
@@ -17,8 +18,8 @@ namespace Nilib {
         std::ofstream d_fstream;
 
     public:
-        BasicFileLogger(char const * filename)
-        :   d_fstream(filename, std::ios::out), Logger(d_fstream)
+        BasicFileLogger(char const *filename)
+            : d_fstream(filename, std::ios::out), Logger(d_fstream)
         {
         }
 
@@ -27,7 +28,7 @@ namespace Nilib {
             d_fstream.close();
         }
 
-        void insertTimestamp(LogLevel const) 
+        void insertTimestamp(LogLevel const)
         {
         }
 
@@ -36,13 +37,12 @@ namespace Nilib {
         }
     };
 
-
-    // Log to console with timestamp and color (BASIC LOGGER). 
+    // Log to console with timestamp and color (BASIC LOGGER).
     class BasicConsoleLogger : public Logger
     {
     public:
         BasicConsoleLogger(std::ostream &stream)
-        : Logger(stream)
+            : Logger(stream)
         {
         }
 
@@ -52,7 +52,7 @@ namespace Nilib {
             insertColor(LogLevel::Info);
         }
 
-        void insertTimestamp(LogLevel const ) 
+        void insertTimestamp(LogLevel const)
         {
             // Print the formatted timestamp with microseconds
             auto now = std::chrono::system_clock::now();
@@ -66,7 +66,7 @@ namespace Nilib {
             std::time_t time_t_seconds = std::chrono::system_clock::to_time_t(time_point_seconds);
 
             // Convert the std::time_t to a tm structure for formatting
-            std::tm* timeinfo = std::localtime(&time_t_seconds);
+            std::tm *timeinfo = std::localtime(&time_t_seconds);
 
             // Format the timestamp as a string
             char buffer[20];
@@ -75,33 +75,38 @@ namespace Nilib {
             d_stream << "[" << buffer << "]:"; //<< "." << mics << pad;
         }
 
-        void insertColor(LogLevel const level){
-            // Set the text color based on the platform
-            #ifdef _WIN32
-                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-            if (level != LogLevel::Info) 
-                SetConsoleTextAttribute(hConsole, static_cast<WORD>(level));       
-            else 
+        void insertColor(LogLevel const level)
+        {
+// Set the text color based on the platform
+#ifdef _WIN32
+            HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (level != LogLevel::Info)
+                SetConsoleTextAttribute(hConsole, static_cast<WORD>(level));
+            else
                 SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-            #endif
+#endif
 
-            #ifdef __linux__
+#ifdef __linux__
             switch (level)
             {
             case LogLevel::Error:
-                (*d_stream) << "\033[31m"; return;
+                (*d_stream) << "\033[31m";
+                return;
             case LogLevel::Warning:
-                (*d_stream) << "\033[33m"; return;
+                (*d_stream) << "\033[33m";
+                return;
             case LogLevel::Success:
-                (*d_stream) << "\033[32m"; return;
+                (*d_stream) << "\033[32m";
+                return;
             case LogLevel::Debug:
-                (*d_stream) << "\033[90m"; return;
+                (*d_stream) << "\033[90m";
+                return;
             default:
-                (*d_stream) << "\033[0m";  return;
+                (*d_stream) << "\033[0m";
+                return;
             }
-            #endif
+#endif
         };
-
     };
 
 }

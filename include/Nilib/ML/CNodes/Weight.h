@@ -7,7 +7,7 @@
 namespace Nilib
 {
     // Weight node.
-    struct Weight : public Input 
+    struct Weight : public Input
     {
         Weight(size_t n, size_t m);
     };

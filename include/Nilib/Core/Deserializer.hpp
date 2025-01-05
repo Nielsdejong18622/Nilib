@@ -9,11 +9,11 @@
 
 #include "Nilib/Logger/Log.hpp"
 
-class Deserializer 
+class Deserializer
 {
     std::ifstream file;
-public:
 
+public:
     explicit Deserializer(std::string const &filename)
     {
         file.open(filename, std::ios::binary | std::ios::in);
@@ -25,7 +25,8 @@ public:
 
     void close()
     {
-        if (file.is_open()) {
+        if (file.is_open())
+        {
             file.close();
         }
     }
@@ -40,8 +41,9 @@ public:
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.read(reinterpret_cast<char *>(&data), sizeof(T));
-        if (!file) {
-           std::cerr << "Error: Failed to read Raw data from file." << std::endl;
+        if (!file)
+        {
+            std::cerr << "Error: Failed to read Raw data from file." << std::endl;
         }
         return !file;
     }
@@ -57,28 +59,31 @@ public:
         {
             data.deserialize(*this);
         }
-        if (!file) {
-           LOG_ERROR() << "Error: Failed to read Object data from file.\n";
+        if (!file)
+        {
+            LOG_ERROR() << "Error: Failed to read Object data from file.\n";
         }
         return !file;
     }
 
-    // Read a string from stream. 
+    // Read a string from stream.
     bool readString(std::string &data)
     {
         size_t length = 0;
-        file.read(reinterpret_cast<char*>(&length), sizeof(length));
+        file.read(reinterpret_cast<char *>(&length), sizeof(length));
         data.resize(length);
         file.read(&data[0], length);
-        if (!file) {
-           LOG_ERROR() << "Error: Failed to read String data from file.\n";
+        if (!file)
+        {
+            LOG_ERROR() << "Error: Failed to read String data from file.\n";
         }
         return !file;
     }
 
     // Specialization for std::vector<T>
     template <typename T>
-    bool readVector(std::vector<T> &vec) {
+    bool readVector(std::vector<T> &vec)
+    {
         // Read the size of the vector
         size_t size;
         readRaw(size);
@@ -87,16 +92,21 @@ public:
         vec.resize(size);
 
         // If trivially copyable, read the entire data block at once
-        if constexpr (std::is_trivially_copyable<T>::value) {
-            file.read(reinterpret_cast<char*>(vec.data()), size * sizeof(T));
-        } else {
+        if constexpr (std::is_trivially_copyable<T>::value)
+        {
+            file.read(reinterpret_cast<char *>(vec.data()), size * sizeof(T));
+        }
+        else
+        {
             // For non-trivially copyable types, deserialize each element
-            for (auto& element : vec) {
+            for (auto &element : vec)
+            {
                 readObject(element);
             }
         }
-        if (!file) {
-           LOG_ERROR() << "Error: Failed to read Vector data from file.\n";
+        if (!file)
+        {
+            LOG_ERROR() << "Error: Failed to read Vector data from file.\n";
         }
         return !file;
     }
@@ -105,7 +115,7 @@ public:
     /*
     // Read data from a binary file
     template <typename T>
-    static bool read(T& data, std::string const &filename) 
+    static bool read(T& data, std::string const &filename)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Data type must be trivially copyable!");
 
@@ -117,7 +127,7 @@ public:
 
         file.read(reinterpret_cast<char*>(&data), sizeof(T));
         file.close();
-        return true; 
+        return true;
     }
 
     // Specialization for std::string

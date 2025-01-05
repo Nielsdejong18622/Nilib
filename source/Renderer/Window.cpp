@@ -1,30 +1,30 @@
-//Own headers
+// Own headers
 #include "Nilib/Renderer/Window.hpp"
 
 using namespace Nilib;
 
 size_t Window::s_windowsactive = 0;
 
-
-Window::Window(size_t width, 
-               size_t height, 
-               char const *title, 
-               size_t minwidth, 
-               size_t minheight, 
-               bool fullscreen, 
-               bool decorated, 
+Window::Window(size_t width,
+               size_t height,
+               char const *title,
+               size_t minwidth,
+               size_t minheight,
+               bool fullscreen,
+               bool decorated,
                bool resizeable)
 {
     /* Initialize the glfw library */
-    if (!glfwInit()) 
+    if (!glfwInit())
         throw std::runtime_error("Failed to initialize the GLFW libary!");
 
     // If this is the first active window.
-    if (s_windowsactive == 0) {
+    if (s_windowsactive == 0)
+    {
         int major, minor, rev;
         glfwGetVersion(&major, &minor, &rev);
-        LOG_INFO() << "Initialized GLFW version " << major << '.' <<  minor << '.' << rev << ".\n";
-        
+        LOG_INFO() << "Initialized GLFW version " << major << '.' << minor << '.' << rev << ".\n";
+
         glfwSetErrorCallback(Window::error_callback);
     }
 
@@ -42,13 +42,13 @@ Window::Window(size_t width,
 
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     GLFWvidmode const *mode = glfwGetVideoMode(monitor);
-    
+
     glfwWindowHint(GLFW_SAMPLES, 4); // Enable Multisampling.
     glfwWindowHint(GLFW_RED_BITS, mode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    
+
     if (fullscreen)
         d_window = glfwCreateWindow(mode->width, mode->height, d_data.title, monitor, nullptr);
     else
@@ -65,9 +65,10 @@ Window::Window(size_t width,
 
     // Render parameters.
     glfwMakeContextCurrent(d_window);
-    
+
     // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         LOG_ERROR("GLAD initialization failed!");
         return;
     }
@@ -75,34 +76,34 @@ Window::Window(size_t width,
     Window::s_windowsactive++;
     LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
 }
-    
 
-Window::Window(size_t width, size_t height, char const *title) 
-: Window(width, height, title, width, height, false, true, true)
-{    
+Window::Window(size_t width, size_t height, char const *title)
+    : Window(width, height, title, width, height, false, true, true)
+{
 }
 
 // Utility function.
 Window &Window::windowFromPtr(GLFWwindow *window)
 {
-    return *reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+    return *reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
 }
 
 char const *Window::title() const
 {
-    return d_data.title; 
+    return d_data.title;
 }
 
-void Window::title(char const *title) const{
+void Window::title(char const *title) const
+{
     glfwSetWindowTitle(d_window, title);
 }
 
 void Window::setCallbacks() const
 {
-    // Callbacks. 
-    //glfwSetCharCallback()
-    //glfwSetCharModsCallback();
-    //glfwSetJoystickCallback();
+    // Callbacks.
+    // glfwSetCharCallback()
+    // glfwSetCharModsCallback();
+    // glfwSetJoystickCallback();
     glfwSetKeyCallback(d_window, Window::key_callback);
     glfwSetDropCallback(d_window, Window::drop_callback);
     glfwSetScrollCallback(d_window, Window::scroll_callback);
@@ -119,18 +120,20 @@ void Window::setCallbacks() const
     glfwSetWindowContentScaleCallback(d_window, Window::windowContentScale_callback);
 }
 
-void Window::framebuffer_size_callback(GLFWwindow*, int width, int height){ 
+void Window::framebuffer_size_callback(GLFWwindow *, int width, int height)
+{
     LOG_DEBUG("[WEVENT] Resizing framebuffer ", width, 'x', height);
     glViewport(0, 0, width, height);
 };
 
-void Window::drop_callback(GLFWwindow* window, int path_count, const char* paths[])
+void Window::drop_callback(GLFWwindow *window, int path_count, const char *paths[])
 {
     LOG_INFO("[WEVENT] Window", window, "dropping", path_count, "files");
     for (int path = 0; path < path_count; ++path)
-        LOG_DEBUG(paths[path]);    
+        LOG_DEBUG(paths[path]);
 };
-void Window::error_callback(int code, char const*description) {
+void Window::error_callback(int code, char const *description)
+{
     LOG_ERROR("[WEVENT] Error ", code, description);
 }
 void Window::windowClose_callback(GLFWwindow *window)
@@ -183,34 +186,35 @@ void Window::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
     LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "scroll:", xoffset, yoffset);
 }
 
-void Window::cursorPos_callback(GLFWwindow* window, double xpos, double ypos)
+void Window::cursorPos_callback(GLFWwindow *window, double xpos, double ypos)
 {
     LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
 }
 
-void Window::open() 
+void Window::open()
 {
     CORE_ASSERT(d_window);
     // If already open.
-    if (!glfwWindowShouldClose(d_window)) {
+    if (!glfwWindowShouldClose(d_window))
+    {
         LOG_WARNING("Window", title(), "already open!");
         return;
     }
 
-    // If window already exists but is hidden. 
+    // If window already exists but is hidden.
     glfwSetWindowShouldClose(d_window, GLFW_FALSE);
     glfwShowWindow(d_window);
     LOG_DEBUG("Showing window", title());
 };
 
-
-
-Window::~Window() {
+Window::~Window()
+{
     CORE_ASSERT(d_window);
     glfwDestroyWindow(d_window);
     LOG_DEBUG("Window", title(), "destructed!");
     d_window = nullptr;
-    if (--Window::s_windowsactive == 0) {
+    if (--Window::s_windowsactive == 0)
+    {
         glfwTerminate();
         LOG_DEBUG("Destructed GLFW library");
     }
@@ -221,13 +225,16 @@ void Window::clearColor(Color const &color)
     LOG_DEBUG("Setting clear color:", color);
     d_data.clearColor = color;
 }
-void Window::requestAttention() const {
+void Window::requestAttention() const
+{
     ASSERT(d_window, "Window not init!");
     glfwRequestWindowAttention(d_window);
 }
 
-void Window::startScene() {
-    if (!d_window || glfwWindowShouldClose(d_window)) {
+void Window::startScene()
+{
+    if (!d_window || glfwWindowShouldClose(d_window))
+    {
         LOG_WARNING("Starting scene on unopened Window", title());
         return;
     }
@@ -240,27 +247,31 @@ void Window::startScene() {
     glClearColor(R, G, B, A);
 };
 
-void Window::endScene() {
+void Window::endScene()
+{
     glfwSwapBuffers(d_window);
 };
 
-void Window::updateidletasks() {
+void Window::updateidletasks()
+{
     glfwWaitEvents();
 };
 
-void Window::update() {
+void Window::update()
+{
     glfwPollEvents();
 };
 
-void Window::close() {
-    //if (glfwWindowShouldClose(d_window)) return;
+void Window::close()
+{
+    // if (glfwWindowShouldClose(d_window)) return;
     glfwSetWindowShouldClose(d_window, GLFW_TRUE);
     glfwHideWindow(d_window);
     LOG_DEBUG() << "Closed window.\n";
 };
 
-
-bool Window::opened() const {
+bool Window::opened() const
+{
     return !glfwWindowShouldClose(d_window);
 };
 
@@ -272,20 +283,20 @@ void Window::bindkey(Callback const &bindfun, int key)
 
 void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
 {
-    if (!glfwInit()) { 
+    if (!glfwInit())
+    {
         LOG_ERROR("Binding key while GLFW is not initialized!");
         return;
     }
-    // Convert scancode to non-platform specific.   
+    // Convert scancode to non-platform specific.
     int scancode = glfwGetKeyScancode(key);
     LOG_DEBUG("[WEVENT] Binding key", key, "scancode", scancode, "mods", mods);
     KeyEvent keyevent = {key, scancode, action, mods};
     d_data.keybindings[keyevent] = bindfun;
 }
 
-
-// Required function by the glfw render library. Handles user key input. 
-void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+// Required function by the glfw render library. Handles user key input.
+void Window::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     Window &win = Window::windowFromPtr(window);
     std::array<char const *, 3> const actionnames = {"release", "press", "hold"};
@@ -294,12 +305,10 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
     // Look in the keymap for the key Callback and call it.
     KeyEvent keyev = {key, scancode, action, mods};
     std::map<KeyEvent, Callback> keymap = win.d_data.keybindings;
-    if (keymap.find(keyev) != keymap.end()) 
+    if (keymap.find(keyev) != keymap.end())
         win.d_data.keybindings.at(keyev)();
 };
 
+void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const {
 
-void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const
-{
-    
 };

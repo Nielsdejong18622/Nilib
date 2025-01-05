@@ -16,7 +16,6 @@
 #include "Nilib/ML/Cnodes/Loss/MSE.h"
 #include "Nilib/ML/Cnodes/Regularizer/L2.h"
 
-
 namespace Nilib
 {
     class MLP : public Model
@@ -40,6 +39,5 @@ namespace Nilib
         MLP(MLP const &other);
     };
 } // namespace Nilib
-
 
 #endif

@@ -5,19 +5,21 @@
 int main()
 {
     // Initialize GLFW
-    if (!glfwInit()) {
+    if (!glfwInit())
+    {
         std::cerr << "Failed to initialize GLFW!" << std::endl;
         return -1;
     }
 
     // Get and print GLFW version
-    const char* glfwVersion = glfwGetVersionString();
+    const char *glfwVersion = glfwGetVersionString();
     std::cout << "GLFW Version: " << glfwVersion << std::endl;
 
     // Gurobi: Initialize and print version information
-    try {
+    try
+    {
         GRBEnv env = GRBEnv(true); // Create a Gurobi environment
-        env.start(); // Start the environment
+        env.start();               // Start the environment
 
         // Get Gurobi version
         int major, minor, patch;
@@ -25,7 +27,8 @@ int main()
 
         std::cout << "Gurobi Version: " << major << "." << minor << "." << patch << std::endl;
     }
-    catch (GRBException& e) {
+    catch (GRBException &e)
+    {
         std::cerr << "Error code " << e.getErrorCode() << ": " << e.getMessage() << std::endl;
         return -1;
     }
@@ -33,6 +36,5 @@ int main()
     // Clean up and exit
     glfwTerminate();
 
-    
     return 0;
 }

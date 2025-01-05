@@ -4,17 +4,15 @@
 #include <vector>
 #include "Simulation/State.h"
 
-struct PartialRoute 
+struct PartialRoute
 {
 
     PartialRoute(std::vector<LocationID> const candidates, Coord const cost)
-        : candidates(candidates), cost(cost)
-    {
-    };
+        : candidates(candidates), cost(cost) {
+          };
 
     std::vector<LocationID> const candidates;
     Coord const cost;
 };
-
 
 #endif

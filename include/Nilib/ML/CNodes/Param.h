@@ -3,14 +3,14 @@
 
 #include "Nilib/ML/CNodes/Input.h"
 
-namespace Nilib {
-    
-    // Input CNode. 
-    struct Param: public Input 
+namespace Nilib
+{
+
+    // Input CNode.
+    struct Param : public Input
     {
         Param(float value);
     };
 }
-
 
 #endif

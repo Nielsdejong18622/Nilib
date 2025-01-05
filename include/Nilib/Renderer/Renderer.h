@@ -9,20 +9,19 @@ namespace Nilib
     class Renderer
     {
 
-        
     public:
-        struct TriangleVertex 
+        struct TriangleVertex
         {
             Vec3f position;
             Vec4f color;
-            // Texture coordinate. 
+            // Texture coordinate.
         };
 
         Renderer();
         ~Renderer();
 
-        // Adds the triangle to the triangle vertex array. 
-        //void drawSimpleTriangle(Vec3f position, Vec4f color);
+        // Adds the triangle to the triangle vertex array.
+        // void drawSimpleTriangle(Vec3f position, Vec4f color);
         void submitTriangle(TriangleVertex const &v1, TriangleVertex const &v2, TriangleVertex const &v3);
 
         void bindTriangles() const;
@@ -30,7 +29,7 @@ namespace Nilib
         void drawCalls();
 
     private:
-        // For bound detection. 
+        // For bound detection.
         RunningStats submitted_x, submitted_y, submitted_z;
 
         static size_t const maxTriangles = 128;
@@ -38,11 +37,7 @@ namespace Nilib
         TriangleVertex triangle_vertices[maxTriangles];
 
         unsigned int VBO_triangles, VAO_triangles;
-
-        
     };
 } // namespace Nilib
-
-
 
 #endif

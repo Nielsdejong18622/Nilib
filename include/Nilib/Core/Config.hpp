@@ -15,117 +15,137 @@ public:
     class Proxy
     {
     public:
-        Proxy(Config* config, key_t section)
+        Proxy(Config *config, key_t section)
             : config(config), section(std::move(section)) {}
 
-        Proxy operator[](key_t key) {
+        Proxy operator[](key_t key)
+        {
             this->key = std::move(key);
             return *this;
         }
 
-        template<typename T>
-        operator T() const {
+        template <typename T>
+        operator T() const
+        {
             ASSERT(config->d_map.contains(section), std::format("Section {} does not exist in Configfile!", section))
             ASSERT(config->d_map[section].contains(key), std::format("Key {} does not exist in Configfile!", key))
-            const auto& value = config->d_map.at(section).at(key);
+            const auto &value = config->d_map.at(section).at(key);
             return std::get<T>(value);
         }
 
-        template<typename T>
-        Proxy& operator=(T&& value) {
+        template <typename T>
+        Proxy &operator=(T &&value)
+        {
             config->d_map[section][key] = std::forward<T>(value);
             return *this;
         }
 
         // Overload the << operator
-        friend std::ostream& operator<<(std::ostream& os, const Proxy& proxy) {
-            const auto& value = proxy.config->d_map.at(proxy.section).at(proxy.key);
-            std::visit([&os](auto&& arg) { os << arg; }, value);
+        friend std::ostream &operator<<(std::ostream &os, const Proxy &proxy)
+        {
+            const auto &value = proxy.config->d_map.at(proxy.section).at(proxy.key);
+            std::visit([&os](auto &&arg)
+                       { os << arg; }, value);
             return os;
         }
 
     private:
-        Config* config;
+        Config *config;
         key_t section;
         key_t key;
     };
 
-    Proxy operator[](const key_t& section) {
+    Proxy operator[](const key_t &section)
+    {
         if (d_map.find(section) == d_map.end())
             d_map[section] = {};
         return Proxy(this, section);
     }
 
-    // Display all config fields. 
-    void display() const {
+    // Display all config fields.
+    void display() const
+    {
         LOG_INFO() << "Configuration " << this << "-----\n";
-        for (auto &[sec, v]  : d_map)
+        for (auto &[sec, v] : d_map)
         {
             LOG_INFO() << "----- " << sec << " -----:\n";
-            for (auto &[key, value] : v) 
-            {    
-                std::visit([&key, &sec, this](auto&& arg) { LOG_INFO() << "\t" << sec << '.' << key << "=" << arg << '\n'; ; }, value);
+            for (auto &[key, value] : v)
+            {
+                std::visit([&key, &sec, this](auto &&arg)
+                           { LOG_INFO() << "\t" << sec << '.' << key << "=" << arg << '\n'; ; }, value);
             }
         }
-        
     }
 
 private:
     std::unordered_map<key_t, std::unordered_map<key_t, value_t>> d_map;
 };
 
-
-
-class ConfigFileParser 
+class ConfigFileParser
 {
 
 public:
-
-
-    static Config parse_from_ini(std::string const &filename) {
+    static Config parse_from_ini(std::string const &filename)
+    {
         LOG_INFO() << "Parsing ini file " << filename << " for config.\n";
 
         Config config;
         std::ifstream file(filename);
-        if (!file.is_open()) {
+        if (!file.is_open())
+        {
             LOG_WARNING() << "Could not open file: " << filename << '\n';
             return config;
         }
 
         std::string line;
         std::string currentSection{"Global"};
-        while (std::getline(file, line)) {
+        while (std::getline(file, line))
+        {
             line = trim(line);
 
-            if (line.empty() || line[0] == ';' || line[0] == '#') {
+            if (line.empty() || line[0] == ';' || line[0] == '#')
+            {
                 continue;
             }
-            if (line.front() == '[' && line.back() == ']') {
+            if (line.front() == '[' && line.back() == ']')
+            {
                 currentSection = line.substr(1, line.size() - 2);
-            } else {
+            }
+            else
+            {
                 size_t equalsPos = line.find('=');
-                if (equalsPos != std::string::npos) {
+                if (equalsPos != std::string::npos)
+                {
                     std::string key = trim(line.substr(0, equalsPos));
                     std::string valueStr = trim(line.substr(equalsPos + 1));
                     Config::value_t value;
 
                     // Automatic type deduction
-                    if (is_bool(valueStr)){
+                    if (is_bool(valueStr))
+                    {
                         std::string lowerStr = valueStr;
                         std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
                         value = (lowerStr == "true") ? true : false;
-                        //LOG_DEBUG() << "Parsing bool " << currentSection << '.' << key << '=' << valueStr << '\n';
-                    } else if (is_uint(valueStr)) {
+                        // LOG_DEBUG() << "Parsing bool " << currentSection << '.' << key << '=' << valueStr << '\n';
+                    }
+                    else if (is_uint(valueStr))
+                    {
                         value = std::stoull(valueStr);
-                        //LOG_DEBUG() << "Parsing size_t " << currentSection << '.' << key << '=' << valueStr << '\n';
-                    } else if (is_int(valueStr)) {
+                        // LOG_DEBUG() << "Parsing size_t " << currentSection << '.' << key << '=' << valueStr << '\n';
+                    }
+                    else if (is_int(valueStr))
+                    {
                         value = std::stoi(valueStr);
-                        //LOG_DEBUG() << "Parsing int " << currentSection << '.' << key << '=' << valueStr << '\n';
-                    } else if (is_float(valueStr)) {
+                        // LOG_DEBUG() << "Parsing int " << currentSection << '.' << key << '=' << valueStr << '\n';
+                    }
+                    else if (is_float(valueStr))
+                    {
                         value = std::stof(valueStr);
-                        //LOG_DEBUG() << "Parsing float " << currentSection << '.' << key << '=' << valueStr << '\n';
-                    } else{
-                        //LOG_DEBUG() << "Parsing str " << currentSection << '.' << key << '=' << valueStr << '\n';
+                        // LOG_DEBUG() << "Parsing float " << currentSection << '.' << key << '=' << valueStr << '\n';
+                    }
+                    else
+                    {
+                        // LOG_DEBUG() << "Parsing str " << currentSection << '.' << key << '=' << valueStr << '\n';
                         value = valueStr;
                     }
                     config[currentSection][key] = value;
@@ -136,30 +156,34 @@ public:
     }
 
 private:
-
-    static std::string trim(std::string const &str) {
+    static std::string trim(std::string const &str)
+    {
         size_t first = str.find_first_not_of(" \t");
         size_t last = str.find_last_not_of(" \t");
         return (first == std::string::npos || last == std::string::npos) ? "" : str.substr(first, last - first + 1);
     }
-    static bool is_uint(std::string const &str) {
-        char* end = nullptr;
+    static bool is_uint(std::string const &str)
+    {
+        char *end = nullptr;
         long val = std::strtoull(str.c_str(), &end, 10);
         return end != str.c_str() && *end == '\0' && val <= INT_MAX && val >= INT_MIN;
     }
-    static bool is_int(std::string const &str) {
-        char* end = nullptr;
+    static bool is_int(std::string const &str)
+    {
+        char *end = nullptr;
         long val = std::strtol(str.c_str(), &end, 10);
         return end != str.c_str() && *end == '\0' && val <= INT_MAX && val >= INT_MIN;
     }
-    static bool is_bool(std::string const &str) {
+    static bool is_bool(std::string const &str)
+    {
         std::string lowerStr = str;
         std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
         return (lowerStr == "true" || lowerStr == "false");
     }
 
-    static bool is_float(std::string const &str) {
-        char* end = nullptr;
+    static bool is_float(std::string const &str)
+    {
+        char *end = nullptr;
         std::strtof(str.c_str(), &end);
         return end != str.c_str() && *end == '\0';
     }

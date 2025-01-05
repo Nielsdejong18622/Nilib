@@ -3,14 +3,13 @@
 
 namespace Nilib
 {
-    // Target CNode. 
-    struct Target: public Input 
+    // Target CNode.
+    struct Target : public Input
     {
         Matrixf partial;
         Target() = default;
         Target(Matrixf const &value);
     };
 }
-
 
 #endif

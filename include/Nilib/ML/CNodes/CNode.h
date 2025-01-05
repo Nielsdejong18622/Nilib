@@ -6,9 +6,11 @@
 #ifndef _CNODE_H
 #define _CNODE_H
 
-namespace Nilib {
+namespace Nilib
+{
 
-    struct CNode {
+    struct CNode
+    {
         Nilib::Matrixf value;
 
         virtual ~CNode() {};
@@ -22,6 +24,3 @@ namespace Nilib {
 }
 
 #endif
-
-
-

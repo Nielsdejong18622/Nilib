@@ -8,7 +8,7 @@ namespace Nilib
 {
     // A ML supervised dataset.
     struct MLData
-    {  
+    {
         std::vector<Matrixf> X;
         std::vector<Matrixf> Y;
         // Elements [0, training_end) are for training.
@@ -18,9 +18,9 @@ namespace Nilib
         // Elements [validation_end, obs()) are for testing.
 
         size_t obs() { return X.size(); };
-        size_t train_obs() {return training_end; }
-        size_t valid_obs() {return validation_end - training_end; }
-        size_t test_obs() {return obs() - validation_end; }
+        size_t train_obs() { return training_end; }
+        size_t valid_obs() { return validation_end - training_end; }
+        size_t test_obs() { return obs() - validation_end; }
 
         // Add some noise to the dataset.
         // void addYNoise(float p);
@@ -35,7 +35,6 @@ namespace Nilib
         static MLData XOR();
 
         static MLData CIRCLE(size_t ntrain_points);
-
 
         // Dimensions of the data.
         size_t Xrows() const { return X.front().rows(); }
@@ -53,7 +52,7 @@ namespace Nilib
 
         void shuffle(size_t low, size_t hgih);
     };
-    
+
 } // namespace Nilib
 
 #endif
