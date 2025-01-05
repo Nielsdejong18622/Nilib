@@ -12,6 +12,12 @@ int main()
     // Generate a number between 0-1.
     RNG::prob();
 
+
+    // Generate a lognormal number. 
+    RNG::lognormal(2.38, 0.683);
+
+    RNG::weibull(2.38, 0.683);
+
     for (size_t test = 0; test < 1; ++test)
     {
         PROFILE_SCOPE("Testing probs");

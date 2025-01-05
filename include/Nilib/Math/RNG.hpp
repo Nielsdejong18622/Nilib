@@ -79,6 +79,21 @@ namespace Nilib {
             return sum;
         }
 
+        template<typename scalar = float>
+        static scalar lognormal(scalar const mean, scalar const var)
+        {
+            // TODO: Check lognormal!
+            return std::log(normal(mean, var));
+        }
+
+        
+        template<typename scalar = float>
+        static scalar weibull(scalar const scale, scalar const shape)
+        {
+            // TODO: Check weibull!
+            return scale * std::pow(-1 * std::log(1 - RNG::prob()), 1.0f / shape);
+        }
+
     };
 
 }
