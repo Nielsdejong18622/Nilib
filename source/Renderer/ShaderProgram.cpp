@@ -2,6 +2,7 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
 
+#include "Glad/glad.h"
 #include <GLFW/glfw3.h>
 
 using namespace Nilib;
@@ -25,10 +26,17 @@ ShaderProgram::~ShaderProgram()
 }
 
 // Function to compile shaders
-unsigned int ShaderProgram::compileShader(GLenum shaderType, const char *shaderSource)
+unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *shaderSource)
 {
     LOG_DEBUG("Compiling", ((shaderType == 0x8B31) ? "VertexShader" : "FragmentShader"));
     ASSERT(glfwGetCurrentContext(), "No associated GLAD context!");
+    
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        LOG_ERROR("GLAD initialization failed!");
+        return 0;
+    }
 
     unsigned int shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &shaderSource, nullptr);

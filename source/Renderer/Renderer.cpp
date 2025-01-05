@@ -1,11 +1,18 @@
-#include "Nilib/Renderer/Renderer.h"
-
 #include "GLAD/glad.h"
+
+#include "Nilib/Renderer/Renderer.h"
 
 using namespace Nilib;
 
 Renderer::Renderer()
 {
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        LOG_ERROR("GLAD initialization failed!");
+        throw std::exception();
+    }
+
     // Enable COLOR blending.     
     glEnable(GL_BLEND);  
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -39,9 +46,18 @@ void Renderer::drawCalls()
 }
 
 // Bind triangle Buffer.
-void Renderer::bindTriangles() const
+void Renderer::endScene() const
 {
 
+}
+
+void Renderer::startScene(Window const &window) const
+{
+    float R, G, B, A;
+    window.d_data.clearColor.RGBAf(&R, &G, &B, &A);
+    
+    glClearColor(R, G, B, A);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 

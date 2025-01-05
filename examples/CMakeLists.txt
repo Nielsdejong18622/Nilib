@@ -1,6 +1,7 @@
 # Define the example executables
 add_executable(NeuralNet_XOR NeuralNet_XOR.cpp)
 add_executable(Triangle Triangle.cpp)
+add_executable(AdvancedTriangle AdvancedTriangle.cpp)
 add_executable(Graph Graph.cpp)
 add_executable(Profiler Profiler.cpp)
 add_executable(Logger Logger.cpp)
@@ -14,6 +15,7 @@ target_compile_options(ComputationalGraph PRIVATE -Wextra -Ofast)
 
 # Link the static library to the example executable
 target_link_libraries(Triangle PUBLIC Nilib)
+target_link_libraries(AdvancedTriangle PUBLIC Nilib)
 target_link_libraries(NeuralNet_XOR PUBLIC Nilib)
 target_link_libraries(Graph PUBLIC Nilib)
 target_link_libraries(Profiler PUBLIC Nilib)

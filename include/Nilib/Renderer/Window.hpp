@@ -16,7 +16,6 @@
 #include <functional>
 
 // In this order!
-#include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Nilib/Logger/Log.hpp"
@@ -54,6 +53,7 @@ namespace Nilib
 
     class Window
     {
+        friend class Renderer;
     public:
         Window(size_t width, size_t height, char const *title);
         Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool, bool decorated, bool resizeable);

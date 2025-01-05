@@ -66,13 +66,6 @@ Window::Window(size_t width,
     // Render parameters.
     glfwMakeContextCurrent(d_window);
 
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        LOG_ERROR("GLAD initialization failed!");
-        return;
-    }
-
     Window::s_windowsactive++;
     LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
 }
@@ -222,8 +215,8 @@ Window::~Window()
 
 void Window::clearColor(Color const &color)
 {
-    LOG_DEBUG("Setting clear color:", color);
     d_data.clearColor = color;
+    LOG_DEBUG("Set clear color:", color);
 }
 void Window::requestAttention() const
 {
@@ -239,11 +232,13 @@ void Window::startScene()
         return;
     }
     glfwMakeContextCurrent(d_window);
-    glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapInterval(1);
 
+    // // Renderer. 
     float R, G, B, A;
     d_data.clearColor.RGBAf(&R, &G, &B, &A);
+    glClear(GL_COLOR_BUFFER_BIT);
+    LOG_DEBUG("Starting Renderering scene!");
     glClearColor(R, G, B, A);
 };
 

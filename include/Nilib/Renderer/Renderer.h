@@ -3,6 +3,7 @@
 
 #include "Nilib/Math/Matrix.hpp"
 #include "Nilib/Math/Stats.hpp"
+#include "Nilib/Renderer/Window.hpp"
 
 namespace Nilib
 {
@@ -24,7 +25,8 @@ namespace Nilib
         // void drawSimpleTriangle(Vec3f position, Vec4f color);
         void submitTriangle(TriangleVertex const &v1, TriangleVertex const &v2, TriangleVertex const &v3);
 
-        void bindTriangles() const;
+        void startScene(Window const &window) const;
+        void endScene() const;
 
         void drawCalls();
 
