@@ -1,22 +1,11 @@
-/*
- * Barebones window class. Bind keybindings, Plot some shapes.
- * Non-resizable.
- * Name is given.
- * Old opengl.
- */
 #ifndef _WINDOW_H
 #define _WINDOW_H
 #pragma once
 
 // External headers.
-#include <exception>
-#include <string>
-#include <cmath>
-#include <map>
-#include <functional>
-
-// In this order!
 #include <GLFW/glfw3.h>
+
+#include <map>
 
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Renderer/Color.h"
@@ -27,33 +16,36 @@
 namespace Nilib
 {
 
-    // Typedefs.
-    typedef std::function<void(void)> Callback;
-    typedef std::tuple<int, int, int, int> KeyEvent;
-
-    class Window;
-
-    struct Windowdata
-    {
-        int width = 800;
-        int height = 800;
-        int screenposx = 0;
-        int screenposy = 0;
-        // size_t framebufx;
-        // size_t framebufy;
-        int minwidth = 0;
-        int minheight = 0;
-        Color clearColor;
-        char const *title;
-        Window *owner = nullptr;
-        std::map<KeyEvent, Callback> keybindings;
-
-        Camera camera;
-    };
-
+    /*
+     * Barebones window class. Bind keybindings, Plot some shapes.
+     * Non-resizable.
+     * Name is given.
+     * Immediate mode opengl.
+     */
     class Window
     {
-        friend class Renderer;
+        // Typedefs.
+        typedef std::function<void(void)> Callback;
+        typedef std::tuple<int, int, int, int> KeyEvent;
+
+        struct Windowdata
+        {
+            int width = 800;
+            int height = 800;
+            int screenposx = 0;
+            int screenposy = 0;
+            // size_t framebufx;
+            // size_t framebufy;
+            int minwidth = 0;
+            int minheight = 0;
+            Color clearColor;
+            char const *title;
+            Window *owner = nullptr;
+            std::map<KeyEvent, Callback> keybindings;
+
+            Camera camera;
+        };
+
     public:
         Window(size_t width, size_t height, char const *title);
         Window(size_t width, size_t height, char const *title, size_t minwidth, size_t minheight, bool, bool decorated, bool resizeable);

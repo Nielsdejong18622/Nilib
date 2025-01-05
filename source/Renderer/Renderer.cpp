@@ -53,11 +53,7 @@ void Renderer::endScene() const
 
 void Renderer::startScene(Window const &window) const
 {
-    float R, G, B, A;
-    window.d_data.clearColor.RGBAf(&R, &G, &B, &A);
     
-    glClearColor(R, G, B, A);
-    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 

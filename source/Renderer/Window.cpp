@@ -238,7 +238,6 @@ void Window::startScene()
     float R, G, B, A;
     d_data.clearColor.RGBAf(&R, &G, &B, &A);
     glClear(GL_COLOR_BUFFER_BIT);
-    LOG_DEBUG("Starting Renderering scene!");
     glClearColor(R, G, B, A);
 };
 
@@ -304,6 +303,14 @@ void Window::key_callback(GLFWwindow *window, int key, int scancode, int action,
         win.d_data.keybindings.at(keyev)();
 };
 
-void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const {
-
+void Window::drawArc(float const x1, float const y1, float const x2, float const y2, float const linewidth) const 
+{
+    // Line segment from this to adjacent. 
+    glLineWidth(linewidth);
+    glBegin(GL_LINES);
+	glVertex3f(x1, y1, 0.0f);
+	glVertex3f(x2, y2, 0.0f);
+	glVertex3f(x1, y1, 0.0f);
+	glVertex3f(x2, y2, 0.0f);
+    glEnd();
 };
