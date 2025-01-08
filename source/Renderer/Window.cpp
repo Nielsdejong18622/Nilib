@@ -311,8 +311,8 @@ void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) cons
     
     transform2D(ax, ay);
     transform2D(bx, by);
-    glVertex3f(A.x(), A.y(), 0.0f);
-    glVertex3f(B.x(), B.y(), 0.0f);
+    glVertex3f(ax, ay, 0.0f);
+    glVertex3f(bx, by, 0.0f);
     glEnd();
 }
 

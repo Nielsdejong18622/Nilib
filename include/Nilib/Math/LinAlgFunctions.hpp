@@ -203,6 +203,13 @@ namespace Nilib
             .sum();
     }
 
+    // Normalize vector.
+    template<typename type>
+    Matrix<type> normalize(Matrix<type> const &A)
+    {
+        auto tmp = A;
+        return tmp / A.sum();
+    }
 
 }
 #endif
