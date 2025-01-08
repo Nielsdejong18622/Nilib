@@ -125,6 +125,7 @@ namespace Nilib
         // Set the background color.
         void clearColor(Color const &color);
 
+
         void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
         void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f, unsigned int sides = 12) const;
         void drawFilledCircle(Vec2f const &centre, float const radius = 1.0f) const;
@@ -135,6 +136,7 @@ namespace Nilib
         void drawCross(Vec2f const &centre, float const size = 1.0f) const;
         void drawTriangleDown(Vec2f const &centre, float const size = 1.0f) const;
         void color(Color const &color);
+        
 
     private:
         void transform2D(float &x, float &y) const;

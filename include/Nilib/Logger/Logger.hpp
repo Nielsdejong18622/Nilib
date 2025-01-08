@@ -64,6 +64,11 @@ namespace Nilib
             }
         }
 
+        void flush()
+        {
+            d_stream.flush();
+        }
+
         template <typename T>
         Logger &operator<<(T const &message)
         {

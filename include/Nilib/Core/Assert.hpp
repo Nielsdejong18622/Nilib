@@ -8,16 +8,16 @@ namespace Nilib
 {
 
 #ifndef ISABLE_ASSERT
-#define ASSERT(condition, message)                                                \
-    {                                                                             \
-        if (!(condition))                                                         \
-        {                                                                         \
-            LOG_ERROR() << "Assertion failed: (" << #condition << ") " << message \
-                        << " in function " << __func__                            \
-                        << " in file " << __FILE__                                \
-                        << " at line " << __LINE__ << '\n';                       \
-            std::exit(EXIT_FAILURE);                                              \
-        }                                                                         \
+
+#define ASSERT(condition, ...)                                                                  \
+    {                                                                                           \
+        if (!(condition))                                                                       \
+        {                                                                                       \
+            LOG_ERROR("Assertion (", #condition, ") failed!", __VA_OPT__(__VA_ARGS__));         \
+            LOG_ERROR() << "Call: __" << __func__ << "__ in " << __FILE__ << ':' << __LINE__ << '\n'; \
+            ::Nilib::LoggerPool::instance().flush_loggers();                                    \
+            std::exit(EXIT_FAILURE);                                                            \
+        }                                                                                       \
     }
 
 #define CORE_ASSERT(condition) ASSERT(condition, "")

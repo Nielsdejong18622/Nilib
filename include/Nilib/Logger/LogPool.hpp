@@ -21,6 +21,17 @@ namespace Nilib
         Logger *name(char const *loggername);
 
         void register_logger(char const *loggername, Logger *logger);
+        
+        // Flush all loggers. 
+        void flush_loggers() const
+        {
+            global()->flush();
+            for (auto &&[loggername, logptr] : d_logger_registry)
+            {
+                logptr->flush();
+            }
+            
+        }
     };
 
 };

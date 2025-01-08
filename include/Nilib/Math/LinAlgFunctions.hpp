@@ -160,7 +160,7 @@ namespace Nilib
         return std::pow(apply(A - B, [](type t)
                               { return std::pow(std::abs(t), p); })
                             .sum(),
-                        1 / p);
+                        1.0 / p);
     }
 
     template <typename type>
@@ -175,6 +175,27 @@ namespace Nilib
         return minkowski<type, 2.0f>(A, B);
     }
 
+    template <typename type>
+    type euclidean2(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    {
+        // Access the underlying data (assuming a 2x1 static matrix structure)
+        type diff1 = A(0,0) - B(0,0);
+        type diff2 = A(1,0) - B(1,0);
+
+        // Compute Euclidean distance directly
+        return diff1 * diff1 + diff2 * diff2;
+    }
+
+    template <typename type>
+    type euclidean(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    {
+        // Access the underlying data (assuming a 2x1 static matrix structure)
+        type diff1 = A(0,0) - B(0,0);
+        type diff2 = A(1,0) - B(1,0);
+
+        // Compute Euclidean distance directly
+        return std::sqrt(diff1 * diff1 + diff2 * diff2);
+    }
     template <typename type>
     type manhattan(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
     {
@@ -204,7 +225,7 @@ namespace Nilib
     }
 
     // Normalize vector.
-    template<typename type>
+    template <typename type>
     Matrix<type> normalize(Matrix<type> const &A)
     {
         auto tmp = A;
