@@ -7,25 +7,29 @@
 namespace Nilib
 {
 
-#ifndef ISABLE_ASSERT
+#ifndef ASSERT_OFF
 
-#define ASSERT(condition, ...)                                                                  \
-    {                                                                                           \
-        if (!(condition))                                                                       \
-        {                                                                                       \
-            LOG_ERROR("Assertion (", #condition, ") failed!", __VA_OPT__(__VA_ARGS__));         \
+#define ASSERT(condition, ...)                                                                        \
+    {                                                                                                 \
+        if (!(condition))                                                                             \
+        {                                                                                             \
+            LOG_ERROR("Assertion (", #condition, ") failed!", __VA_OPT__(__VA_ARGS__));               \
             LOG_ERROR() << "Call: __" << __func__ << "__ in " << __FILE__ << ':' << __LINE__ << '\n'; \
-            ::Nilib::LoggerPool::instance().flush_loggers();                                    \
-            std::exit(EXIT_FAILURE);                                                            \
-        }                                                                                       \
+            ::Nilib::LoggerPool::instance().flush_loggers();                                          \
+            std::exit(EXIT_FAILURE);                                                                  \
+        }                                                                                             \
     }
 
 #define CORE_ASSERT(condition) ASSERT(condition, "")
 
 #else
-#define ASSERT(...)
+#define ASSERT(...) \
+    {               \
+    }
 
-#define CORE_ASSERT(...)
+#define CORE_ASSERT(...) \
+    {                    \
+    }
 #endif
 
 }
