@@ -18,7 +18,7 @@
 
 namespace Nilib
 {
-    class MLP : public Model
+    struct MLP : public Model
     {
         Input x;
         Target y;

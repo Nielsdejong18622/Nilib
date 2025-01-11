@@ -42,10 +42,10 @@ namespace Nilib
 
     struct DenseGraphLayer : public CNode
     {
-        CNode *A, *input, *W, *b;
+        CNode *A, *input, *W;
 
-        DenseGraphLayer(CNode *A, CNode *input, CNode *W, CNode *b)
-            : A(A), input(input), W(W), b(b)
+        DenseGraphLayer(CNode *A, CNode *input, CNode *W)
+            : A(A), input(input), W(W)
         {
         }
 
@@ -54,8 +54,7 @@ namespace Nilib
             A->evaluate();
             input->evaluate();
             W->evaluate();
-            b->evaluate();
-            this->value = A->value * input->value * W->value + b->value;
+            this->value = A->value * input->value * W->value;
         }
 
         void derive(Nilib::Matrixf const &seed)
@@ -63,7 +62,53 @@ namespace Nilib
             input->derive(transpose(A->value) * seed * transpose(W->value));
             A->derive(seed * transpose(input->value * W->value));
             W->derive(transpose(A->value * input->value) * seed);
-            b->derive(seed);
+        }
+    };
+
+    struct OuterProductDecoder : public CNode
+    {
+        CNode *X;
+
+        OuterProductDecoder(CNode *X)
+            : X(X)
+        {
+        }
+
+        void evaluate()
+        {
+            X->evaluate();
+            this->value = X->value * transpose(X->value);
+        }
+
+        void derive(Nilib::Matrixf const &seed)
+        {
+            CORE_ASSERT(X->value.cols() == seed.rows());
+            CORE_ASSERT(X->value.cols() == seed.cols());
+            X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
+        }
+    };
+
+    struct GraphPoolAverage : public CNode
+    {
+        CNode *X;
+        Matrixf iota;
+
+        GraphPoolAverage(CNode *X)
+            : X(X)
+        {
+        }
+
+        void evaluate()
+        {
+            X->evaluate();
+            iota = Matrixf::all(1, X->value.rows(), 1.0f);
+            this->value = (1.0f / X->value.rows()) * iota * X->value;
+        }
+
+        void derive(Nilib::Matrixf const &seed)
+        {
+            CORE_ASSERT(X->value.rows() > 0);
+            X->derive((1.0f / X->value.rows()) * Nilib::transpose(iota) * seed);
         }
     };
 
