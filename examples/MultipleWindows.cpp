@@ -30,12 +30,12 @@ int main(int argc, char **argv)
     {
         // Render for window 1.
         win1.startScene();
-        win1.drawArc(0, 0, 100, 100, 4);
+        win1.drawArc({0, 0}, {100, 100}, 4);
         win1.endScene();
 
         // Render for window 2.
         win2.startScene();
-        win2.drawArc(0, 0, -100, 100, 4);
+        win2.drawArc({0, 0}, {-100, 100}, 4);
         win2.endScene();
         Window::updateidletasks();
 
