@@ -128,7 +128,7 @@ namespace Nilib
 
         void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
         void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f, unsigned int sides = 12) const;
-        void drawFilledCircle(Vec2f const &centre, float const radius = 1.0f) const;
+        void drawFilledCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f, unsigned int sides = 12) const;
         void drawTriangleUp(Vec2f const &centre, float const size = 1.0f) const;
         void drawSquare(Vec2f const &centre, float const size = 1.0f) const;
         void drawRectangle(Vec2f const &leftup, Vec2f const &rightdown) const;
