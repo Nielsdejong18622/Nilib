@@ -179,8 +179,8 @@ namespace Nilib
     type euclidean2(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
     {
         // Access the underlying data (assuming a 2x1 static matrix structure)
-        type diff1 = A(0,0) - B(0,0);
-        type diff2 = A(1,0) - B(1,0);
+        type diff1 = A(0, 0) - B(0, 0);
+        type diff2 = A(1, 0) - B(1, 0);
 
         // Compute Euclidean distance directly
         return diff1 * diff1 + diff2 * diff2;
@@ -190,8 +190,8 @@ namespace Nilib
     type euclidean(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
     {
         // Access the underlying data (assuming a 2x1 static matrix structure)
-        type diff1 = A(0,0) - B(0,0);
-        type diff2 = A(1,0) - B(1,0);
+        type diff1 = A(0, 0) - B(0, 0);
+        type diff2 = A(1, 0) - B(1, 0);
 
         // Compute Euclidean distance directly
         return std::sqrt(diff1 * diff1 + diff2 * diff2);
@@ -232,5 +232,23 @@ namespace Nilib
         return tmp / A.sum();
     }
 
+    template <typename type>
+    Matrix<type> rownormalize(Matrix<type> &A)
+    {
+        for (size_t rdx = 0; rdx < A.rows(); ++rdx)
+        {
+            float rowsum = 0.0f;
+            for (size_t cdx = 0; cdx < A.cols(); ++cdx)
+            {
+                rowsum += A(rdx, cdx);
+            }
+            if (rowsum == 0.0f) continue;
+            for (size_t cdx = 0; cdx < A.cols(); ++cdx)
+            {
+                A(rdx, cdx) /= rowsum;
+            }
+        }
+        return A;
+    }
 }
 #endif

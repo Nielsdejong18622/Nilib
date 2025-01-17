@@ -43,6 +43,7 @@ namespace Nilib
     struct DenseGraphLayer : public CNode
     {
         CNode *A, *input, *W;
+        bool owning = false;
 
         DenseGraphLayer(CNode *A, CNode *input, CNode *W)
             : A(A), input(input), W(W)
@@ -54,6 +55,8 @@ namespace Nilib
             A->evaluate();
             input->evaluate();
             W->evaluate();
+            CORE_ASSERT(A->value.cols() == input->value.rows());
+            CORE_ASSERT(input->value.cols() == W->value.rows());
             this->value = A->value * input->value * W->value;
         }
 
