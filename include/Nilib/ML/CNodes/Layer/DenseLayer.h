@@ -62,8 +62,8 @@ namespace Nilib
 
         void derive(Nilib::Matrixf const &seed)
         {
-            input->derive(transpose(A->value) * seed * transpose(W->value));
             A->derive(seed * transpose(input->value * W->value));
+            input->derive(transpose(A->value) * seed * transpose(W->value));
             W->derive(transpose(A->value * input->value) * seed);
         }
     };
@@ -80,14 +80,17 @@ namespace Nilib
         void evaluate()
         {
             X->evaluate();
-            this->value = X->value * transpose(X->value);
+            float scalefactor = X->value.rows() * X->value.rows();
+            this->value = X->value * transpose(X->value) / scalefactor;
         }
 
         void derive(Nilib::Matrixf const &seed)
         {
-            CORE_ASSERT(X->value.cols() == seed.rows());
-            CORE_ASSERT(X->value.cols() == seed.cols());
-            X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
+            CORE_ASSERT(seed.cols() == X->value.rows());
+            CORE_ASSERT(X->value.rows() == seed.rows());
+            float scalefactor = X->value.rows() * X->value.rows();
+            X->derive(seed * X->value / scalefactor + Nilib::transpose(Nilib::transpose(X->value) * seed / scalefactor));
+            //X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
         }
     };
 

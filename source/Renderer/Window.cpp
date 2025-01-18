@@ -325,6 +325,34 @@ void Window::drawCircle(Vec2f const &centre, float const radius, float const lin
     float arcx = centre.x() + radius;
     float arcy = centre.y();
 
+    glBegin(GL_LINES);
+    while (arc <= 360.0f)
+    {
+        float warcx = arcx;
+        float warcy = arcy;
+        transform2D(warcx, warcy);
+        glVertex3f(warcx, warcy, 0.0f);
+        arc += 360.0f / sides;
+        arcx = cx + radius * cos(arc * 3.14159265f / 180.0f);
+        arcy = cy + radius * sin(arc * 3.14159265f / 180.0f);
+        float nwarcx = arcx;
+        float nwarcy = arcy;
+        transform2D(nwarcx, nwarcy);
+        glVertex3f(nwarcx, nwarcy, 0.0f);
+    }
+    glEnd();
+}
+
+
+void Window::drawFilledCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
+{
+    float arc = 0.0f;
+    // Start on the right. 
+    float cx = centre.x();
+    float cy = centre.y();
+    float arcx = centre.x() + radius;
+    float arcy = centre.y();
+
     glBegin(GL_TRIANGLE_FAN);
     while (arc <= 360.0f)
     {
@@ -342,6 +370,7 @@ void Window::drawCircle(Vec2f const &centre, float const radius, float const lin
     }
     glEnd();
 }
+
 
 void Window::drawDiamond(Vec2f const &center, float const radius, float const linewidth) const
 {

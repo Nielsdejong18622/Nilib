@@ -13,7 +13,7 @@ namespace Nilib
     class RNG
     {
         static uint64_t state;
-
+        
     public:
         static void seed(uint64_t const seed)
         {
