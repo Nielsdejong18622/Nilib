@@ -16,6 +16,8 @@
 #include "Nilib/ML/CNodes/Layer/DenseLayer.h"
 
 #include "Nilib/ML/CNodes/Activation/Activation.h"
+#include "Nilib/ML/CNodes/Activation/Sigmoid.h"
+#include "Nilib/ML/CNodes/Activation/RBF.h"
 #include "Nilib/ML/CNodes/Activation/Relu.h"
 #include "Nilib/ML/CNodes/Activation/Tanh.h"
 

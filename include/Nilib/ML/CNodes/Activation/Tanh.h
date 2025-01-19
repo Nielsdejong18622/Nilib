@@ -9,6 +9,7 @@ namespace Nilib
 
     struct Tanh : public Activation
     {
+
         Tanh(CNode *input)
             : Activation(input,
                          std::bind(&Tanh::tanh, this, std::placeholders::_1),

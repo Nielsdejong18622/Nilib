@@ -9,6 +9,9 @@ namespace Nilib
     struct Relu : public Activation
     {
         float d_leaky;
+        Relu(CNode *input)
+        : Relu(input, 0.01f) {};
+
         Relu(CNode *input, float leaky)
             : d_leaky(leaky), Activation(input,
                                          std::bind(&Relu::relu, this, std::placeholders::_1),
