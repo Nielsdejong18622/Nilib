@@ -5,6 +5,7 @@
 
 #include "Nilib/ML/CNodes/Multiply.h"
 #include "Nilib/ML/CNodes/Plus.h"
+#include "Nilib/ML/CNodes/Concat.h"
 
 #include "Nilib/ML/CNodes/Regularizer/Regularizer.h"
 #include "Nilib/ML/CNodes/Regularizer/L1.h"

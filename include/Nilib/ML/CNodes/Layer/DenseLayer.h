@@ -7,6 +7,32 @@
 namespace Nilib
 {
 
+    struct Linear : public CNode
+    {
+        CNode *input = nullptr, *W = nullptr;
+
+
+        Linear(CNode *input, CNode *W)
+            : input(input), W(W)
+        {
+        }
+
+        void evaluate()
+        {
+            CORE_ASSERT(input && W);
+            input->evaluate();
+            W->evaluate();
+            this->value = input->value * W->value;
+        }
+
+        void derive(Matrixf const &seed)
+        {
+            CORE_ASSERT(input && W);
+            input->derive(seed * transpose(W->value));
+            W->derive(transpose(input->value) * seed);
+        }
+    };
+
     struct DenseLayer : public CNode
     {
         CNode *input = nullptr, *W = nullptr, *b = nullptr;

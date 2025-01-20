@@ -45,7 +45,7 @@ namespace Nilib
     operator*(Matrix<DynamicMatrixData<type>> const &A,
               Matrix<DynamicMatrixData<type>> const &B)
     {
-        CORE_ASSERT(A.cols() == B.rows());
+        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
 
         Matrix<DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
@@ -132,6 +132,27 @@ namespace Nilib
         for (size_t nridx = 0; nridx < A.rows() + B.rows(); ++nridx)
             for (size_t ncidx = 0; ncidx < A.cols(); ++ncidx)
                 res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
+        return res;
+    }
+    // Rbind.
+    template <size_t n, size_t m, size_t p, typename type>
+    Matrix<StaticMatrixData<n + p, m, type>> rbind(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<p, m, type>> const &B)
+    {
+        CORE_ASSERT(A.rows() == B.rows());
+        Matrix<StaticMatrixData<n + p, m, type>> res;
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t ncidx = 0; ncidx < A.cols() + B.cols(); ++ncidx)
+                res(nridx, ncidx) = (ncidx < A.cols()) ? A(nridx, ncidx) : B(nridx, ncidx - A.cols());
+        return res;
+    }
+    template <typename type>
+    Matrix<DynamicMatrixData<type>> rbind(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    {
+        CORE_ASSERT(A.rows() == B.rows());
+        Matrix<DynamicMatrixData<type>> res(A.rows(), A.cols() + B.cols());
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t ncidx = 0; ncidx < A.cols() + B.cols(); ++ncidx)
+                res(nridx, ncidx) = (ncidx < A.cols()) ? A(nridx, ncidx) : B(nridx, ncidx - A.cols());
         return res;
     }
 
@@ -242,7 +263,8 @@ namespace Nilib
             {
                 rowsum += A(rdx, cdx);
             }
-            if (rowsum == 0.0f) continue;
+            if (rowsum == 0.0f)
+                continue;
             for (size_t cdx = 0; cdx < A.cols(); ++cdx)
             {
                 A(rdx, cdx) /= rowsum;
