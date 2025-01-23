@@ -332,7 +332,7 @@ void Window::drawCircle(Vec2f const &centre, float const radius, float const lin
         float warcy = arcy;
         transform2D(warcx, warcy);
         glVertex3f(warcx, warcy, 0.0f);
-        arc += 360.0f / sides;
+        arc += static_cast<float>(360.0f / sides);
         arcx = cx + radius * cos(arc * 3.14159265f / 180.0f);
         arcy = cy + radius * sin(arc * 3.14159265f / 180.0f);
         float nwarcx = arcx;

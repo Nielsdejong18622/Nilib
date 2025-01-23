@@ -221,6 +221,7 @@ namespace Nilib
     using Mat3x3 = Matrix<StaticMatrixData<3, 3, float>>;
     using Matrixf = Matrix<DynamicMatrixData<float>>;
     using Matrixd = Matrix<DynamicMatrixData<double>>;
+    using Matrixi = Matrix<DynamicMatrixData<int>>;
 
     // Special Matrices. (Rotation, Random, Identity, Diagonal, all, etc.)
     using Vec4f = Matrix<StaticMatrixData<4, 1, float>>;
