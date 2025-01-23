@@ -1,19 +1,20 @@
 // #include "GraphLayout.hpp"
 #include "Nilib/Renderer/Window.hpp"
 #include "Nilib/Structures/Graph.hpp"
-#//include "LinAlg.hpp"
-
-struct Ndata
-{
-    int a;
-};
+//include "LinAlg.hpp"
 
 int main()
 {
     RNG::seed(127);
+
+    struct Ndata
+    {
+        int a;
+    };
+
     Window win(1024, 812, "Graph window!");
     win.bindkey(std::bind(&Window::close, &win), GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
-
+    win.open();
     // Tests.
     std::vector<Ndata> locations(20, Ndata());
     Graph<Ndata> erdos_reini;
