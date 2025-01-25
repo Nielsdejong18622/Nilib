@@ -13,7 +13,7 @@ namespace Nilib
     // See https://www.johndcook.com/skewness_kurtosis.html
     class RunningStats
     {
-        float M1, M2, M3, M4, Msum, Mmax, Mmin;
+        float M1, M2, M3, M4, Msum, Mmax, Mmin, d_lag;
         size_t d_n;
 
     public:
@@ -22,6 +22,7 @@ namespace Nilib
         void push(float const obs)
         {
             float delta, delta_n, delta_n2, term1;
+            d_lag = obs;
             size_t n1 = d_n;
 
             d_n++;
@@ -43,7 +44,7 @@ namespace Nilib
 
         void reset()
         {
-            M1 = M2 = M3 = M4 = Msum = 0;
+            M1 = M2 = M3 = M4 = Msum = d_lag = 0;
             Mmax = std::numeric_limits<float>::min();
             Mmin = std::numeric_limits<float>::max();
             d_n = 0;
@@ -57,6 +58,7 @@ namespace Nilib
         float sum() const { return Msum; }
         float min() const { return Mmin; }
         float max() const { return Mmax; }
+        float lag() const { return d_lag; }
         float kurtosis() const { return static_cast<float>(d_n) * M4 / (M2 * M2) - 3.0; }
 
         friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats)
@@ -69,7 +71,8 @@ namespace Nilib
                       << " skew:" << stats.skewness()
                       << " kurtosis:" << stats.kurtosis()
                       << " n:" << stats.n()
-                      << " sum:" << stats.sum();
+                      << " sum:" << stats.sum()
+                      << " lag:" << stats.lag();
         }
     };
 
