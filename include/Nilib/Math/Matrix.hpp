@@ -20,9 +20,12 @@ namespace Nilib
     public:
         auto operator()(size_t const row, size_t const col) const { return d_data(row * d_data.cols() + col); }
         auto &operator()(size_t const row, size_t const col) { return d_data(row * d_data.cols() + col); }
+        auto &operator()(size_t const idx) { return d_data(idx); }
+        auto operator()(size_t const idx) const { return d_data(idx); }
 
         size_t rows() const { return d_data.rows(); }
         size_t cols() const { return d_data.cols(); }
+        size_t size() const { return d_data.rows() * d_data.cols(); }
 
         friend std::ostream &operator<<(std::ostream &os, Matrix const &mat)
         {

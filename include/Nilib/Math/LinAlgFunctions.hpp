@@ -103,8 +103,8 @@ namespace Nilib
     template <typename data>
     Matrix<data> hadamar(Matrix<data> const &A, Matrix<data> const &B)
     {
-        CORE_ASSERT(A.rows() == B.rows());
-        CORE_ASSERT(A.cols() == B.cols());
+        ASSERT(A.rows() == B.rows(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.cols(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
         Matrix<data> res(A.rows(), B.cols());
 
         for (size_t ridx = 0; ridx < A.rows(); ++ridx)
