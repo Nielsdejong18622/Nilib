@@ -213,11 +213,15 @@ Window::~Window()
     }
 };
 
-
 void Window::requestAttention() const
 {
     ASSERT(d_window, "Window not init!");
     glfwRequestWindowAttention(d_window);
+}
+
+void Window::linewidth(float const lw) const
+{
+    glLineWidth(lw);
 }
 
 void Window::startScene()
@@ -308,7 +312,7 @@ void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) cons
     float ay = A.y();
     float bx = B.x();
     float by = B.y();
-    
+
     transform2D(ax, ay);
     transform2D(bx, by);
     glVertex3f(ax, ay, 0.0f);
@@ -319,7 +323,7 @@ void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) cons
 void Window::drawCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
 {
     float arc = 0.0f;
-    // Start on the right. 
+    // Start on the right.
     float cx = centre.x();
     float cy = centre.y();
     float arcx = centre.x() + radius;
@@ -343,11 +347,10 @@ void Window::drawCircle(Vec2f const &centre, float const radius, float const lin
     glEnd();
 }
 
-
 void Window::drawFilledCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
 {
     float arc = 0.0f;
-    // Start on the right. 
+    // Start on the right.
     float cx = centre.x();
     float cy = centre.y();
     float arcx = centre.x() + radius;
@@ -371,26 +374,56 @@ void Window::drawFilledCircle(Vec2f const &centre, float const radius, float con
     glEnd();
 }
 
-
 void Window::drawDiamond(Vec2f const &center, float const radius, float const linewidth) const
 {
     return drawCircle(center, radius, linewidth, 4);
 }
 
+void Window::drawPole(Vec2f const &centre, float const size) const
+{
+    glBegin(GL_LINES);
+
+    float lx = centre.x() - 1 * size;
+    float ly = centre.y();
+    float rx = centre.x() + 1 * size;
+    float ry = centre.y();
+
+    float cx = centre.x();
+    float cy = centre.y();
+
+    float tx = centre.x();
+    float ty = centre.y() + 2 * size;
+
+    transform2D(lx, ly);
+    transform2D(rx, ry);
+    transform2D(cx, cy);
+    transform2D(tx, ty);
+
+    glVertex3f(rx, ry, 0.0f);
+    glVertex3f(lx, ly, 0.0f);
+
+    glVertex3f(cx, cy, 0.0f);
+    glVertex3f(tx, ty, 0.0f);
+
+    glEnd();
+}
+
 void Window::drawTriangleUp(Vec2f const &centre, float const size) const
 {
     glBegin(GL_TRIANGLES);
-    float ax = centre.x();       
+    float ax = centre.x();
     float ay = centre.y() + size;
     float bx = centre.x() + size;
     float by = centre.y() - size;
     float cx = centre.x() - size;
     float cy = centre.y() - size;
-    transform2D(ax, ay); transform2D(bx, by); transform2D(cx, cy);
+    transform2D(ax, ay);
+    transform2D(bx, by);
+    transform2D(cx, cy);
 
-    glVertex3f(ax, ay, 0.0f);   // Top
-    glVertex3f(bx, by, 0.0f);   // Bottom right
-    glVertex3f(cx, cy, 0.0f);   // Bottom left
+    glVertex3f(ax, ay, 0.0f); // Top
+    glVertex3f(bx, by, 0.0f); // Bottom right
+    glVertex3f(cx, cy, 0.0f); // Bottom left
     glEnd();
 }
 
@@ -434,21 +467,23 @@ void Window::drawCross(Vec2f const &centre, float const size) const
 void Window::drawTriangleDown(Vec2f const &centre, float const size) const
 {
     glBegin(GL_TRIANGLES);
-    float ax = centre.x();       
+    float ax = centre.x();
     float ay = centre.y() + size;
     float bx = centre.x() + size;
     float by = centre.y() - size;
     float cx = centre.x() - size;
     float cy = centre.y() - size;
-    transform2D(ax, ay); transform2D(bx, by); transform2D(cx, cy);
+    transform2D(ax, ay);
+    transform2D(bx, by);
+    transform2D(cx, cy);
 
-    glVertex3f(ax, by, 0.0f);   // Top
-    glVertex3f(bx, ay, 0.0f);   // Bottom right
-    glVertex3f(cx, ay, 0.0f);   // Bottom left
+    glVertex3f(ax, by, 0.0f); // Top
+    glVertex3f(bx, ay, 0.0f); // Bottom right
+    glVertex3f(cx, ay, 0.0f); // Bottom left
     glEnd();
 }
 
-// For immediate mode drawing. 
+// For immediate mode drawing.
 void Window::color(Color const &color)
 {
     float r, g, b, a;
@@ -470,10 +505,12 @@ void Window::transform2D(float &x, float &y) const
 
 void Window::setXlim(float const xmin, float const xmax)
 {
-    d_data.xmin = xmin; d_data.xmax = xmax;
+    d_data.xmin = xmin;
+    d_data.xmax = xmax;
 }
 
 void Window::setYlim(float const ymin, float const ymax)
 {
-    d_data.ymin = ymin; d_data.ymax = ymax;
+    d_data.ymin = ymin;
+    d_data.ymax = ymax;
 }

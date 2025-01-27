@@ -43,13 +43,13 @@ namespace Nilib
             Window *owner = nullptr;
             std::map<KeyEvent, Callback> keybindings;
 
-            // Advanced mode rendering. 
+            // Advanced mode rendering.
             Camera camera;
 
-            // Immediate mode rendering. 
+            // Immediate mode rendering.
             float xmin = -1.0f;
             float xmax = +1.0f;
-            
+
             float ymin = -1.0f;
             float ymax = +1.0f;
         };
@@ -118,13 +118,13 @@ namespace Nilib
         // Below is all for immediate mode.
         // Calling these functions while shaders/Render exist might not give the expected result.
         // Immediate mode 2D Draw functions.
-        
+
         void setXlim(float const xmin, float const xmax);
         void setYlim(float const ymin, float const ymax);
 
         // Set the background color.
         void clearColor(Color const &color);
-
+        void linewidth(float const lw) const;
 
         void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
         void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f, unsigned int sides = 12) const;
@@ -135,8 +135,8 @@ namespace Nilib
         void drawDiamond(Vec2f const &center, float const radius = 1.0f, float const linewidth = 1.0f) const;
         void drawCross(Vec2f const &centre, float const size = 1.0f) const;
         void drawTriangleDown(Vec2f const &centre, float const size = 1.0f) const;
+        void drawPole(Vec2f const &centre, float const size) const;
         void color(Color const &color);
-        
 
     private:
         void transform2D(float &x, float &y) const;

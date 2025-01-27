@@ -46,7 +46,14 @@ namespace Nilib
                 std::stringstream ss;
                 ss << "(" << std::fixed << std::setprecision(3);
                 for (size_t cidx = 0; cidx < d_data.cols(); ++cidx)
-                    ss << d_data(ridx, cidx) << ((cidx < d_data.cols() - 1) ? ',' : ')');
+                {
+                    
+                    if (d_data(ridx, cidx) == std::numeric_limits<float>::max())
+                        ss << "INF";
+                    else
+                        ss << d_data(ridx, cidx);
+                    ss << ((cidx < d_data.cols() - 1) ? ',' : ')');
+                }
                 LOG_DEBUG(ss.str());
             }
         }
