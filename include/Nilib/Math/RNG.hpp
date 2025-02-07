@@ -53,6 +53,7 @@ namespace Nilib
         // Returns a random index [0, size)
         static size_t index(size_t const size)
         {
+            if (size == 0) return 0;
             return wyhash(&state) % size;
         }
 
