@@ -1,5 +1,8 @@
 // Own headers
 #include "Nilib/Renderer/Window.hpp"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb/stb_image_write.h>
+
 
 using namespace Nilib;
 
@@ -255,6 +258,37 @@ void Window::update()
 {
     glfwPollEvents();
 };
+
+void Window::screenshotPNG(char const *filename)
+{
+    int width = d_data.width;
+    int height = d_data.height;
+    LOG_PROGRESS("Saving Framebuffer screenshot to file", filename, "dimensions", width, 'x', height);
+    // Step 1: Create a buffer to store pixel data
+    unsigned char* pixels = new unsigned char[3 * width * height];
+
+    // Step 2: Read the pixels from the framebuffer
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+    // Step 3: Flip the image vertically (OpenGL's origin is bottom-left)
+    unsigned char* flippedPixels = new unsigned char[3 * width * height];
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int srcIdx = (y * width + x) * 3;
+            int dstIdx = ((height - y - 1) * width + x) * 3;
+            flippedPixels[dstIdx] = pixels[srcIdx];       // R
+            flippedPixels[dstIdx + 1] = pixels[srcIdx + 1]; // G
+            flippedPixels[dstIdx + 2] = pixels[srcIdx + 2]; // B
+        }
+    }
+
+    // Step 4: Save the flipped pixel data to a file as PNG
+    stbi_write_png(filename, width, height, 3, flippedPixels, width * 3);
+
+    // Step 5: Cleanup
+    delete[] pixels;
+    delete[] flippedPixels;
+}
 
 void Window::close()
 {

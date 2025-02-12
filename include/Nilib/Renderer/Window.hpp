@@ -81,6 +81,8 @@ namespace Nilib
         void bindkey(Callback const &fun, int key, int action, int mods);
         void bindkey(Callback const &bindfun, int key);
 
+
+
     protected:
         GLFWwindow *d_window = nullptr;
         GLFWmonitor *d_monitor = nullptr;
@@ -114,6 +116,8 @@ namespace Nilib
 
         // Poll and handle events.
         void static update();
+
+        void screenshotPNG(char const *filename = "Screenshot.png");
 
         // Below is all for immediate mode.
         // Calling these functions while shaders/Render exist might not give the expected result.
