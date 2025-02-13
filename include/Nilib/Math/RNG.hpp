@@ -36,6 +36,12 @@ namespace Nilib
                                        static_cast<float>(std::numeric_limits<uint64_t>::max()));
         }
 
+        static float rounded_uniform(float const min, float const max, int const digits = 2)
+        {
+            float const multiplier = std::pow(10.0, digits);
+            return std::ceil(uniform(min, max) * multiplier) / multiplier;
+        }
+
         // Uniform random variable between [min, max]
         static float uniform(float const min, float const max)
         {
