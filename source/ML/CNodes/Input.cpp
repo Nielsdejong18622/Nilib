@@ -18,5 +18,6 @@ void Nilib::Input::evaluate()
 
 void Nilib::Input::derive(Nilib::Matrixf const &seed)
 {
-    partial += seed;
+    if (partial.rows() == seed.rows() && partial.cols() == seed.cols())
+        partial += seed;
 }
