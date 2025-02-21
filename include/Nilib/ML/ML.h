@@ -21,6 +21,7 @@
 #include "Nilib/ML/CNodes/Activation/RBF.h"
 #include "Nilib/ML/CNodes/Activation/Relu.h"
 #include "Nilib/ML/CNodes/Activation/Tanh.h"
+#include "Nilib/ML/CNodes/GaussianNoise.h"
 
 #include "Nilib/ML/MLData.h"
 #include "Nilib/ML/Model.h"

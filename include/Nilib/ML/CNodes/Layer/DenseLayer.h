@@ -97,11 +97,13 @@ namespace Nilib
     struct DenseGraphLayer2 : public CNode
     {
         CNode *A, *input, *input2, *W, *Wself;
+        float b; // Drift bias. 
         bool owning = false;
 
         DenseGraphLayer2(CNode *A, CNode *input, CNode *input2, CNode *W, CNode *Wself)
             : A(A), input(input), input2(input2), W(W), Wself(Wself)
         {
+            b = RNG::normal(0.0, 0.1);
         }
 
         void evaluate()
@@ -115,7 +117,7 @@ namespace Nilib
             CORE_ASSERT(A->value.cols() == input->value.rows());
             CORE_ASSERT(input->value.cols() == W->value.rows());
             CORE_ASSERT(input2->value.cols() == Wself->value.rows());
-            this->value = 0.5 * A->value * input->value * W->value + 0.5 * input2->value * Wself->value;
+            this->value = 0.2 * A->value * input->value * W->value + 0.8 * input2->value * Wself->value;
         }
 
         void derive(Nilib::Matrixf const &seed)

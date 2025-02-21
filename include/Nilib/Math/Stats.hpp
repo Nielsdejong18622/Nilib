@@ -52,7 +52,7 @@ namespace Nilib
 
         size_t n() const { return d_n; }
         float mean() const { return M1; }
-        float variance() const { return M2 / (d_n - 1.0); }
+        float variance() const { return (d_n > 1) ? M2 / (d_n - 1.0) : 0.0; }
         float stddev() const { return std::sqrt(variance()); }
         float skewness() const { return std::sqrt(static_cast<float>(d_n)) * M3 / std::pow(M2, 1.5); }
         float sum() const { return Msum; }
