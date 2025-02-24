@@ -81,18 +81,18 @@ namespace Nilib
                     d_data[idx++] = val;
         }
 
-        type &operator()(size_t const idx)
+        inline type &operator()(size_t const idx)
         {
             return d_data[idx];
         };
 
-        type operator()(size_t const idx) const
+        inline type operator()(size_t const idx) const
         {
             return d_data[idx];
         };
 
-        type operator()(size_t const row, size_t col) const { return operator()(row * cols() + col); }
-        type &operator()(size_t const row, size_t const col) { return operator()(row * cols() + col); }
+        inline type operator()(size_t const row, size_t col) const { return operator()(row * cols() + col); }
+        inline type &operator()(size_t const row, size_t const col) { return operator()(row * cols() + col); }
 
         size_t rows() const { return d_rows; }
         size_t cols() const { return d_cols; }

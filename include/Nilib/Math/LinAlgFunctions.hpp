@@ -52,7 +52,7 @@ namespace Nilib
             for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
                 for (size_t k = 0; k < A.cols(); ++k)
                     res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
-        return res;
+        return std::move(res);
     }
     // Specialization.
     template <size_t n, size_t m, size_t p, typename type>

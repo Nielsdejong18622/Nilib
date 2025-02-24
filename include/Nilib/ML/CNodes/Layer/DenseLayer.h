@@ -65,6 +65,12 @@ namespace Nilib
         }
     };
 
+    struct GIN : public CNode
+    {
+        CNode *A, *input;
+        
+    };
+
     struct DenseGraphLayer : public CNode
     {
         CNode *A, *input, *W;
