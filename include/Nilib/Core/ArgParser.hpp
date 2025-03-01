@@ -54,24 +54,8 @@ public:
         return d_flags[lat] ? "True" : "False";
     }
 
-    // Remove the prefix dashes -(-)  before a string.
-    std::string &removeprefixdash(std::string &str)
-    {
-        while (str[0] == '-')
-            str.erase(0, 1);
-        return str;
-    }
-
-    // Convert string to lower.
-    std::string &strtolower(std::string &str)
-    {
-        for (auto &c : str)
-            c = tolower(c);
-        return str;
-    }
-
     // Parse the command line arguments.
-    void parse(int argc, char const **argv)
+    void parse(int argc, char **argv)
     {
         this->argv.clear();
         this->argv.reserve(argc);
@@ -91,7 +75,7 @@ public:
         {
             // Log the help text and terminate the program.
             printHelpText();
-            throw std::runtime_error();
+            throw std::runtime_error("Unable to parse command line arguments!");
         }
     }
 
@@ -115,8 +99,29 @@ public:
         {
             LOG_INFO() << "\t-" << key << "\t\t\t\t" << d_flagdesc[key] << '\n';
         }
-        LOG_INFO(argv[0]) << " " << d_version << '\n';
+        LOG_INFO() << argv[0] << ' ' << d_version << '\n';
         exit(0);
+    }
+
+public:
+    size_t argc = 0;
+    std::vector<std::string> argv;
+
+private:
+    // Remove the prefix dashes -(-)  before a string.
+    std::string &removeprefixdash(std::string &str)
+    {
+        while (str[0] == '-')
+            str.erase(0, 1);
+        return str;
+    }
+
+    // Convert string to lower.
+    std::string &strtolower(std::string &str)
+    {
+        for (auto &c : str)
+            c = tolower(c);
+        return str;
     }
 
     // Check if all required options where parsed, print those missing.
@@ -132,11 +137,6 @@ public:
         }
     }
 
-public:
-    size_t argc = 0;
-    std::vector<std::string> argv;
-
-private:
     char const *d_argdescr;
     char const *d_version;
     std::unordered_map<std::string, std::string> d_options;
@@ -152,7 +152,7 @@ private:
         return str;
     }
 
-    void parse_internal(int argc, char const **argv)
+    void parse_internal(int argc, char **argv)
     {
         // Previous arg and bool.
         std::string prarg(argv[0]);
@@ -166,20 +166,20 @@ private:
             {
                 if (arg[0] == '-')
                 {
-                    LOG_ERROR('[') << arg << "] is not an argument for " << prarg << "!\n";
+                    LOG_ERROR() << '[' << arg << "] is not an argument for " << prarg << "!\n";
                     throw std::runtime_error("Incorrect argument!");
                 }
 
                 d_options[prarg] = arg;
                 nextoptionarg = false;
-                LOG_DEBUG('[') << arg << "] is the argument of " << prarg << ".\n";
+                LOG_DEBUG() << '[' << arg << "] is the argument of " << prarg << ".\n";
                 continue;
             }
 
             // Argument is the only remaining option.
             if (arg[0] != '-')
             {
-                LOG_DEBUG('[') << arg << "] is an argument.\n";
+                LOG_DEBUG() << '[' << arg << "] is an argument.\n";
                 this->argv.push_back(arg);
                 continue;
             }
@@ -197,7 +197,7 @@ private:
                 std::string valueName = arg.substr(arg.find('=') + 1);
                 optionName = strtolower(optionName);
 
-                LOG_DEBUG('[') << arg
+                LOG_DEBUG() << '[' << arg
                                << "] is an equality option, name: "
                                << optionName
                                << " value: "
@@ -215,13 +215,13 @@ private:
             else if (d_flags.find(arg) != d_flags.end())
             {
                 // Check if it matches one of our flags.
-                LOG_DEBUG('[') << arg << "] is a flag.\n";
+                LOG_DEBUG() << '[' << arg << "] is a flag.\n";
                 d_flags[arg] = true; // We found a flag.
             }
             else
             {
                 // Nothing mathches, hence it must be an argument.
-                LOG_ERROR('[') << arg << "] is not a flag, argument or option!\n";
+                LOG_ERROR() << '[' << arg << "] is not a flag, argument or option!\n";
                 throw std::runtime_error("Processed not a flag, argument nor option!");
             }
         }
