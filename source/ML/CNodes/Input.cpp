@@ -4,7 +4,8 @@
 void Nilib::Input::set(Nilib::Matrixf const &value)
 {
     this->value = value;
-    this->partial = Nilib::Matrixf::zeros(value.rows(), value.cols());
+    if (this->partial.rows() != value.rows() || this->partial.cols() != value.cols())
+        this->partial = Nilib::Matrixf::zeros(value.rows(), value.cols());
 }
 
 Nilib::Input::Input(Nilib::Matrixf const &value) 
