@@ -76,7 +76,6 @@ namespace Nilib
                     }
                 }
             }
-
             lhs->derive(seedlhs);
             rhs->derive(seedrhs);
         }

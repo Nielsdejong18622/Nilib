@@ -11,6 +11,7 @@ namespace Nilib
     template <typename data>
     Matrix<data> operator+(Matrix<data> const &A, Matrix<data> const &B)
     {
+        CORE_ASSERT(A.rows() == B.rows() && A.cols() == B.cols());
         Matrix<data> result(A);
         result += B;
         return result;
@@ -19,6 +20,7 @@ namespace Nilib
     template <typename data>
     Matrix<data> operator-(Matrix<data> const &A, Matrix<data> const &B)
     {
+        CORE_ASSERT(A.rows() == B.rows() && A.cols() == B.cols());
         Matrix<data> result(A);
         result -= B;
         return result;

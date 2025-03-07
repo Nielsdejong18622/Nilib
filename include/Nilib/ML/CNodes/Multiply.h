@@ -25,5 +25,23 @@ namespace Nilib
             rhs->derive(transpose(lhs->value) * seed);
         }
     };
+
+    struct Scale : public CNode
+    {
+        CNode *x = nullptr;
+        float scalar = 1.0f;
+        Scale(CNode *x, float const scalar) : x(x), scalar(scalar) {}
+
+        void evaluate()
+        {
+            x->evaluate();
+            this->value = scalar * x->value;
+        }
+
+        void derive(Matrixf const &seed)
+        {
+            x->derive(seed * scalar);
+        }
+    };
 }
 #endif

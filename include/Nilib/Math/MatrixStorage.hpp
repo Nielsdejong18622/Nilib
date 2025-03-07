@@ -33,11 +33,13 @@ namespace Nilib
 
         type &operator()(size_t const idx)
         {
+            CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
         };
 
         type operator()(size_t const idx) const
         {
+            CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
         };
 
@@ -46,6 +48,7 @@ namespace Nilib
 
         size_t rows() const { return n; }
         size_t cols() const { return m; }
+        size_t size() const { return n * m; }
 
         type sum() const { return std::accumulate(d_data.begin(), d_data.end(), 0.0); }
         StaticMatrixData &apply(std::function<type(type)> fun)
@@ -83,11 +86,13 @@ namespace Nilib
 
         inline type &operator()(size_t const idx)
         {
+            CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
         };
 
         inline type operator()(size_t const idx) const
         {
+            CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
         };
 

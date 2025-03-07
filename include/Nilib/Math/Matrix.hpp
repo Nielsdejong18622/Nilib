@@ -60,6 +60,7 @@ namespace Nilib
 
         // Returns the sum of all the entries in the Matrix.
         auto sum() const { return d_data.sum(); }
+        auto avg() const { return d_data.sum() / size(); }
         Matrix apply(std::function<float(float const)> const &fun) { return d_data.apply(fun); }
 
         Matrix() = default;

@@ -65,9 +65,11 @@ namespace Nilib
         }
     };
 
-    struct GIN : public CNode
+    struct GNNN : public CNode
     {
-        CNode *A, *input;
+        CNode *A, *X;
+
+
         
     };
 
@@ -181,7 +183,7 @@ namespace Nilib
         void evaluate()
         {
             X->evaluate();
-            float scalefactor = X->value.rows() * X->value.rows();
+            float scalefactor = X->value.rows();// * X->value.rows();
             this->value = X->value * transpose(X->value) / scalefactor;
         }
 
@@ -189,7 +191,7 @@ namespace Nilib
         {
             CORE_ASSERT(seed.cols() == X->value.rows());
             CORE_ASSERT(X->value.rows() == seed.rows());
-            float scalefactor = X->value.rows() * X->value.rows();
+            float scalefactor = X->value.rows();// * X->value.rows();
             X->derive(seed * X->value / scalefactor + Nilib::transpose(Nilib::transpose(X->value) * seed / scalefactor));
             // X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
         }
