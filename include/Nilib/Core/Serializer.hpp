@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/ML/CNodes/CNode.h"
 
 class Serializer
 {
@@ -31,8 +33,8 @@ public:
     }
 
     explicit Serializer(std::string const &filename)
+        : file(filename, std::ios::binary | std::ios ::out)
     {
-        file.open(filename, std::ios::binary | std::ios::out);
         if (!file)
         {
             LOG_ERROR() << "Serialization Error: Could not open file " << filename << " for writing!\n";
@@ -41,7 +43,7 @@ public:
 
     // Write raw data to a binary file
     template <typename T>
-    bool writeRaw(T &data)
+    bool writeRaw(T const &data)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.write(reinterpret_cast<char const *>(&data), sizeof(T));
@@ -68,21 +70,32 @@ public:
         {
             LOG_ERROR() << "Error: Failed to write Object data to file.\n";
         }
+        close();
         return !file;
     }
 
     // Specialization for matrix.
-    // template <typename T>
-    // bool write(Matrix<T> const &data) {
-    //     LOG_DEBUG() << "Writing Matrix!\n";
-    //     size_t n = data.rows();
-    //     size_t m = data.cols();
-    //     file.write(reinterpret_cast<char const *>(&n), sizeof(n));
-    //     file.write(reinterpret_cast<char const *>(&m), sizeof(m));
-    //     // Use the conversion operator to write the vector data.
-    //     file.write(reinterpret_cast<char const *>(data.data()), n * m * sizeof(T));
-    //     return true;
-    // }
+    template <typename T>
+    bool writeMatrix(Nilib::Matrix<T> const &data)
+    {
+        size_t n = data.rows();
+        size_t m = data.cols();
+        file.write(reinterpret_cast<char const *>(&n), sizeof(n));
+        file.write(reinterpret_cast<char const *>(&m), sizeof(m));
+        // Use the conversion operator to write the vector data.
+        for (size_t i = 0; i < n * m; i++)
+        {
+            auto entry = data(i);
+            file.write(reinterpret_cast<char const *>(&entry), sizeof(entry));
+        }
+        return true;
+    }
+    // Specialization for CNode.
+    bool writeCNode(Nilib::CNode &data)
+    {
+        writeMatrix(data.value);
+        return true;
+    }
 
     // Specialization for std::string
     bool writeString(std::string const &data)

@@ -27,6 +27,7 @@ namespace Nilib
         std::ostream &d_stream;
 
     public:
+        bool endl = true;
         Logger(std::ostream &stream)
             : d_stream(stream)
         {
@@ -58,7 +59,7 @@ namespace Nilib
                 d_stream << ' ';                     // Print separator
                 output(std::forward<Args>(args)...); // Template recurse
             }
-            else
+            else if (endl)
             {
                 d_stream << '\n';
             }

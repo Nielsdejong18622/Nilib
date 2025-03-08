@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/ML/CNodes/CNode.h"
 
 class Deserializer
 {
@@ -15,11 +17,15 @@ class Deserializer
 
 public:
     explicit Deserializer(std::string const &filename)
+        : file(filename, std::ios::binary)
     {
-        file.open(filename, std::ios::binary | std::ios::in);
-        if (!file)
+        if (!file.is_open())
         {
-            LOG_ERROR() << "Deserialization Error: Could not open file " << filename << " for reading!\n";
+            LOG_ERROR("Deserialization Error: Could not open file", filename, "for reading!");
+        }
+        if (file.bad())
+        {
+            LOG_ERROR("File has gone bad!");
         }
     }
 
@@ -43,7 +49,7 @@ public:
         file.read(reinterpret_cast<char *>(&data), sizeof(T));
         if (!file)
         {
-            std::cerr << "Error: Failed to read Raw data from file." << std::endl;
+            LOG_ERROR("Error: Failed to read", sizeof(T), "bytes of Raw data from file into", &data);
         }
         return !file;
     }
@@ -61,7 +67,7 @@ public:
         }
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to read Object data from file.\n";
+            LOG_ERROR("Error: Failed to read Object data from file.");
         }
         return !file;
     }
@@ -75,9 +81,34 @@ public:
         file.read(&data[0], length);
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to read String data from file.\n";
+            LOG_ERROR("Error: Failed to read String data from file.");
         }
         return !file;
+    }
+
+    // Specialization for Matrix.
+    template <typename T>
+    bool readMatrix(Nilib::Matrix<T> &data)
+    {
+        size_t n, m;
+        readRaw(n);
+        readRaw(m);
+        LOG_DEBUG("Reading Matrix", n, 'x', m);
+        data = Nilib::Matrix<T>(n, m);
+        // Use the conversion operator to write the vector data.
+        for (size_t i = 0; i < n * m; i++)
+        {
+            readRaw(data(i));
+        }
+        return true;
+    }
+
+    // Specialization for CNode.
+    bool readCNode(Nilib::CNode &data)
+    {
+        LOG_DEBUG("Reading CNode");
+        readMatrix(data.value);
+        return true;
     }
 
     // Specialization for std::vector<T>
@@ -87,7 +118,7 @@ public:
         // Read the size of the vector
         size_t size;
         readRaw(size);
-
+        LOG_DEBUG("Reading vector size", size);
         // Resize the vector to hold the data
         vec.resize(size);
 
@@ -106,7 +137,7 @@ public:
         }
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to read Vector data from file.\n";
+            LOG_ERROR("Error: Failed to read Vector data from file.");
         }
         return !file;
     }
