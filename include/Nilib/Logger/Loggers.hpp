@@ -18,6 +18,10 @@ namespace Nilib
         std::ofstream d_fstream;
 
     public:
+        BasicFileLogger(std::string const &filename)
+            : d_fstream(filename, std::ios::out), Logger(d_fstream)
+        {
+        }
         BasicFileLogger(char const *filename)
             : d_fstream(filename, std::ios::out), Logger(d_fstream)
         {
