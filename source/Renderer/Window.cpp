@@ -268,6 +268,7 @@ void Window::screenshotPNG(char const *filename)
     unsigned char* pixels = new unsigned char[3 * width * height];
 
     // Step 2: Read the pixels from the framebuffer
+    glfwSwapBuffers(d_window);
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
     // Step 3: Flip the image vertically (OpenGL's origin is bottom-left)
