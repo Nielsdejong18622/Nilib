@@ -5,6 +5,8 @@
 #include <sstream>
 #include "Nilib/Math/MatrixStorage.hpp"
 
+#include <fmt/core.h>
+
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
@@ -44,7 +46,7 @@ namespace Nilib
             for (size_t ridx = 0; ridx < d_data.rows(); ++ridx)
             {
                 std::stringstream ss;
-                ss << "(" << std::fixed << std::setprecision(3);
+                ss << "(" << std::fixed; //<< std::setprecision(3);
                 for (size_t cidx = 0; cidx < d_data.cols(); ++cidx)
                 {
                     
@@ -78,8 +80,8 @@ namespace Nilib
         template <typename data>
         void operator+=(Matrix<data> const &B)
         {
-            ASSERT(d_data.rows() == B.d_data.rows(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
-            ASSERT(d_data.cols() == B.d_data.cols(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
+            ASSERT(d_data.rows() == B.d_data.rows(), fmt::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
+            ASSERT(d_data.cols() == B.d_data.cols(), fmt::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
             for (size_t idx = 0; idx < d_data.cols() * d_data.rows(); idx++)
                 d_data(idx) += B.d_data(idx);
         }

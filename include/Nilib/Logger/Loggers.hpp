@@ -94,19 +94,19 @@ namespace Nilib
             switch (level)
             {
             case LogLevel::Error:
-                (*d_stream) << "\033[31m";
+                (d_stream) << "\033[31m";
                 return;
             case LogLevel::Warning:
-                (*d_stream) << "\033[33m";
+                (d_stream) << "\033[33m";
                 return;
             case LogLevel::Success:
-                (*d_stream) << "\033[32m";
+                (d_stream) << "\033[32m";
                 return;
             case LogLevel::Debug:
-                (*d_stream) << "\033[90m";
+                (d_stream) << "\033[90m";
                 return;
             default:
-                (*d_stream) << "\033[0m";
+                (d_stream) << "\033[0m";
                 return;
             }
 #endif

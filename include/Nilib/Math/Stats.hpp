@@ -63,7 +63,7 @@ namespace Nilib
 
         friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats)
         {
-            return os << std::fixed << std::setprecision(4)
+            return os << std::fixed //<< std::setprecision(4)
                       << "Mean:" << stats.mean()
                       << '(' << stats.stddev()
                       << ") Min:" << stats.min()

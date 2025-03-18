@@ -7,9 +7,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
 # Add the external GLFW submodule
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/gurobi1103)
+if (WIN32)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/gurobi1103)
+endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glfw)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
+
 
 # Add subdirectories for the Nilibrary
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)

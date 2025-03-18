@@ -2,6 +2,7 @@
 #define _LINALG_FUNCTIONS_H
 
 #include "Nilib/Math/LinAlg.hpp"
+#include <fmt/core.h>
 
 namespace Nilib
 {
@@ -47,7 +48,7 @@ namespace Nilib
     operator*(Matrix<DynamicMatrixData<type>> const &A,
               Matrix<DynamicMatrixData<type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), fmt::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
 
         Matrix<DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
@@ -105,8 +106,8 @@ namespace Nilib
     template <typename data>
     Matrix<data> hadamar(Matrix<data> const &A, Matrix<data> const &B)
     {
-        ASSERT(A.rows() == B.rows(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
-        ASSERT(A.cols() == B.cols(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.rows() == B.rows(), fmt::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.cols(), fmt::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
         Matrix<data> res(A.rows(), B.cols());
 
         for (size_t ridx = 0; ridx < A.rows(); ++ridx)

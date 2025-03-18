@@ -7,13 +7,19 @@ add_library(Nilib STATIC ${CPP_FILES})
 # target_compile_options(Nilib PRIVATE -Wextra -Ofast)
 
 # Link GLFW to the Nilib library
-target_link_libraries(Nilib PUBLIC glfw glad gurobi_c++mt ${GUROBI_LIBRARY} opengl32)
+if(WIN32)
+    target_link_libraries(Nilib PUBLIC glfw glad fmt gurobi_c++mt ${GUROBI_LIBRARY} opengl32)
+elseif(LINUX)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(Nilib PUBLIC glfw glad fmt OpenGL::GL)
+endif()
 
 # Include the headers
 target_include_directories(Nilib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/../external/gurobi1103/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../external/stb/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/fmt/include
 )
 
 # Precompiled header.

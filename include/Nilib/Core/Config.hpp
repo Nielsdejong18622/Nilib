@@ -6,6 +6,8 @@
 #include "Nilib/Core/Assert.hpp"
 #include <optional>
 
+#include <fmt/core.h>
+
 class Config
 {
 public:
@@ -27,8 +29,8 @@ public:
         template <typename T>
         operator T() const
         {
-            ASSERT(config->d_map.contains(section), std::format("Section {} does not exist in Configfile!", section))
-            ASSERT(config->d_map[section].contains(key), std::format("Key {} does not exist in Configfile!", key))
+            ASSERT(config->d_map.contains(section), fmt::format("Section {} does not exist in Configfile!", section))
+            ASSERT(config->d_map[section].contains(key), fmt::format("Key {} does not exist in Configfile!", key))
             const auto &value = config->d_map.at(section).at(key);
             return std::get<T>(value);
         }
