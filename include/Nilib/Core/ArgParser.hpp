@@ -3,23 +3,114 @@
 
 #include "Nilib/Logger/Log.hpp"
 
-#include <unordered_map>
-#include <stdexcept>
+namespace Nilib
+{
+    template <typename Type>
+    struct ArgProxy
+    {
+        Type d_value;
 
-/* This class passes the arguments from the terminal.
-    Responsibilities:
-    Exit on exception error.
-    Provide help information on incorrect usage.
-    Provide version info on usage.
+        ArgProxy setdefault(Type const &value)
+        {
+            d_value = value;
+            return *this;
+        }
 
-    Set flags and options prior to parse.
-    Parse the command lines.
-    Supply a hasmap of options and flags.
-    For other program components to use.
-    Options and flags must be case insensitive
-    Options and flags can have additional alternatives specified. (-n 10 same as -loCs 10 and -nLOCS=10)
+        // Implicit conversion.
+        operator Type() const
+        {
+            return d_value;
+        }
+    };
 
-    */
+
+
+    class Argparser
+    {
+        std::string d_program_name;
+        std::unordered_map<int, std::string> d_positional_argument_map;
+
+        void parse(int argc, char **argv)
+        {
+            LOG_DEBUG("Parsing:", argc, "arguments");
+            d_program_name = argv[0];
+
+            for (size_t i = 1; i < argc; i++)
+            {
+                d_positional_argument_map[i] = argv[i];
+                std::string argstring = d_positional_argument_map[i];
+                
+                // Each command line argument is either a positional argument. file1.txt
+                if (!argstring.starts_with('-'))
+                {
+
+                
+                }
+                // A short option -v (flag)
+                else if (argstring.size() > 1 && argstring.at(1))
+                {
+
+                }
+
+                // a long option --verbose (flag)
+
+                // a long option --value=5 
+
+                // a long option --out file.txt
+
+
+
+            }
+        }
+
+    public:
+        Argparser(int argc, char **argv)
+        {
+            parse(argc, argv);
+            LOG_PROGRESS("ArgParser constructor.");
+        }
+
+        template <typename Type>
+        ArgProxy<Type> argument(std::string const &argument_descriptor, std::string const &description)
+        {
+            LOG_PROGRESS("Program requires argument:", description, "given after", argument_descriptor);
+            // // Try to find the argument in the argument_map.
+
+            // auto result = std::find_if(
+            //     d_positional_argument_map.begin(),
+            //     d_positional_argument_map.end(),
+            //     [val](const auto &mo)
+            //     { return mo.second == val; });
+
+            // // RETURN VARIABLE IF FOUND
+            // if (result != mapObject.end())
+            //     int foundkey = result->first;
+
+            return ArgProxy<Type>();
+        }
+
+        // Prints all arguments and values.
+        void print() const
+        {
+            LOG_DEBUG("Program:", d_program_name);
+            for (auto &&[k, v] : d_positional_argument_map)
+            {
+                LOG_DEBUG(k, ':', v);
+            }
+        }
+
+        // Displays the help (-h) command.
+        void helpinfo() const
+        {
+            LOG_PROGRESS("Usage", d_program_name);
+            LOG_PROGRESS("-h\t\tshows this info menu.");
+        };
+    };
+
+} // namespace Nilib
+
+/*
+
 
 class Argparser
 {
@@ -198,11 +289,11 @@ private:
                 optionName = strtolower(optionName);
 
                 LOG_DEBUG() << '[' << arg
-                               << "] is an equality option, name: "
-                               << optionName
-                               << " value: "
-                               << valueName
-                               << ".\n";
+                            << "] is an equality option, name: "
+                            << optionName
+                            << " value: "
+                            << valueName
+                            << ".\n";
                 d_options[optionName] = valueName;
             }
             else if (d_options.find(arg) != d_options.end())
@@ -227,4 +318,5 @@ private:
         }
     }
 };
+*/
 #endif
