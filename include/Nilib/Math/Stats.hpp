@@ -10,71 +10,36 @@ namespace Nilib
 {
 
     // Running statistics.
-    // See https://www.johndcook.com/skewness_kurtosis.html
+    // See https://www.johndcook.com/skewness_kurtosis.html.
+    // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
     class RunningStats
     {
-        float M1, M2, M3, M4, Msum, Mmax, Mmin, d_lag;
+        float d_M1, d_M2, d_M3, d_M4, d_sum, d_max, d_min, d_lag;
         size_t d_n;
 
     public:
-        RunningStats() { reset(); }
+        RunningStats();
+        void push(float const obs);
+        void reset();
 
-        void push(float const obs)
-        {
-            float delta, delta_n, delta_n2, term1;
-            d_lag = obs;
-            size_t n1 = d_n;
+        inline size_t n() const { return d_n; }
+        inline float mean() const { return d_M1; }
+        inline float variance() const { return (d_n > 1) ? d_M2 / (d_n - 1.0) : 0.0; }
+        inline float stddev() const { return std::sqrt(variance()); }
+        inline float sum() const { return d_sum; }
+        inline float min() const { return d_min; }
+        inline float max() const { return d_max; }
+        inline float lag() const { return d_lag; }
+        inline float kurtosis() const { return static_cast<float>(d_n) * d_M4 / (d_M2 * d_M2) - 3.0; }
+        inline float skewness() const { return std::sqrt(static_cast<float>(d_n)) * d_M3 / std::pow(d_M2, 1.5); }
 
-            d_n++;
-
-            delta = obs - M1;
-            delta_n = delta / d_n;
-            delta_n2 = delta_n * delta_n;
-            term1 = delta * delta_n * n1;
-
-            M1 += delta_n; // The mean.
-            M4 += term1 * delta_n2 * (d_n * d_n - 3 * d_n + 3) + 6 * delta_n2 * M2 - 4 * delta_n * M3;
-            M3 += term1 * delta_n * (d_n - 2) - 3 * delta_n * M2;
-            M2 += term1;
-
-            Mmax = (obs > Mmax) ? obs : Mmax;
-            Mmin = (obs < Mmin) ? obs : Mmin;
-            Msum += obs;
-        }
-
-        void reset()
-        {
-            M1 = M2 = M3 = M4 = Msum = d_lag = 0;
-            Mmax = std::numeric_limits<float>::min();
-            Mmin = std::numeric_limits<float>::max();
-            d_n = 0;
-        }
-
-        size_t n() const { return d_n; }
-        float mean() const { return M1; }
-        float variance() const { return (d_n > 1) ? M2 / (d_n - 1.0) : 0.0; }
-        float stddev() const { return std::sqrt(variance()); }
-        float skewness() const { return std::sqrt(static_cast<float>(d_n)) * M3 / std::pow(M2, 1.5); }
-        float sum() const { return Msum; }
-        float min() const { return Mmin; }
-        float max() const { return Mmax; }
-        float lag() const { return d_lag; }
-        float kurtosis() const { return static_cast<float>(d_n) * M4 / (M2 * M2) - 3.0; }
-
-        friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats)
-        {
-            return os << std::fixed //<< std::setprecision(4)
-                      << "Mean:" << stats.mean()
-                      << '(' << stats.stddev()
-                      << ") Min:" << stats.min()
-                      << " Max:" << stats.max()
-                      << " skew:" << stats.skewness()
-                      << " kurtosis:" << stats.kurtosis()
-                      << " n:" << stats.n()
-                      << " sum:" << stats.sum()
-                      << " lag:" << stats.lag();
-        }
+        RunningStats &operator+=(RunningStats const &other);
+        friend RunningStats operator+(RunningStats lhs, RunningStats const &rhs);
+        friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats);
     };
+
+    RunningStats operator+(RunningStats lhs, RunningStats const &rhs);
+    std::ostream &operator<<(std::ostream &os, RunningStats const &stats);
 
 } // namespace Nilib
 
