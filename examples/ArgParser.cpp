@@ -6,24 +6,14 @@ int main(int argc, char **argv)
 {
     Argparser parser(argc, argv);
 
-    // struct Settings
-    // {
-    //     int integer;
-    //     bool verbose;
-    // } settings;
-
     // // Which positional arguments does this program neeed!
-    std::string inputfile = parser.argument<std::string>("--inputfile", "inputfile for the program").setdefault("load.csv");
-    int integer =           parser.argument<int>("--dim", "dimension");
-    // auto intege2 = parser.argument<int>("outputfile").setdefault(5);
+    std::string inputfile = parser.argument<std::string>("--inputfile", "-i", "inputfile for the program");
+    int integer =           parser.argument<int>("--dim", "-d", "dimension");
+    bool verbose = parser.option<bool>("--verbose", "-v", "verbose printing of messages");
+    parser.check();
 
-    // settings.verbose = parser.flag();
-
-    // parser.helpinfo();
-
-    // parser.print();
-
-    LOG_PROGRESS("Program start!", inputfile, integer);
+    
+    LOG_PROGRESS("Program", parser.programName(), "arguments:", "InputFile:", inputfile, "integerDim:", integer, "verbose:", verbose);
 
     return 0;
 }

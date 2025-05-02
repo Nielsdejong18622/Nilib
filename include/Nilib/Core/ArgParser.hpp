@@ -23,79 +23,178 @@ namespace Nilib
         }
     };
 
-
-
     class Argparser
     {
-        std::string d_program_name;
-        std::unordered_map<int, std::string> d_positional_argument_map;
 
-        void parse(int argc, char **argv)
+        struct Argument
         {
-            LOG_DEBUG("Parsing:", argc, "arguments");
-            d_program_name = argv[0];
+            std::string argument_descriptor, argument_descriptor_shorthand, description;
+        };
 
-            for (size_t i = 1; i < argc; i++)
+        bool d_failed_parse;
+        int d_succesfully_parsed_args;
+        std::string d_program_name;
+        std::vector<std::string> d_positional_argument_map;
+        std::vector<Argument> d_helpmap;
+
+        template <typename Type>
+        Type getNextArgument(std::string const &argument_key)
+        {
+            // We found the short hand, e.g. -i
+            auto argument_iter = std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_key);
+            Type value; // Default constructed value.
+            if (argument_iter == d_positional_argument_map.end())
             {
-                d_positional_argument_map[i] = argv[i];
-                std::string argstring = d_positional_argument_map[i];
-                
-                // Each command line argument is either a positional argument. file1.txt
-                if (!argstring.starts_with('-'))
-                {
-
-                
-                }
-                // A short option -v (flag)
-                else if (argstring.size() > 1 && argstring.at(1))
-                {
-
-                }
-
-                // a long option --verbose (flag)
-
-                // a long option --value=5 
-
-                // a long option --out file.txt
-
-
-
+                LOG_ERROR("No argument following", argument_key);
+                return value;
             }
+
+            d_succesfully_parsed_args++; // We found the key.
+
+            auto argval = next(argument_iter);
+            if (argval == d_positional_argument_map.end())
+            {
+                LOG_ERROR("No argument following", argument_key);
+                d_succesfully_parsed_args++;
+                return value;
+            }
+
+            std::stringstream convert(*argval);
+            if (!(convert >> value) || !(convert >> std::ws).eof())
+            {
+                LOG_ERROR("Failed parsing of argument:", *argval, "given after ", argument_key);
+                return value;
+            }
+
+            d_succesfully_parsed_args++; // We also passed the argument here.
+            return value;
         }
 
     public:
         Argparser(int argc, char **argv)
+            : d_failed_parse(false),
+              d_succesfully_parsed_args(1) // The program name.
         {
             parse(argc, argv);
-            LOG_PROGRESS("ArgParser constructor.");
+        }
+
+        inline std::string const &programName() { return d_program_name; }
+
+        // Check if parsing went well.
+        void check()
+        {
+            auto &&argv = d_positional_argument_map;
+            // Look for "-h" or "--help"
+            if (std::find(argv.begin(), argv.end(), "-h") != argv.end() ||
+                std::find(argv.begin(), argv.end(), "--help") != argv.end())
+            {
+                helpinfo();
+            }
+            if (d_positional_argument_map.size() > d_succesfully_parsed_args)
+            {
+                //LOG_ERROR("Unknown argument!");
+                //helpinfo();
+            }
+        }
+
+        void parse(int argc, char **argv)
+        {
+            // Loop through all the required positional arguments and process them.
+            d_program_name = argv[0];
+
+            d_positional_argument_map.reserve(argc);
+            for (size_t i = 0; i < argc; i++)
+                d_positional_argument_map.emplace_back(argv[i]);
         }
 
         template <typename Type>
-        ArgProxy<Type> argument(std::string const &argument_descriptor, std::string const &description)
+        Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description)
         {
-            LOG_PROGRESS("Program requires argument:", description, "given after", argument_descriptor);
-            // // Try to find the argument in the argument_map.
+            // Log the argument in the help map.
+            d_helpmap.emplace_back(argument_descriptor, argument_shorthand, description);
+            Type defaultType;
+            // If parsing failed on a previous argument, skip this argument parsing to get to the help message.
+            if (d_failed_parse)
+                return defaultType;
 
-            // auto result = std::find_if(
-            //     d_positional_argument_map.begin(),
-            //     d_positional_argument_map.end(),
-            //     [val](const auto &mo)
-            //     { return mo.second == val; });
+            // Parse the argument.
+            // If the argument can not be located/parsed, set failbit and return default constructed value.
 
-            // // RETURN VARIABLE IF FOUND
-            // if (result != mapObject.end())
-            //     int foundkey = result->first;
+            // First search for the shorthand.
+            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_shorthand) != d_positional_argument_map.end())
+            {
+                return getNextArgument<Type>(argument_shorthand);
+            }
+            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_descriptor) != d_positional_argument_map.end())
+            {
+                return getNextArgument<Type>(argument_descriptor);
+            }
+            if (std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_shorthand](std::string const &x)
+                             { return x.rfind(argument_shorthand) == 0; }) != d_positional_argument_map.end())
+            {
+                return parseEqualityArgument<Type>(argument_shorthand);
+            }
+            if (std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_descriptor](std::string const &x)
+                             { return x.rfind(argument_descriptor) == 0; }) != d_positional_argument_map.end())
+            {
+                return parseEqualityArgument<Type>(argument_descriptor);
+            }
+            LOG_ERROR("Program requires argument:", description);
+            return defaultType;
+        }
 
-            return ArgProxy<Type>();
+        template <typename Type>
+        Type parseEqualityArgument(std::string const &argument_key)
+        {
+            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
+                                         { return x.rfind(argument_key) == 0; });
+            Type value; // Default constructed value.
+
+            std::string argstr = *argument;
+            if (argstr.length() <= argument_key.length() + 1)
+            {
+                // Case --inputfile=
+                LOG_ERROR("Expected argument after", argstr);
+                return value;
+            }
+            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
+            std::stringstream convert(arg_str);
+            if (!(convert >> value) || !(convert >> std::ws).eof())
+            {
+                LOG_ERROR("Failed parsing of argument:", arg_str);
+                return value;
+            }
+            d_succesfully_parsed_args++;
+            return value;
+        }
+
+        template <typename Type = bool>
+        bool option(std::string const &argument_descriptor, std::string const &argument_descriptor_shorthand, std::string const &description)
+        {
+            // If the option (-h) is found in the argument map, it is true.
+            // Otherwise it is false.
+            auto &argv = d_positional_argument_map;
+            if (std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end())
+                return true;
+            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+        }
+
+        template <typename Type = bool>
+        bool option(std::string const &argument_descriptor, std::string const &description)
+        {
+            // If the option (-h) is found in the argument map, it is true.
+            // Otherwise it is false.
+            auto &argv = d_positional_argument_map;
+            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
         }
 
         // Prints all arguments and values.
         void print() const
         {
             LOG_DEBUG("Program:", d_program_name);
-            for (auto &&[k, v] : d_positional_argument_map)
+            for (auto &&v : d_positional_argument_map)
             {
-                LOG_DEBUG(k, ':', v);
+                LOG_DEBUG(v);
             }
         }
 
