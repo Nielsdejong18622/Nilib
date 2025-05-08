@@ -26,16 +26,18 @@ namespace Nilib
         LogLevel d_log;
         std::ostream &d_stream;
 
+        virtual ~Logger() = default;
+        virtual void insertTimestamp(LogLevel const level) = 0;
+        virtual void insertColor(LogLevel const level) = 0;
+
     public:
         bool endl = true;
+        char sep = ' ';
+
         Logger(std::ostream &stream)
             : d_stream(stream)
         {
         }
-
-        virtual ~Logger() = default;
-        virtual void insertTimestamp(LogLevel const level) = 0;
-        virtual void insertColor(LogLevel const level) = 0;
 
         Logger &level(LogLevel const level)
         {
@@ -56,7 +58,7 @@ namespace Nilib
             d_stream << first; // Print the first argument
             if constexpr (sizeof...(args) > 0)
             {                                        // Check if there are more arguments
-                d_stream << ' ';                     // Print separator
+                d_stream << sep;                     // Print separator
                 output(std::forward<Args>(args)...); // Template recurse
             }
             else if (endl)
