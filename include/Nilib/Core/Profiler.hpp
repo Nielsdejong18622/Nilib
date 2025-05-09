@@ -15,11 +15,20 @@ namespace Nilib
         const char *d_file;
         int d_line;
         std::chrono::time_point<std::chrono::high_resolution_clock> d_start_timepoint;
+        bool d_printondestruct;
 
     public:
+        Profiler();
         Profiler(const char *func_name, const char *file_name, int line_num);
         ~Profiler();
+
+        void reset();
+
+        size_t getSeconds() const;
+        size_t getMilliseconds() const;
     };
+
+    using Timer = Profiler;
 
 }; // Namespace.
 
