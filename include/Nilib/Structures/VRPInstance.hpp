@@ -11,42 +11,41 @@ namespace Nilib
     namespace VRP
     {
 
+        // An instance holds a graph adjacency matrix. And a matrix with node attributes.
+        class Instance
+        {
+        public:
+            Nilib::Matrixf A; // Adjacency matrix.
+            Nilib::Matrixf X; // Attributes
+            size_t vehcap;    // vehicle capacity. (Assume all nodes have demand 1).
 
-// An instance holds a graph adjacency matrix. And a matrix with node attributes.
-class Instance
-{
-public:
-    Nilib::Matrixf A; // Adjacency matrix.
-    Nilib::Matrixf X; // Attributes
-    size_t vehcap;    // vehicle capacity. (Assume all nodes have demand 1).
+            friend class Solution;
+            Instance() = default;
 
-    friend class Solution;
-    Instance() = default;
+            Instance(size_t const nnodes, size_t const vehcap, Nilib::Matrixf const &A, Nilib::Matrixf const &X);
 
-    Instance(size_t const nnodes, size_t const vehcap, Nilib::Matrixf const &A, Nilib::Matrixf const &X);
+            // Draw the instance to a window.
+            // - Uses the first two features of X matrix as x and y coordinates.
+            void draw(Nilib::Window &win) const;
 
-    // Draw the instance to a window.
-    // - Uses the first two features of X matrix as x and y coordinates.
-    void draw(Nilib::Window &win) const;
+            // Creates a simple random instance.
+            static Instance createRandom(size_t const nnodes, size_t const vehcap);
 
-    // Creates a simple random instance.
-    static Instance createRandom(size_t const nnodes, size_t const vehcap);
+            // Load an instance from stream.
+            static Instance load(std::istream &out);
 
-    // Load an instance from stream.
-    static Instance load(std::istream &out);
+            // Get number of locations
+            size_t numlocations() const;
+            size_t vehcapacity() const;
 
-    // Get number of locations
-    size_t numlocations() const;
-    size_t vehcapacity() const;
+            Nilib::Matrixf distances() const;
 
-    Nilib::Matrixf distances() const;
+            // static bool serialize(Serializer &serializer. Instance &inst);
+            // static Instance deserialize(Deserializer &deserializer);
+            bool serialize(Serializer &serializer);
+            bool deserialize(Deserializer &deserializer);
+        };
 
-    // static bool serialize(Serializer &serializer. Instance &inst);
-    // static Instance deserialize(Deserializer &deserializer);
-    bool serialize(Serializer &serializer);
-    bool deserialize(Deserializer &deserializer);
-};
-
-};
+    };
 };
 #endif
