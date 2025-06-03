@@ -2,6 +2,7 @@
 #include "gurobi_c++.h"
 
 using namespace Nilib;
+using namespace Nilib::VRP;
 
 bool Solution::feasible() const
 {

@@ -49,7 +49,7 @@ namespace Nilib
                 ss << "(" << std::fixed; //<< std::setprecision(3);
                 for (size_t cidx = 0; cidx < d_data.cols(); ++cidx)
                 {
-                    
+
                     if (d_data(ridx, cidx) == std::numeric_limits<float>::max())
                         ss << "INF";
                     else
@@ -189,6 +189,23 @@ namespace Nilib
             Matrix result;
             for (size_t idx = 0; idx < result.rows() * result.cols(); ++idx)
                 result.d_data(idx) = RNG::prob();
+            return result;
+        }
+
+        // Creates a random matrix filled with [lower-upper].
+        static Matrix randunif(size_t const n, size_t const m, auto const lower, auto const upper)
+        {
+            Matrix result(n, m);
+            for (size_t idx = 0; idx < n * m; ++idx)
+                result.d_data(idx) = RNG::uniform(lower, upper);
+            return result;
+        }
+
+        static Matrix randunif(auto const lower, auto const upper)
+        {
+            Matrix result;
+            for (size_t idx = 0; idx < result.rows() * result.cols(); ++idx)
+                result.d_data(idx) = RNG::uniform(lower, upper);
             return result;
         }
 

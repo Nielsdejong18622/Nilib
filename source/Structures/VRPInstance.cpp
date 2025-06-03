@@ -3,6 +3,7 @@
 #include "Nilib/Math/LinAlg.hpp"
 
 using namespace Nilib;
+using namespace Nilib::VRP;
 
 Instance::Instance(size_t const nnodes, size_t const vehcap, Matrixf const &A, Matrixf const &X)
     : A(A), X(X), vehcap(vehcap)
@@ -14,15 +15,15 @@ Instance Instance::createRandom(size_t const nnodes, size_t const vehcap)
     CORE_ASSERT(vehcap >= 1);
     // Feature matrix X;
     // (x, y, isdepot, nnodes, vehcap)
-    Matrixf Pos = Matrixf::randn(nnodes, 2, 0, 1);
+    Matrixf Pos = Matrixf::randunif(nnodes, 2, -100.0f, 100.0f);
     Matrixf isdepot = Matrixf::zeros(nnodes, 1);
     Matrixf Nodes = Matrixf::all(nnodes, 1, nnodes);
     Matrixf V = Matrixf::all(nnodes, 1, vehcap);
     // Matrixf numnodes = Matrixf::all(nnodes, 1, nnodes);
     isdepot(0, 0) = 1.0;
-    Matrixf X = cbind(Pos, isdepot);
-    X = cbind(X, Nodes);
-    X = cbind(X, V);
+    Matrixf X = rbind(Pos, isdepot);
+    X = rbind(X, Nodes);
+    X = rbind(X, V);
 
     // Adjacency matrix A;
     Matrixf A = Matrixf::ones(nnodes, nnodes) - Matrixf::diag(nnodes, nnodes, 1.0);

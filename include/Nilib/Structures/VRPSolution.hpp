@@ -5,39 +5,44 @@
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"
 
-
-class Solution 
+namespace Nilib
 {
-private:
-public:
-    // A solution object is meaningless without an instance. 
-    Instance d_instance;
+    namespace VRP
+    {
+        class Solution
+        {
+        private:
+        public:
+            // A solution object is meaningless without an instance.
+            Instance d_instance;
 
-    // The route matrix. 
-    Nilib::Matrixf d_X;
-    float d_opt_objval = 0.0;
-    
-    Solution(Instance const &inst, Nilib::Matrixf const &X, float const opt_objval);
-    Solution(Instance const &inst, Nilib::Matrixf const &X);
+            // The route matrix.
+            Nilib::Matrixf d_X;
+            float d_opt_objval = 0.0;
 
-    // Shuffle the solution. 
-    void random();
+            Solution(Instance const &inst, Nilib::Matrixf const &X, float const opt_objval);
+            Solution(Instance const &inst, Nilib::Matrixf const &X);
 
-    static Solution randomSolution(Instance const &inst);
-    static Solution optimalSolution(Instance const &inst);
-    static Solution feasibleSolution(Instance const &inst);
-    
-    void draw(Nilib::Window const &window) const;
+            // Shuffle the solution.
+            void random();
 
-    // Returns information about the solution. 
-    bool feasible() const;
-    float objective() const;
-    float optimalityGap() const;
+            static Solution randomSolution(Instance const &inst);
+            static Solution optimalSolution(Instance const &inst);
+            static Solution feasibleSolution(Instance const &inst);
 
-    bool serialize(Serializer &serializer);
-    bool deserialize(Deserializer &deserializer);
+            void draw(Nilib::Window const &window) const;
 
-    bool operator==(Solution const &other) const;
+            // Returns information about the solution.
+            bool feasible() const;
+            float objective() const;
+            float optimalityGap() const;
+
+            bool serialize(Serializer &serializer);
+            bool deserialize(Deserializer &deserializer);
+
+            bool operator==(Solution const &other) const;
+        };
+    };
 };
 
 #endif
