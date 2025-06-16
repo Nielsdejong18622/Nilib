@@ -6,7 +6,11 @@ using namespace Nilib::VRP;
 
 bool Solution::feasible() const
 {
+    // Routes should be circular. 
 
+    // Every customer should be visited. 
+
+    // Capacity should be respected. 
     return true;
 }
 
@@ -105,6 +109,12 @@ Solution Solution::feasibleSolution(Instance const &inst)
     return Solution(inst, d_X);
 }
 
+Solution Solution::emptySolution(Instance const &inst)
+{
+    size_t const numnodes = inst.numlocations();
+    return Solution(inst, Matrixf::zeros(numnodes, numnodes));
+}
+
 Solution Solution::randomSolution(Instance const &inst)
 {
     // ASSUMES Node 0 is always the depot!
@@ -140,7 +150,7 @@ Solution Solution::optimalSolution(Instance const &inst)
         GRBModel model = GRBModel(env);
 
         // Silence the solver output
-        model.set(GRB_IntParam_OutputFlag, 0);
+        model.set(GRB_IntParam_OutputFlag, 1);
 
         // Create decision variables
         std::vector<std::vector<GRBVar>> x(n, std::vector<GRBVar>(n));
@@ -236,21 +246,21 @@ Solution Solution::optimalSolution(Instance const &inst)
 
 void Solution::draw(Window const &window) const
 {
-    ASSERT(false, "Reimplement Solution::draw, please.");
-    /*
+    //ASSERT(false, "Reimplement Solution::draw, please.");
+    
     size_t const numnodes = d_instance.numlocations();
     //window.drawColor(Colors::Black);
+    // Traverse through the solution matrix d_X.
     for (size_t from = 0; from < numnodes; ++from)
     {
         for (size_t to = 0; to < numnodes; ++to)
         {
             if (d_X(from, to) < 0.5) continue;
-            Vec2D<float> from_pos( {d_instance.X(from, 0), d_instance.X(from,1)});
-            Vec2D<float> to_pos( {d_instance.X(to,0), d_instance.X(to,1)});
+            Nilib::Vec2f from_pos( {d_instance.X(from, 0), d_instance.X(from,1)});
+            Nilib::Vec2f to_pos( {d_instance.X(to,0), d_instance.X(to,1)});
             window.drawArc(from_pos, to_pos, 2.0f);
         }
     }
-    */
 }
 
 bool Solution::serialize(Serializer &serializer)

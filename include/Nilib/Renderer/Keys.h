@@ -21,6 +21,8 @@ namespace Nilib
 			Minus = 45,		 /* - */
 			Period = 46,	 /* . */
 			Slash = 47,		 /* / */
+
+			// Keyboard toprow.
 			D0 = 48,		 /* 0 */
 			D1 = 49,		 /* 1 */
 			D2 = 50,		 /* 2 */

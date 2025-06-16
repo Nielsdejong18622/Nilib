@@ -329,7 +329,7 @@ void Window::key_callback(GLFWwindow *window, int key, int scancode, int action,
 {
     Window &win = Window::windowFromPtr(window);
     std::array<char const *, 3> const actionnames = {"release", "press", "hold"};
-    LOG_DEBUG("[WEVENT] Window", win.title(), "key", key, "action", actionnames[action], "scancode", scancode, "mods", mods);
+    // LOG_DEBUG("[WEVENT] Window", win.title(), "key", key, "action", actionnames[action], "scancode", scancode, "mods", mods);
 
     // Look in the keymap for the key Callback and call it.
     KeyEvent keyev = {key, scancode, action, mods};

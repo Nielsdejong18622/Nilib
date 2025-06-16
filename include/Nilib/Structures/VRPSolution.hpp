@@ -9,6 +9,7 @@ namespace Nilib
 {
     namespace VRP
     {
+        // Pretty basic VRP solution. 
         class Solution
         {
         private:
@@ -26,6 +27,7 @@ namespace Nilib
             // Shuffle the solution.
             void random();
 
+            static Solution emptySolution(Instance const &inst);
             static Solution randomSolution(Instance const &inst);
             static Solution optimalSolution(Instance const &inst);
             static Solution feasibleSolution(Instance const &inst);
