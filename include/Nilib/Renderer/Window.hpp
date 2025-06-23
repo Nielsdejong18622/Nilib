@@ -61,6 +61,7 @@ namespace Nilib
 
         // Set Windowtitle.
         void title(char const *title) const;
+        void title(std::string const &title) const;
         char const *title() const;
 
         // Open/close the window.

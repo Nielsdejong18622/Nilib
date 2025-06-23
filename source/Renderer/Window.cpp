@@ -89,6 +89,11 @@ char const *Window::title() const
     return d_data.title;
 }
 
+void Window::title(std::string const &title) const
+{
+    glfwSetWindowTitle(d_window, title.c_str());
+}
+
 void Window::title(char const *title) const
 {
     glfwSetWindowTitle(d_window, title);
@@ -184,7 +189,7 @@ void Window::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 
 void Window::cursorPos_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
+    //LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
 }
 
 void Window::open()

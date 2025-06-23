@@ -149,7 +149,131 @@ namespace Nilib
         Color const RoyalBlue = Color::RGBf(0.255, 0.412, 0.882);
         Color const DodgerBlue = Color::RGBf(0.118, 0.565, 1.000);
         Color const LightSkyBlue = Color::RGBf(0.529, 0.808, 0.980);
-    };
-} // namespace Nilib
+
+        namespace Palette
+        {
+
+            template <std::size_t N>
+            class Palette
+            {
+            public:
+                Palette(std::array<Color, N> const &colors) : colors(colors) {}
+
+                // Sample color by index (wraps around)
+                inline Color const &sample(std::size_t index) const
+                {
+                    return colors[index % N];
+                }
+
+                inline Color const &sample() const
+                {
+                    return colors[Nilib::RNG::rand() % N];
+                }
+
+                inline Color const &operator[](std::size_t index) const
+                {
+                    return sample(index);
+                }
+
+                inline size_t size() { return N; }
+
+            protected:
+                Palette() = default;
+                std::array<Color, N> colors;
+            };
+
+            template <std::size_t N>
+            struct Random : public Palette<N>
+            {
+                Random()
+                {
+                    for (size_t i = 0; i < N; i++)
+                        this->colors[i] = Nilib::Color::RandomHSL();
+                }
+            };
+
+            Palette<3> const stoplight({Colors::Red, Colors::Orange, Colors::Green});
+            Palette<3> const primary({Colors::Red, Colors::Blue, Colors::Yellow});
+            Palette<6> const rainbow({Colors::Red, Colors::Orange, Colors::Yellow, Colors::Green, Colors::Blue, Colors::Purple});
+            Palette<5> const cool({Colors::Teal, Colors::Cyan, Colors::SkyBlue, Colors::Blue, Colors::Indigo});
+            Palette<5> const warm({Colors::Red, Colors::Orange, Colors::Coral, Colors::Gold, Colors::Amber});
+            Palette<5> const earth({Colors::Brown, Colors::Olive, Colors::Tan, Colors::SaddleBrown, Colors::ForestGreen});
+            Palette<5> const pastel({Colors::Lavender, Colors::PeachPuff, Colors::LightPink, Colors::MintCream, Colors::Orchid});
+            Palette<5> const grayscale({Colors::Black, Colors::Charcoal, Colors::Grey, Colors::LavenderBlush, Colors::White});
+            Palette<6> const vibrant({Colors::Red,
+                                      Colors::Green,
+                                      Colors::Blue,
+                                      Colors::Magenta,
+                                      Colors::Cyan,
+                                      Colors::Yellow});
+            Palette<5> const nature({Colors::SeaGreen, Colors::SkyBlue, Colors::Wheat, Colors::Sienna, Colors::ForestGreen});
+            Palette<5> const twilight({Colors::Indigo, Colors::PurpleHeart, Colors::Orchid, Colors::Plum, Colors::SlateBlue}); // 🌅 Sunset Palette — warm, fading sky tones
+            Palette<5> const sunset({Colors::Peach,
+                                     Colors::Coral,
+                                     Colors::Orange,
+                                     Colors::Pink,
+                                     Colors::Lavender});
+            Palette<5> const sunrise({Colors::MistyRose,
+                                      Colors::PapayaWhip,
+                                      Colors::Gold,
+                                      Colors::PeachPuff,
+                                      Colors::LightPink});
+            Palette<6> const rustic({Colors::SaddleBrown,
+                                     Colors::Tan,
+                                     Colors::BurlyWood,
+                                     Colors::RosyBrown,
+                                     Colors::Peru,
+                                     Colors::Chocolate});
+            Palette<6> const galaxy({Colors::SkyBlue,
+                                     Colors::Indigo,
+                                     Colors::SlateBlue,
+                                     Colors::MediumPurple,
+                                     Colors::Orchid,
+                                     Colors::Thistle});
+            Palette<6> const autumn({Colors::DarkRed,
+                                     Colors::Sienna,
+                                     Colors::Orange,
+                                     Colors::OliveDrab,
+                                     Colors::Tan,
+                                     Colors::Wheat});
+            Palette<6> const spring({Colors::LightPink,
+                                     Colors::Mint,
+                                     Colors::LavenderBlush,
+                                     Colors::Aquamarine,
+                                     Colors::SkyBlue,
+                                     Colors::LemonChiffon});
+            Palette<5> const winter({Colors::Slate,
+                                     Colors::Charcoal,
+                                     Colors::SkyBlue,
+                                     Colors::MintCream,
+                                     Colors::Lavender});
+            Palette<5> const alertLevels({Colors::Green,
+                                          Colors::Yellow,
+                                          Colors::Orange,
+                                          Colors::Red,
+                                          Colors::DarkRed});
+            Palette<7> const scientific({Colors::DarkSlateBlue,
+                                         Colors::Blue,
+                                         Colors::Cyan,
+                                         Colors::Green,
+                                         Colors::Yellow,
+                                         Colors::Orange,
+                                         Colors::Red});
+            Palette<6> const candy({Colors::Fuchsia,
+                                    Colors::Lime,
+                                    Colors::Periwinkle,
+                                    Colors::Peach,
+                                    Colors::Mint,
+                                    Colors::LightPink});
+            Palette<5> const beach({Colors::Sand,
+                                    Colors::Aquamarine,
+                                    Colors::SkyBlue,
+                                    Colors::Moccasin,
+                                    Colors::Seashell});
+
+        }; // namespace Nilib
+    }; // namespace Colors
+
+}; // namespace Nilib
 
 #endif

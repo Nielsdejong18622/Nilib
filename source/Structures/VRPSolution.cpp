@@ -17,31 +17,31 @@ bool Solution::feasible() const
 float Solution::optimalityGap() const
 {
     float obj = objective();
-    if (obj <= d_opt_objval)
+    if (obj <= optimal_objective)
         return 0.0;
-    // CORE_ASSERT(obj >= d_opt_objval)
-    if (d_opt_objval == 0)
+    // CORE_ASSERT(obj >= optimal_objective)
+    if (optimal_objective == 0)
         LOG_WARNING() << "Optimal Objective value not calculated!\n";
-    return (obj - d_opt_objval) / d_opt_objval;
+    return (obj - optimal_objective) / optimal_objective;
 }
 
 float Solution::objective() const
 {
     float objval = 0;
-    for (size_t ri = 0; ri < d_X.rows(); ++ri)
+    for (size_t ri = 0; ri < adjacencyMatrix.rows(); ++ri)
     {
-        for (size_t ci = 0; ci < d_X.cols(); ++ci)
+        for (size_t ci = 0; ci < adjacencyMatrix.cols(); ++ci)
         {
-            if (d_X(ri, ci) > 0.5)
+            if (adjacencyMatrix(ri, ci) > 0.5)
             {
-                objval += d_instance.distances()(ri, ci);
+                objval += instance.distances()(ri, ci);
             }
         }
     }
     return objval;
 }
 Solution::Solution(Instance const &inst, Matrixf const &X, float const opt_objval)
-    : d_instance(inst), d_X(X), d_opt_objval(opt_objval)
+    : instance(inst), adjacencyMatrix(X), optimal_objective(opt_objval)
 {
 }
 
@@ -52,8 +52,8 @@ Solution::Solution(Instance const &inst, Matrixf const &X)
 
 void Solution::random()
 {
-    d_X = Matrixf::rand(d_X.rows(), d_X.cols());
-    d_X.apply([](float const t)
+    adjacencyMatrix = Matrixf::rand(adjacencyMatrix.rows(), adjacencyMatrix.cols());
+    adjacencyMatrix.apply([](float const t)
               { return (t > 0.8); });
 }
 
@@ -248,16 +248,16 @@ void Solution::draw(Window const &window) const
 {
     //ASSERT(false, "Reimplement Solution::draw, please.");
     
-    size_t const numnodes = d_instance.numlocations();
+    size_t const numnodes = instance.numlocations();
     //window.drawColor(Colors::Black);
     // Traverse through the solution matrix d_X.
     for (size_t from = 0; from < numnodes; ++from)
     {
         for (size_t to = 0; to < numnodes; ++to)
         {
-            if (d_X(from, to) < 0.5) continue;
-            Nilib::Vec2f from_pos( {d_instance.X(from, 0), d_instance.X(from,1)});
-            Nilib::Vec2f to_pos( {d_instance.X(to,0), d_instance.X(to,1)});
+            if (adjacencyMatrix(from, to) < 0.5) continue;
+            Nilib::Vec2f from_pos( {instance.X(from, 0), instance.X(from,1)});
+            Nilib::Vec2f to_pos( {instance.X(to,0), instance.X(to,1)});
             window.drawArc(from_pos, to_pos, 2.0f);
         }
     }

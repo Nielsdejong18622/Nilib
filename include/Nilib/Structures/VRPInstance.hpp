@@ -3,6 +3,8 @@
 
 #include "Nilib/Math/Matrix.hpp"
 #include "Nilib/Renderer/Window.hpp"
+#include "Nilib/Structures/Graph.hpp"
+
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"
 
@@ -44,6 +46,27 @@ namespace Nilib
             // static Instance deserialize(Deserializer &deserializer);
             bool serialize(Serializer &serializer);
             bool deserialize(Deserializer &deserializer);
+        };
+
+        template <typename Location, typename Vehicle>
+        struct DataInstance
+        {
+            // If graph is empty, assume full connectivity.
+            // Nilib::Graph<Location> graph;
+            std::vector<Location> locations;
+
+            // If fleet is empty, assume unlimited vehicles.
+            std::vector<Vehicle> fleet;
+
+            void draw(Nilib::Window &window) const;
+
+            bool serialize(Serializer &serializer);
+            bool deserialize(Deserializer &deserializer);
+
+            static DataInstance empty()
+            {
+                return DataInstance();
+            };
         };
 
     };

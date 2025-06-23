@@ -2,24 +2,24 @@
 #define _VRP_SOLUTION_H
 
 #include "Nilib/Structures/VRPInstance.hpp"
+#include "Nilib/Math/ALNS.hpp"
+
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"
 
 namespace Nilib
 {
     namespace VRP
-    {
-        // Pretty basic VRP solution. 
-        class Solution
+    {     
+        // Pretty basic MATRIX VRP solution. 
+        struct Solution
         {
-        private:
-        public:
             // A solution object is meaningless without an instance.
-            Instance d_instance;
+            Instance instance;
 
             // The route matrix.
-            Nilib::Matrixf d_X;
-            float d_opt_objval = 0.0;
+            Nilib::Matrixf adjacencyMatrix;
+            float optimal_objective = 0.0;
 
             Solution(Instance const &inst, Nilib::Matrixf const &X, float const opt_objval);
             Solution(Instance const &inst, Nilib::Matrixf const &X);
@@ -43,6 +43,22 @@ namespace Nilib
             bool deserialize(Deserializer &deserializer);
 
             bool operator==(Solution const &other) const;
+        };
+    
+        // Pretty basic list<Route> VRP solution. 
+        template<typename VRPinstance, typename Route>
+        struct RouteSolution : public ALNS::Solution
+        {
+            VRPinstance instance;
+
+            std::vector<Route> routes;
+
+            // static RouteSolution random(size_t const nnodes, size_t const veh);
+            virtual void draw(Nilib::Window &window) const = 0;
+            
+            // Inherited from ALNS::Solution. 
+            virtual float objective() const = 0;
+            virtual bool feasible() const = 0;
         };
     };
 };
