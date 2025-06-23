@@ -1,5 +1,3 @@
-#include "VRPinstance.hpp"
-#include "VRPsolution.hpp"
 #include "Nilib/Math/ALNS.hpp"
 
 #include "Nilib/Logger/Log.hpp"

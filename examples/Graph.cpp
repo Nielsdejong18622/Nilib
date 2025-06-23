@@ -10,6 +10,7 @@ struct Ndata
 
 int main()
 {
+    using namespace Nilib;
     RNG::seed(127);
     Window win(1024, 812, "Graph window!");
     win.bindkey(std::bind(&Window::close, &win), GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
