@@ -8,7 +8,6 @@ namespace Nilib
     // This class should be optimized away by the compiler.
     struct BaseLogger
     {
-
         template <typename T>
         constexpr BaseLogger &operator<<(T const &message)
         {

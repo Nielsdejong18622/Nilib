@@ -26,6 +26,22 @@ int main()
         LOG_DEBUG() << "Loop" << i << ((i == 15000 - 1) ? '\n' : '\r');
     }
 
+    LOG_WARNING("Commencing string test!");
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        std::string mystring = "mystring";
+        LOG_DEBUG() << "Printing string " << i << ": [";
+        for (auto &&ch : mystring)
+        {
+            LOG_DEBUG() << ch << '/';
+        }
+        LOG_DEBUG() << ']' << '\n';
+        //LOG_DEBUG() << '\n';//LOG_DEBUG(); // THIS IS IMPORTANT TO CLOSE THE STRING!
+        
+    }
+    
+
     LOG_DEBUG(A, 'h', "severity level", LOG_LEVEL);
 
     LOG_TRACE("Trace message.");

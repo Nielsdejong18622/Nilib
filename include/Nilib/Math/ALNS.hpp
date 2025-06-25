@@ -54,6 +54,13 @@ namespace Nilib
             {
                 ASSERT(operators.size() > 0, "ALNS::Solver requires atleast one operator!");
             }
+            	
+            // Sets initial solution. 
+            void initial(Solution const &initial)
+            {
+                bestfound = initial;
+                incumbent = initial;
+            }
 
             void solve()
             {

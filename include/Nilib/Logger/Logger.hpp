@@ -30,6 +30,8 @@ namespace Nilib
         virtual void insertTimestamp(LogLevel const level) = 0;
         virtual void insertColor(LogLevel const level) = 0;
 
+        bool d_requireheader = true;
+
     public:
         bool endl = true;
         char sep = ' ';
@@ -39,10 +41,35 @@ namespace Nilib
         {
         }
 
-        Logger &level(LogLevel const level)
+        // This is called when the user does LOG_DEBUG(A, B, C, ...)
+        Logger &userblock(LogLevel const level)
         {
+            d_requireheader = true;
             insertColor(level);
             insertTimestamp(level);
+            return *this;
+        }
+
+        // This is called when the user does LOG_DEBUG() <<
+        Logger &userblock()
+        {
+            if (d_requireheader == true)
+            {
+                insertColor(d_log);
+                insertTimestamp(d_log);
+                d_requireheader = false;
+            }
+            return *this;
+        }
+
+        Logger &level(LogLevel const level)
+        {
+            d_log = level;
+            // if (d_requireheader)
+            // {
+            //     insertColor(level);
+            //     insertTimestamp(level);
+            // }
             return *this;
         }
 
@@ -64,6 +91,11 @@ namespace Nilib
             else if (endl)
             {
                 d_stream << '\n';
+                d_requireheader = true;
+            }
+            else
+            {
+                d_requireheader = true;
             }
         }
 
@@ -73,11 +105,22 @@ namespace Nilib
         }
 
         template <typename T>
-        Logger &operator<<(T const &message)
+        constexpr Logger &operator<<(T const &message)
         {
             (d_stream) << message;
             return *this;
         }
+
+        Logger &operator<<(char const &message)
+        {
+            if (message == '\n' || message == '\r')
+            {
+                d_requireheader = true;
+            }
+            (d_stream) << message;
+            return *this;
+        }
+        
     };
 };
 #endif

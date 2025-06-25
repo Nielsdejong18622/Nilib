@@ -24,7 +24,7 @@ Logger *LoggerPool::name(char const *loggername)
         return d_logger_registry[loggername];
 
     // TODO fail using global logger!
-    LoggerPool::global()->level(LogLevel::Warning) << "Logger: " << loggername << " not registered!\n";
+    LoggerPool::global()->level(LogLevel::Warning).userblock(LogLevel::Warning).output("LoggerPool:", loggername, "not registered!");
     return LoggerPool::global(); // No logger with that name was found.
 }
 

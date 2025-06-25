@@ -16,15 +16,15 @@ struct DemoSolution : public Nilib::ALNS::Solution
     float objective() const
     {
         // Simple convex problem.
-        // return (x - 5.0f) * (x - 5.0f) + (y - 15.0f) * (y - 15.0f);
+        return (x - 5.0f) * (x - 5.0f) + (y - 15.0f) * (y - 15.0f);
 
         // Rastrigin function.
         // return 20 + x * x + y * y - 10 * (cos(6.28 * x) + cos(6.28 * y));
 
-        // Shaffer F6.
-        float const parabola = x * x + y * y;
-        float const denom = (1 + 0.001 * parabola);
-        return 100 * (0.5 + (sin(sqrt(parabola)) * sin(sqrt(parabola)) - 0.5) / (denom * denom));
+        // // Shaffer F6.
+        // float const parabola = x * x + y * y;
+        // float const denom = (1 + 0.001 * parabola);
+        // return 100 * (0.5 + (sin(sqrt(parabola)) * sin(sqrt(parabola)) - 0.5) / (denom * denom));
     }
 
     bool feasible() const 
