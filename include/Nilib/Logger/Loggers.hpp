@@ -16,20 +16,21 @@ namespace Nilib
     class BasicFileLogger : public Logger
     {
         std::ofstream d_fstream;
+        std::string d_filename;
 
     public:
         BasicFileLogger(std::string const &filename)
-            : d_fstream(filename, std::ios::out), Logger(d_fstream)
+            : d_fstream(filename, std::ios::out), d_filename(filename), Logger(d_fstream)
         {
         }
         BasicFileLogger(char const *filename)
-            : d_fstream(filename, std::ios::out), Logger(d_fstream)
+            : d_fstream(filename, std::ios::out), d_filename(filename), Logger(d_fstream)
         {
         }
 
         ~BasicFileLogger()
         {
-            d_fstream.close();
+            close();
         }
 
         void insertTimestamp(LogLevel const)
@@ -38,6 +39,25 @@ namespace Nilib
 
         void insertColor(LogLevel const)
         {
+        }
+
+        // Close the file (flush the buffer)
+        void close()
+        {
+            d_fstream.flush();
+            d_fstream.close();
+        }
+
+        void open()
+        {
+            d_fstream = std::ofstream(d_filename, std::ios::out);
+        }
+
+        // Close and open the File. 
+        void reset()
+        {
+            close();
+            open();
         }
     };
 

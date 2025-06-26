@@ -80,10 +80,13 @@ namespace Nilib
                 LOG_PROGRESS("Optimizing a solution of size ", sizeof(Solution), "bytes");
                 LOG_PROGRESS("Initial solution objective:", best_obj);
                 if (params.history_filename != "")
+                {
+                    d_logger.reset();
                     LOG_PROGRESS("Writing history to file", params.history_filename);
+                }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
-                float const coolingrate = std::pow(0.001f, 1.0f / params.max_iterations);
+                float const coolingrate = std::pow(0.01f, 1.0f / params.max_iterations);
                 Nilib::Timer timer;
 
                 bool next_feasible = incumbent.feasible();
@@ -113,9 +116,13 @@ namespace Nilib
                     next_feasible = incumbent.feasible();
 
                     // If we can not traverse infeasible solution space and the next solution is infeasible.
-                    if (!(!params.allow_infeasible && next_feasible == false))
+                    if (!params.allow_infeasible && next_feasible == false)
                     {
-
+                        incumbent = previous;
+                    }
+                    // If the next solution is okay to go. 
+                    else
+                    {
                         // Delta cost (new - current)
                         float delta = (next_obj - current_obj) / current_obj;
 
@@ -144,7 +151,7 @@ namespace Nilib
                                     d_callback_global_improvement(incumbent);
                                 best_obj = next_obj;
                                 bestfound = incumbent;
-                                LOG_PROGRESS("Found global improvement, objective:", best_obj);
+                                // LOG_PROGRESS("Found global improvement, objective:", best_obj);
                             }
                         }
                         else
@@ -156,7 +163,9 @@ namespace Nilib
 
                     if (params.history_filename != "")
                     {
-                        CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, next_obj, temperature);
+                        // TODO: CSV does not work when called multiple times as we have static. 
+                        // Thus we require LOG_PROGRESS_TO(history_filename, ... ) with header inserted earlier.
+                        CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, current_feasible, next_obj, next_feasible, temperature, selected_operator_idx);
                     }
 
                     // Cool down
@@ -164,6 +173,7 @@ namespace Nilib
                 }
 
                 LOG_PROGRESS("ALNS solver performed", iteration, "iterations in", timer.getMilliseconds(), "ms.");
+                d_logger.close();
             }
 
             // This userdefined callback is called at the start of each ALNS iteration.
