@@ -5,6 +5,7 @@
 
 #include "Nilib/ML/MLData.h"
 #include "Nilib/ML/MLP.h"
+#include "Nilib/Core/Memory.hpp"
 
 int main(int argc, char **argv)
 {

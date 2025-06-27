@@ -3,6 +3,9 @@
 
 #include "Nilib/Logger/Log.hpp"
 
+#include <vector>
+#include <algorithm>
+
 namespace Nilib
 {
     class Argparser

@@ -10,7 +10,7 @@ int main()
         std::cerr << "Failed to initialize GLFW!" << std::endl;
         return -1;
     }
-
+#ifdef WIN32
     // Get and print GLFW version
     const char *glfwVersion = glfwGetVersionString();
     std::cout << "GLFW Version: " << glfwVersion << std::endl;
@@ -32,7 +32,7 @@ int main()
         std::cerr << "Error code " << e.getErrorCode() << ": " << e.getMessage() << std::endl;
         return -1;
     }
-
+#endif
     // Clean up and exit
     glfwTerminate();
 

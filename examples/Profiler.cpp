@@ -11,7 +11,9 @@ int main()
     {
         PROFILE_SCOPE(fmt::format("Loop {}", i).c_str());
         LOG_INFO() << "Loop " << i << '\n';
+#ifdef WIN_32
         Sleep(40 * i);
+#endif
     }
 
     // Destructors are called in reverse order of construction.

@@ -48,7 +48,7 @@ void op2(DemoSolution &solution)
 
 void myfunction(DemoSolution &sol)
 {
-    LOG_DEBUG() << "Found global improvement:" << std::setprecision(15) << sol.objective() << '\n';
+    LOG_DEBUG() << "Found global improvement:" << sol.objective() << '\n';
 }
 
 int main(int argc, char **argv)
