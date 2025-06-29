@@ -73,7 +73,7 @@ int main()
     {
         auto prey = res_predatorprey[idx](0);
         auto predator = res_predatorprey[idx](1);
-        float time = idx * 0.01;
+        float time = idx * 0.1;
         CSV("predatorprey.csv", time, prey, predator);
     }
 
