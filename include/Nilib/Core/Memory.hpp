@@ -13,8 +13,11 @@
 namespace Nilib
 {
     // Global memory tracker
-    struct MemoryTracker
+    class MemoryTracker
     {
+        std::string formatBytes(uint64_t bytes, bool useBinary = true) const;
+
+    public:
         Nilib::RunningStats allocations;
         Nilib::RunningStats deallocations;
         std::mutex mtx;
@@ -28,20 +31,18 @@ namespace Nilib
     };
 } // namespace Nilib
 
-
 // Align memory (optional but safe)
-void* allocateWithSize(std::size_t size);
-void deallocateWithSize(void* userPtr) noexcept;
+void *allocateWithSize(std::size_t size);
+void deallocateWithSize(void *userPtr) noexcept;
 
 // Single object
-void* operator new(std::size_t size); 
-void operator delete(void* ptr) noexcept;
-void operator delete(void* ptr, std::size_t size) noexcept;
+void *operator new(std::size_t size);
+void operator delete(void *ptr) noexcept;
+void operator delete(void *ptr, std::size_t size) noexcept;
 
 // Arrays
-void* operator new[](std::size_t size);
-void operator delete[](void* ptr) noexcept;
-void operator delete[](void* ptr, std::size_t size) noexcept; 
-
+void *operator new[](std::size_t size);
+void operator delete[](void *ptr) noexcept;
+void operator delete[](void *ptr, std::size_t size) noexcept;
 
 #endif

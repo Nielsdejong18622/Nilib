@@ -16,15 +16,37 @@ void MemoryTracker::remove(size_t size) noexcept
 void MemoryTracker::report() const noexcept
 {
     LOG_DEBUG("==== Memory Tracker Report ====");
-    LOG_DEBUG() << "Total Allocated: " << allocations.sum() << " bytes\n";
-    LOG_DEBUG() << "Total Freed:     " << deallocations.sum() << " bytes\n";
-    LOG_DEBUG() << "Leaked:          " << (allocations.sum() - deallocations.sum()) << " bytes\n";
+    LOG_DEBUG("Total Allocated:", formatBytes(allocations.sum()));
+    LOG_DEBUG("Total Freed:    ", formatBytes(deallocations.sum()));
+    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()));
     LOG_DEBUG("=======================");
 }
 
 MemoryTracker::~MemoryTracker()
 {
     report();
+}
+
+std::string MemoryTracker::formatBytes(uint64_t bytes, bool useBinary) const
+{
+    const char *siUnits[] = {"B", "KB", "MB", "GB", "TB", "PB"};
+    const char *iecUnits[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB"};
+
+    double size = static_cast<double>(bytes);
+    int unit = 0;
+
+    int divisor = useBinary ? 1024 : 1000;
+    const char **units = useBinary ? iecUnits : siUnits;
+
+    while (size >= divisor && unit < 5)
+    {
+        size /= divisor;
+        ++unit;
+    }
+
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(2) << size << " " << units[unit];
+    return out.str();
 }
 
 // Declare global static instance

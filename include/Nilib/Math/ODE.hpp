@@ -10,21 +10,23 @@ namespace Nilib
     namespace ODE
     {
         // Observation, or point.
-        using X = Nilib::Mat<1, 1>;
-        //using X = Nilib::Matrixf;
-        // Standard ODE solver framework.
+        // using Y = Nilib::Mat<1, 1>;
+        // using X = Nilib::Matrixf;
+        //  Standard ODE solver framework.
 
         // A differential function.
         // y' = f(y, t), y(t_0) = y_0
-        using ODEfunction = X (*)(X const &, float const t);
+        // using ODEfunction = Y (*)(Y const &, float const t);
 
-        std::vector<X> EulerMethod(ODEfunction fun, float const start, float const end, X const initial, float const timestep)
+        template<typename Y = Nilib::Mat<1, 1>, typename ODEfunction = Y (*)(Y const &, float const t)>
+        std::vector<Y> EulerMethod(ODEfunction fun, float const start, float const end, Y const initial, float const timestep)
         {
-            X currentval = initial;
-            std::vector<X> results;
+            Y currentval = initial;
+            std::vector<Y> results;
 
-            results.push_back(currentval);
             size_t const iterations = (end - start) / timestep;
+            results.reserve(iterations + 1);
+            results.push_back(currentval);
             float current_time = start;
             for (size_t iter = 0; iter < iterations; ++iter)
             {
@@ -34,10 +36,36 @@ namespace Nilib
                 results.push_back(currentval);
                 current_time += timestep;
             }
-            
 
             // Returns a vector of observations (or points) from [start, end, by = timestep(h)].
-            
+            return results;
+        }
+
+        template<typename Y = Nilib::Mat<1, 1>, typename ODEfunction = Y (*)(Y const &, float const t)>
+        std::vector<Y> RungeKutta4(ODEfunction fun, float const start, float const end, Y const initial, float const timestep)
+        {
+            Y currentval = initial;
+            std::vector<Y> results;
+
+            size_t const iterations = (end - start) / timestep;
+            results.reserve(iterations + 1);
+            results.push_back(currentval);
+            float current_time = start;
+            for (size_t iter = 0; iter < iterations; ++iter)
+            {
+                auto k1 = fun(currentval, current_time);
+                auto k2 = fun(currentval + timestep * k1 / 2, current_time + timestep / 2);
+                auto k3 = fun(currentval + timestep * k2 / 2, current_time + timestep / 2);
+                auto k4 = fun(currentval + k3 * timestep, current_time + timestep);
+
+                auto m = (k1 + k4) / 6 + (k2 + k3) / 3;
+                
+                currentval += m * timestep;
+                current_time += timestep;
+                results.push_back(currentval);
+            }
+
+            // Returns a vector of observations (or points) from [start, end, by = timestep(h)].
             return results;
         }
 
