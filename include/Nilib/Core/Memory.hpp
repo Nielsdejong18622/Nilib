@@ -31,9 +31,11 @@ namespace Nilib
     };
 } // namespace Nilib
 
+
 // Align memory (optional but safe)
 void *allocateWithSize(std::size_t size);
 void deallocateWithSize(void *userPtr) noexcept;
+#ifdef TRACK_MEMORY
 
 // Single object
 void *operator new(std::size_t size);
@@ -44,5 +46,6 @@ void operator delete(void *ptr, std::size_t size) noexcept;
 void *operator new[](std::size_t size);
 void operator delete[](void *ptr) noexcept;
 void operator delete[](void *ptr, std::size_t size) noexcept;
+#endif
 
 #endif
