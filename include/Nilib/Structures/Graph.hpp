@@ -68,7 +68,7 @@ namespace Nilib
 
         };
 
-        class DiGraph
+        class Graph
         {
             GraphI *rep; // Make it unique ptr.
 

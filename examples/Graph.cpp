@@ -6,11 +6,11 @@ int main()
     using namespace Nilib::Graph;
 
     // Step 1. Make a simple graph that stores relations. 
-    Graph<AdjacencyRep> graph;
+    // Graph<AdjacencyRep> graph;
 
-    graph.addNode(1);
-    graph.addNode(2);
-    graph.addEdge(1, 2);
+    // graph.addNode(1);
+    // graph.addNode(2);
+    // graph.addEdge(1, 2);
 
 
     // Step 2. Use graphmaps to create graphWithDatatype

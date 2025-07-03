@@ -20,7 +20,6 @@ namespace Nilib
     public:
         Nilib::RunningStats allocations;
         Nilib::RunningStats deallocations;
-        std::mutex mtx;
 
         ~MemoryTracker();
         void add(size_t size) noexcept;
