@@ -75,6 +75,9 @@ void deallocateWithHeader(void *userPtr, size_t size) noexcept
     gMemoryTracker.remove(size);
 }
 
+
+#ifdef TRACK_MEMORY
+
 // Single object
 void *operator new(std::size_t size)
 {
@@ -102,3 +105,5 @@ void operator delete[](void *ptr, std::size_t size) noexcept
 {
     deallocateWithHeader(ptr, size);
 }
+
+#endif

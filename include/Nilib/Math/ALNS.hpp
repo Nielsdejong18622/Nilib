@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace Nilib
 {
@@ -40,7 +41,7 @@ namespace Nilib
         {
         public:
             using Operator = void (*)(Solution &);
-            using Callback = Operator;
+            using Callback = std::function<void(Solution&)>;
 
             Solution bestfound;
             Solution incumbent;

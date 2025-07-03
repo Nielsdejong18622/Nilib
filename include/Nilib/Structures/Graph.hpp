@@ -30,7 +30,7 @@ namespace Nilib
             // Properties.
             virtual size_t numnodes() const = 0;
             virtual size_t numedges() const = 0;
-            [[no_discard]] virtual bool empty() const = 0;
+            virtual bool empty() const = 0;
 
             // Traversal
             virtual std::vector<node_id> down_stream(node_id node) const = 0;
@@ -68,12 +68,6 @@ namespace Nilib
 
         };
 
-        class Graph
-        {
-            GraphI *rep; // Make it unique ptr.
-
-
-        };
 
     }; // namespace Graph
 
