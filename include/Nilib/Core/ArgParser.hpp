@@ -86,17 +86,6 @@ namespace Nilib
             }
         }
 
-        void parse(int argc, char **argv)
-        {
-            // Loop through all the required positional arguments and process them.
-            d_program_name = argv[0];
-
-            d_positional_argument_map.reserve(argc);
-            for (size_t i = 0; i < argc; i++)
-            {
-                d_positional_argument_map.emplace_back(argv[i]);
-            }
-        }
         template <typename Type>
         Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description)
         {
@@ -141,31 +130,6 @@ namespace Nilib
             return defaultType;
         }
 
-        template <typename Type>
-        Type parseEqualityArgument(std::string const &argument_key)
-        {
-            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
-                                         { return x.rfind(argument_key) == 0; });
-            Type value; // Default constructed value.
-
-            std::string argstr = *argument;
-            if (argstr.length() <= argument_key.length() + 1)
-            {
-                // Case --inputfile=
-                LOG_ERROR("Expected argument after", argstr);
-                return value;
-            }
-            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
-            std::stringstream convert(arg_str);
-            if (!(convert >> value) || !(convert >> std::ws).eof())
-            {
-                LOG_ERROR("Failed parsing of argument:", arg_str);
-                return value;
-            }
-            d_succesfully_parsed_args++;
-            return value;
-        }
-
         template <typename Type = bool>
         bool option(std::string const &argument_descriptor, std::string const &argument_descriptor_shorthand, std::string const &description)
         {
@@ -205,9 +169,46 @@ namespace Nilib
                 Argument arg = d_helpmap[argument_idx];
                 LOG_PROGRESS("\t", arg.argument_descriptor_shorthand, arg.argument_descriptor, arg.description);
             }
-            
+
             LOG_PROGRESS("\t -h --help shows this menu");
         };
+
+    private:
+        void parse(int argc, char **argv)
+        {
+            // Loop through all the required positional arguments and process them.
+            d_program_name = argv[0];
+
+            d_positional_argument_map.reserve(argc);
+            for (size_t i = 0; i < argc; i++)
+            {
+                d_positional_argument_map.emplace_back(argv[i]);
+            }
+        }
+        template <typename Type>
+        Type parseEqualityArgument(std::string const &argument_key)
+        {
+            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
+                                         { return x.rfind(argument_key) == 0; });
+            Type value; // Default constructed value.
+
+            std::string argstr = *argument;
+            if (argstr.length() <= argument_key.length() + 1)
+            {
+                // Case --inputfile=
+                LOG_ERROR("Expected argument after", argstr);
+                return value;
+            }
+            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
+            std::stringstream convert(arg_str);
+            if (!(convert >> value) || !(convert >> std::ws).eof())
+            {
+                LOG_ERROR("Failed parsing of argument:", arg_str);
+                return value;
+            }
+            d_succesfully_parsed_args++;
+            return value;
+        }
     };
 
 } // namespace Nilib
