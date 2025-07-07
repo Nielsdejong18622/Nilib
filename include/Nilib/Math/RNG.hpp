@@ -6,6 +6,8 @@
 #include <numeric>
 #include <chrono>
 
+#include "Nilib/Core/Assert.hpp"
+
 namespace Nilib
 {
 
@@ -45,8 +47,27 @@ namespace Nilib
         // Uniform random variable between [min, max]
         static float uniform(float const min, float const max)
         {
-            // ASSERT(max > min, "Degenerate uniform!");
+            ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::prob() * (max - min);
+        }
+
+        static double uniform(double const min, double const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::prob() * (max - min);
+        }
+
+        // Uniform random variable between [min, max]
+        static int uniform(int const min, int const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::index(max - min);
+        }
+        // Uniform random variable between [min, max]
+        static size_t uniform(size_t const min, size_t const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::index(max - min);
         }
 
         static uint64_t rand()

@@ -67,7 +67,7 @@ namespace Nilib
 
         inline std::string const &programName() { return d_program_name; }
 
-        // Check if parsing went well.
+        // Check if parsing went well. Throws error if not!
         void check()
         {
             auto &&argv = d_positional_argument_map;
@@ -81,8 +81,9 @@ namespace Nilib
             }
             if (d_positional_argument_map.size() > d_succesfully_parsed_args)
             {
-                // LOG_ERROR("Unknown argument!");
-                // helpinfo();
+                LOG_ERROR("Error while parsing!");
+                helpinfo();
+                std::exit(EXIT_FAILURE);
             }
         }
 

@@ -22,7 +22,8 @@ Logger *LoggerPool::name(char const *loggername)
 {
     if (d_logger_registry.contains(loggername))
         return d_logger_registry[loggername];
-
+    else
+        throw std::runtime_error("Loggername not found!");
     // TODO fail using global logger!
     LoggerPool::global()->level(LogLevel::Warning).userblock(LogLevel::Warning).output("LoggerPool:", loggername, "not registered!");
     return LoggerPool::global(); // No logger with that name was found.
