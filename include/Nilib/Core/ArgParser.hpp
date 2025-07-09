@@ -131,24 +131,28 @@ namespace Nilib
             return defaultType;
         }
 
-        template <typename Type = bool>
         bool option(std::string const &argument_descriptor, std::string const &argument_descriptor_shorthand, std::string const &description)
         {
+            d_helpmap.emplace_back(argument_descriptor, argument_descriptor_shorthand, description);
             // If the option (-h) is found in the argument map, it is true.
             // Otherwise it is false.
             auto &argv = d_positional_argument_map;
-            if (std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end())
-                return true;
-            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            bool const find_shorthand = std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end();
+            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            d_succesfully_parsed_args += find_shorthand || find_descriptor;
+            return find_shorthand || find_descriptor;
         }
 
         template <typename Type = bool>
         bool option(std::string const &argument_descriptor, std::string const &description)
         {
+            d_helpmap.emplace_back(argument_descriptor, "", description);
             // If the option (-h) is found in the argument map, it is true.
             // Otherwise it is false.
             auto &argv = d_positional_argument_map;
-            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            d_succesfully_parsed_args += find_descriptor;
+            return find_descriptor;
         }
 
         // Prints all arguments and values.
