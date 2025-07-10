@@ -82,7 +82,10 @@ namespace Nilib
         void bindkey(Callback const &fun, int key, int action, int mods);
         void bindkey(Callback const &bindfun, int key);
 
-
+        inline float getXlim_min() const { return d_data.xmin; };
+        inline float getXlim_max() const { return d_data.xmax; };
+        inline float getYlim_min() const { return d_data.ymin; };
+        inline float getYlim_max() const { return d_data.ymax; };
 
     protected:
         GLFWwindow *d_window = nullptr;

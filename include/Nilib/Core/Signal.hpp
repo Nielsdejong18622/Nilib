@@ -27,12 +27,13 @@ namespace Nilib
             }
         }
 
-    public:
         static Signal getInstance()
         {
             static Signal signal;
             return signal;
         }
+
+    public:
         static bool receivedCtrlC() { return !getInstance().running; }
     };
 
