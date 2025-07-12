@@ -77,6 +77,7 @@ namespace Nilib
             for (auto const &[num, name] : valueToStringMap())                     \
                 LOG_PROGRESS(name, '=', num);                                      \
         };                                                                         \
+        constexpr static char const *description() { return #__VA_ARGS__; };       \
                                                                                    \
     private:                                                                       \
         value val;                                                                 \
