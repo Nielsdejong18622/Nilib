@@ -25,7 +25,6 @@ Not yet complete. Not completely bug free and safe.
 
 # Dependencies
 - GLFW, glad and opengl for cross platform window functionality. 
-- fmt to replicate std::format on Linux. 
 - stb for saving screenshots to file.  
 - CMake for building. 
 - Gurobi in the future.

@@ -12,7 +12,7 @@ if (WIN32)
 endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glfw)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
 
 
 # Add subdirectories for the Nilibrary
