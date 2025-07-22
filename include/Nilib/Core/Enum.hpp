@@ -84,27 +84,27 @@ namespace Nilib
         value val;                                                                   \
         static const std::unordered_map<value, std::string> &valueToStringMap()      \
         {                                                                            \
-            static std::unordered_map<value, std::string> const map = [] {            \
-                std::unordered_map<value, std::string> m;                             \
-                std::string const names = #__VA_ARGS__;                               \
-                size_t pos = 0, index = 0;                                             \
-                int enumVal = 0;                                                      \
-                while (pos < names.size()) {                                          \
-                    size_t comma = names.find(',', pos);                              \
-                    std::string token = names.substr(pos, comma - pos);               \
-                    size_t eq = token.find('=');                                       \
-                    std::string name = token.substr(0, eq);                           \
-                    name.erase(0, name.find_first_not_of(" \t\n"));                   \
-                    name.erase(name.find_last_not_of(" \t\n") + 1);                   \
-                    if (eq != std::string::npos) {                                    \
-                        enumVal = std::stoi(token.substr(eq + 1));                    \
-                    }                                                               \
-                    while(m.contains(static_cast<value>(enumVal))) ++enumVal;         \
-                    m[static_cast<value>(enumVal)] = name;                            \
-                    ++enumVal;                                                        \
-                    if (comma == std::string::npos) break;                            \
-                    pos = comma + 1;                                                  \
-                }                                                                     \
+            static std::unordered_map<value, std::string> const map = [] {           \
+                std::unordered_map<value, std::string> m;                            \
+                std::string const names = #__VA_ARGS__;                              \
+                size_t pos = 0, index = 0;                                           \
+                int enumVal = 0;                                                     \
+                while (pos < names.size()) {                                         \
+                    size_t comma = names.find(',', pos);                             \
+                    std::string token = names.substr(pos, comma - pos);              \
+                    size_t eq = token.find('=');                                     \
+                    std::string name = token.substr(0, eq);                          \
+                    name.erase(0, name.find_first_not_of(" \t\n"));                  \
+                    name.erase(name.find_last_not_of(" \t\n") + 1);                  \
+                    if (eq != std::string::npos) {                                   \
+                        enumVal = std::stoi(token.substr(eq + 1));                   \
+                    }                                                                \
+                    while(m.contains(static_cast<value>(enumVal))) ++enumVal;        \
+                    m[static_cast<value>(enumVal)] = name;                           \
+                    ++enumVal;                                                       \
+                    if (comma == std::string::npos) break;                           \
+                    pos = comma + 1;                                                 \
+                }                                                                    \
                 return m; }();      \
             return map;                                                              \
         }                                                                            \
