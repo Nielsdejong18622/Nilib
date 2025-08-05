@@ -134,18 +134,24 @@ namespace Nilib
             return scale * std::pow(-1 * std::log(1 - RNG::prob()), 1.0f / shape);
         }
 
-        // Shuffles container between [low, high], inplace.
+        // Shuffles container between [low, high), inplace.
         template <typename Container>
         static void shuffle(Container &container, size_t const low, size_t const high)
         {
             // Length of the subarray to shuffle.
-            size_t nobs = high - low;
+            size_t const nobs = high - low;
             // Shuffle in place. (Fisher-Yates shuffle)
             for (size_t idx = low; idx < nobs - 1; ++idx)
             {
                 size_t jdx = RNG::index(nobs) + low;
                 std::swap(container[idx], container[jdx]);
             }
+        }
+
+        template <typename Container>
+        static void shuffle(Container &container)
+        {
+            shuffle(container, 0, container.size());
         }
     };
 
