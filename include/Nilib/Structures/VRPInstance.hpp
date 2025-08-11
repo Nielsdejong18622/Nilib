@@ -3,7 +3,6 @@
 
 #include "Nilib/Math/Matrix.hpp"
 #include "Nilib/Renderer/Window.hpp"
-#include "Nilib/Structures/Graph.hpp"
 
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"

@@ -1,75 +1,78 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
-#include <iostream>
+#include "Nilib/Structures/GraphRepresentation.hpp"
 #include <vector>
-#include "Nilib/Renderer/Window.hpp"
-#include "Nilib/Math/RNG.hpp"
-#include <map>
 
 namespace Nilib
 {
-    namespace Graph
+
+    // General Graph type
+    template <typename Node = void, typename Arc = void, typename GraphRep = AdjacencyList>
+    class Graph : public GraphRep
     {
 
-        // Interface of everything we are allowed to do with a graph class.
-        class GraphI
+    private:
+        nodeID addNode() override { return nodeID{0}; };
+        void addArc(nodeID a, nodeID b) override {};
+
+    public:
+        std::unordered_map<arcID, Arc> arcs;
+        std::unordered_map<nodeID, Node> nodes;
+
+        nodeID addNode(Node const &node)
         {
-        public:
-            using node_id = int;
-
-            // Adding and removing nodes/edges.
-            virtual void add(node_id node) = 0;
-            virtual void remove(node_id node) = 0;
-
-            virtual void add(node_id node_A, node_id node_B) = 0;
-            virtual void remove(node_id node_A, node_id node_B) = 0;
-
-            virtual void clear() = 0;
-
-            // Properties.
-            virtual size_t numnodes() const = 0;
-            virtual size_t numedges() const = 0;
-            virtual bool empty() const = 0;
-
-            // Traversal
-            virtual std::vector<node_id> down_stream(node_id node) const = 0;
-            virtual std::vector<node_id> up_stream(node_id node) const = 0;
-            virtual std::vector<node_id> adjacent(node_id node) const = 0;
+            nodeID id = GraphRep::addNode();
+            nodes[id] = node;
+            return id;
         };
-
-        namespace Representation
+        void addArc(nodeID a, nodeID b, Arc const &arc)
         {
-
-            struct AdjacencyRep : GraphI
-            {
-                Nilib::Matrixf adjacency;
-            };
-
-            
-            struct Incidence : GraphI
-            {
-                Nilib::Matrixf adjacency;
-            };
-
-        }; // namespace Representation
-
-
-        // Structure that maps node_id -> Custom data. 
-        class GraphNodeMap
-        {
-
+            arcs[arcID{a, b}] = arc;
+            GraphRep::addArc(a, b);
         };
+    };
 
+    // Simples graph, only thin wrapper around GraphRep.
+    template <typename GraphRep>
+    class Graph<void, void, GraphRep> : public GraphRep
+    {
+    };
 
-        class DiGraph
+    // Partial Specialization: Graph with only Node type (for cases like Graph<int>)
+    template <typename Node, typename GraphRep>
+    class Graph<Node, void, GraphRep> : public GraphRep
+    {
+    private:
+        nodeID addNode() override { return nodeID{0}; };
+
+    public:
+        std::unordered_map<nodeID, Node> nodes;
+
+        nodeID addNode(Node const &node)
         {
-            GraphI *rep; // Make it unique ptr. 
-
+            nodeID id = GraphRep::addNode();
+            nodes[id] = node;
+            return id;
         };
+    };
 
+    // Partial Specialization: Graph with only Arc type (for cases like Graph<void, int>)
+    template <typename Arc, typename GraphRep>
+    class Graph<void, Arc, GraphRep> : public GraphRep
+    {
+    private:
+        void addArc(nodeID a, nodeID b) override {};
 
-    }; // namespace Graph
+    public:
+        std::unordered_map<arcID, Arc> arcs;
+
+        void addArc(nodeID a, nodeID b, Arc const &arc)
+        {
+            arcs[arcID{a, b}] = arc;
+            GraphRep::addArc(a, b);
+        };
+    };
 
 }; // namespace Nilib
 
