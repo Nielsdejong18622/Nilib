@@ -23,6 +23,29 @@ namespace Nilib
         std::vector<Argument> d_helpmap;
 
         template <typename Type>
+        Type getNextEnumArgument(std::string const &argument_key)
+        {
+            // We found the short hand, e.g. -i
+            auto argument_iter = std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_key);
+            if (argument_iter == d_positional_argument_map.end())
+            {
+                LOG_ERROR("No argument following", argument_key);
+                std::exit(EXIT_FAILURE);
+            }
+
+            auto argval = next(argument_iter);
+            if (argval == d_positional_argument_map.end())
+            {
+                LOG_ERROR("No argument following", argument_key);
+                std::exit(EXIT_FAILURE);
+            }
+
+            Type value = Type::fromString(*argval);
+            d_succesfully_parsed_args++; // We also passed the argument here.
+            return value;
+        }
+
+        template <typename Type>
         Type getNextArgument(std::string const &argument_key)
         {
             // We found the short hand, e.g. -i
@@ -67,7 +90,7 @@ namespace Nilib
 
         inline std::string const &programName() { return d_program_name; }
 
-        // Check if parsing went well.
+        // Check if parsing went well. Throws error if not!
         void check()
         {
             auto &&argv = d_positional_argument_map;
@@ -81,22 +104,12 @@ namespace Nilib
             }
             if (d_positional_argument_map.size() > d_succesfully_parsed_args)
             {
-                // LOG_ERROR("Unknown argument!");
-                // helpinfo();
+                LOG_ERROR("Received", d_positional_argument_map.size(), "arguments but succesfully parsed", d_succesfully_parsed_args, "arguments!");
+                helpinfo();
+                std::exit(EXIT_FAILURE);
             }
         }
 
-        void parse(int argc, char **argv)
-        {
-            // Loop through all the required positional arguments and process them.
-            d_program_name = argv[0];
-
-            d_positional_argument_map.reserve(argc);
-            for (size_t i = 0; i < argc; i++)
-            {
-                d_positional_argument_map.emplace_back(argv[i]);
-            }
-        }
         template <typename Type>
         Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description)
         {
@@ -104,7 +117,26 @@ namespace Nilib
         }
 
         template <typename Type>
-        Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description, Type const &defaultType, bool const defaultSupplied = true)
+        Type enum_argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description, Type const &defaultType, bool const required = true)
+        {
+            d_helpmap.emplace_back(argument_descriptor, argument_shorthand, description);
+
+            // First search for the shorthand.
+            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_shorthand) != d_positional_argument_map.end())
+            {
+                return getNextEnumArgument<Type>(argument_shorthand);
+            }
+            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_descriptor) != d_positional_argument_map.end())
+            {
+                return getNextEnumArgument<Type>(argument_descriptor);
+            }
+            if (required)
+                LOG_ERROR("Program requires argument:", description);
+            return defaultType;
+        }
+
+        template <typename Type>
+        Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description, Type const &defaultType, bool const required = false)
         {
 
             // Log the argument in the help map.
@@ -112,7 +144,7 @@ namespace Nilib
 
             // If parsing failed on a previous argument, skip this argument parsing to get to the help message.
             if (d_failed_parse)
-                return defaultType;
+                return Type{defaultType};
 
             // Parse the argument.
             // If the argument can not be located/parsed, set failbit and return default constructed value.
@@ -136,54 +168,33 @@ namespace Nilib
             {
                 return parseEqualityArgument<Type>(argument_descriptor);
             }
-            if (!defaultSupplied)
+            if (required)
                 LOG_ERROR("Program requires argument:", description);
-            return defaultType;
+            return Type{defaultType};
         }
 
-        template <typename Type>
-        Type parseEqualityArgument(std::string const &argument_key)
-        {
-            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
-                                         { return x.rfind(argument_key) == 0; });
-            Type value; // Default constructed value.
-
-            std::string argstr = *argument;
-            if (argstr.length() <= argument_key.length() + 1)
-            {
-                // Case --inputfile=
-                LOG_ERROR("Expected argument after", argstr);
-                return value;
-            }
-            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
-            std::stringstream convert(arg_str);
-            if (!(convert >> value) || !(convert >> std::ws).eof())
-            {
-                LOG_ERROR("Failed parsing of argument:", arg_str);
-                return value;
-            }
-            d_succesfully_parsed_args++;
-            return value;
-        }
-
-        template <typename Type = bool>
         bool option(std::string const &argument_descriptor, std::string const &argument_descriptor_shorthand, std::string const &description)
         {
+            d_helpmap.emplace_back(argument_descriptor, argument_descriptor_shorthand, description);
             // If the option (-h) is found in the argument map, it is true.
             // Otherwise it is false.
             auto &argv = d_positional_argument_map;
-            if (std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end())
-                return true;
-            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            bool const find_shorthand = std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end();
+            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            d_succesfully_parsed_args += find_shorthand || find_descriptor;
+            return find_shorthand || find_descriptor;
         }
 
         template <typename Type = bool>
         bool option(std::string const &argument_descriptor, std::string const &description)
         {
+            d_helpmap.emplace_back(argument_descriptor, "", description);
             // If the option (-h) is found in the argument map, it is true.
             // Otherwise it is false.
             auto &argv = d_positional_argument_map;
-            return std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
+            d_succesfully_parsed_args += find_descriptor;
+            return find_descriptor;
         }
 
         // Prints all arguments and values.
@@ -205,9 +216,46 @@ namespace Nilib
                 Argument arg = d_helpmap[argument_idx];
                 LOG_PROGRESS("\t", arg.argument_descriptor_shorthand, arg.argument_descriptor, arg.description);
             }
-            
+
             LOG_PROGRESS("\t -h --help shows this menu");
         };
+
+    private:
+        void parse(int argc, char **argv)
+        {
+            // Loop through all the required positional arguments and process them.
+            d_program_name = argv[0];
+
+            d_positional_argument_map.reserve(argc);
+            for (size_t i = 0; i < argc; i++)
+            {
+                d_positional_argument_map.emplace_back(argv[i]);
+            }
+        }
+        template <typename Type>
+        Type parseEqualityArgument(std::string const &argument_key)
+        {
+            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
+                                         { return x.rfind(argument_key) == 0; });
+            Type value{0}; // Default constructed value.
+
+            std::string argstr = *argument;
+            if (argstr.length() <= argument_key.length() + 1)
+            {
+                // Case --inputfile=
+                LOG_ERROR("Expected argument after", argstr);
+                return value;
+            }
+            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
+            std::stringstream convert(arg_str);
+            if (!(convert >> value) || !(convert >> std::ws).eof())
+            {
+                LOG_ERROR("Failed parsing of argument:", arg_str);
+                return value;
+            }
+            d_succesfully_parsed_args++;
+            return value;
+        }
     };
 
 } // namespace Nilib

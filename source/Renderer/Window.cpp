@@ -416,7 +416,7 @@ void Window::drawFilledCircle(Vec2f const &centre, float const radius, float con
 
 void Window::drawDiamond(Vec2f const &center, float const radius, float const linewidth) const
 {
-    return drawCircle(center, radius, linewidth, 4);
+    return drawFilledCircle(center, radius, linewidth, 4);
 }
 
 void Window::drawPole(Vec2f const &centre, float const size) const

@@ -16,9 +16,9 @@ void MemoryTracker::remove(size_t size) noexcept
 void MemoryTracker::report() const noexcept
 {
     LOG_DEBUG("==== Memory Tracker Report ====");
-    LOG_DEBUG("Total Allocated:", formatBytes(allocations.sum()));
-    LOG_DEBUG("Total Freed:    ", formatBytes(deallocations.sum()));
-    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()));
+    LOG_DEBUG("Total Allocated:", allocations.n(), formatBytes(allocations.sum()));
+    LOG_DEBUG("Total Freed:    ", deallocations.n(), formatBytes(deallocations.sum()));
+    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()), "in", allocations.n() - deallocations.n(), "chunks");
     LOG_DEBUG("=======================");
 }
 

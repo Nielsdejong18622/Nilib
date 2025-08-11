@@ -1,8 +1,9 @@
 #ifndef _LINALG_FUNCTIONS_H
 #define _LINALG_FUNCTIONS_H
 
+#include <format>
+
 #include "Nilib/Math/LinAlg.hpp"
-#include <fmt/core.h>
 
 namespace Nilib
 {
@@ -48,7 +49,7 @@ namespace Nilib
     operator*(Matrix<DynamicMatrixData<type>> const &A,
               Matrix<DynamicMatrixData<type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), fmt::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
 
         Matrix<DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
@@ -106,8 +107,8 @@ namespace Nilib
     template <typename data>
     Matrix<data> hadamar(Matrix<data> const &A, Matrix<data> const &B)
     {
-        ASSERT(A.rows() == B.rows(), fmt::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
-        ASSERT(A.cols() == B.cols(), fmt::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.rows() == B.rows(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.cols(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
         Matrix<data> res(A.rows(), B.cols());
 
         for (size_t ridx = 0; ridx < A.rows(); ++ridx)
@@ -199,6 +200,7 @@ namespace Nilib
         return minkowski<type, 2.0f>(A, B);
     }
 
+    // Specializations for Vec2
     template <typename type>
     type euclidean2(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
     {
@@ -220,16 +222,33 @@ namespace Nilib
         // Compute Euclidean distance directly
         return std::sqrt(diff1 * diff1 + diff2 * diff2);
     }
+
     template <typename type>
     type manhattan(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
     {
-        return minkowski<type, 1.0f>(A, B);
+        return apply(A - B, [](type t)
+                     { return std::abs(t); })
+            .sum();
     }
 
     template <typename type, size_t n, size_t m>
     type manhattan(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n, m, type>> const &B)
     {
-        return minkowski<type, 2.0f>(A, B);
+        return apply(A - B, [](type t)
+                     { return std::abs(t); })
+            .sum();
+    }
+
+    // Specialization for Vec2f.
+    template <typename type>
+    type manhattan(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    {
+        // Access the underlying data (assuming a 2x1 static matrix structure)
+        type diff1 = A(0, 0) - B(0, 0);
+        type diff2 = A(1, 0) - B(1, 0);
+
+        // Compute Manhattan distance directly
+        return std::abs(diff1) + std::abs(diff2);
     }
 
     template <typename type>

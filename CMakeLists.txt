@@ -12,7 +12,7 @@ if (WIN32)
 endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glfw)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
 
 
 # Add subdirectories for the Nilibrary
@@ -22,6 +22,7 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 
 # Definitons of Preprocessor directives. 
 target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=1)
+target_compile_definitions(Nilib PUBLIC ENABLE_ASSERT=1)
 
 # Default log levels (can be reordered
 # Only LEVELS higher than or equal to LOG_LEVEL are displayed. 

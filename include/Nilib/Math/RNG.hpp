@@ -6,6 +6,8 @@
 #include <numeric>
 #include <chrono>
 
+#include "Nilib/Core/Assert.hpp"
+
 namespace Nilib
 {
 
@@ -45,8 +47,27 @@ namespace Nilib
         // Uniform random variable between [min, max]
         static float uniform(float const min, float const max)
         {
-            // ASSERT(max > min, "Degenerate uniform!");
+            ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::prob() * (max - min);
+        }
+
+        static double uniform(double const min, double const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::prob() * (max - min);
+        }
+
+        // Uniform random variable between [min, max]
+        static int uniform(int const min, int const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::index(max - min);
+        }
+        // Uniform random variable between [min, max]
+        static size_t uniform(size_t const min, size_t const max)
+        {
+            ASSERT(max >= min, "Degenerate uniform!");
+            return min + RNG::index(max - min);
         }
 
         static uint64_t rand()
@@ -113,18 +134,24 @@ namespace Nilib
             return scale * std::pow(-1 * std::log(1 - RNG::prob()), 1.0f / shape);
         }
 
-        // Shuffles container between [low, high], inplace.
+        // Shuffles container between [low, high), inplace.
         template <typename Container>
         static void shuffle(Container &container, size_t const low, size_t const high)
         {
             // Length of the subarray to shuffle.
-            size_t nobs = high - low;
+            size_t const nobs = high - low;
             // Shuffle in place. (Fisher-Yates shuffle)
             for (size_t idx = low; idx < nobs - 1; ++idx)
             {
                 size_t jdx = RNG::index(nobs) + low;
                 std::swap(container[idx], container[jdx]);
             }
+        }
+
+        template <typename Container>
+        static void shuffle(Container &container)
+        {
+            shuffle(container, 0, container.size());
         }
     };
 
