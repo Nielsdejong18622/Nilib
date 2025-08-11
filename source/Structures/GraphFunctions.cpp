@@ -5,15 +5,22 @@
 
 using namespace Nilib;
 
-// Shortest path form source -> destination.
-GraphFunctions::Dijkstra::Dijkstra(Graph<> const &graph, nodeID const source, nodeID const destination)
+#include <queue>
+
+bool Dijkstra::admissableArc(nodeID const A, nodeID const B) const
 {
-    CORE_ASSERT(graph.contains(source));
-    CORE_ASSERT(graph.contains(destination));
-    LOG_DEBUG("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
+    return true;
 }
 
-void GraphFunctions::drawGraph(Window &window, GraphI const &graph)
+float Dijkstra::arcCost(nodeID const A, nodeID const B) const
+{
+    return 1.0;
+}
+
+// Shortest path form source -> destination.
+
+
+void drawGraph(Window &window, GraphI const &graph)
 {
     LOG_DEBUG("Drawing graph to window!");
     LOG_DEBUG("Constructing GraphLayout object...");

@@ -19,6 +19,17 @@ namespace Nilib
         Progress = 0 // To show to the end user.
     };
 
+    // Meta programming. 
+    template <typename T>
+    constexpr bool is_range =
+        requires(T t) {
+            std::begin(t);
+            std::end(t);
+        } &&
+        !std::is_convertible_v<T, const char *> &&     // exclude char*
+        !std::is_convertible_v<T, std::string_view> && // exclude std::string_view
+        !std::is_same_v<std::decay_t<T>, std::string>; // exclude std::string
+
     // Can be derived from to support custom behaviour.
     class Logger : public BaseLogger
     {
@@ -82,7 +93,25 @@ namespace Nilib
         template <typename T, typename... Args>
         void output(T &&first, Args &&...args)
         {
-            d_stream << first; // Print the first argument
+
+            if constexpr (is_range<T>)
+            {
+                d_stream << '[';
+                bool first_elem = true;
+                for (auto &&elem : first)
+                {
+                    if (!first_elem)
+                        d_stream << ", ";
+                    d_stream << elem;
+                    first_elem = false;
+                }
+                d_stream << ']';
+            }
+            else
+            {
+                d_stream << first; // Print the first argument
+            }
+
             if constexpr (sizeof...(args) > 0)
             {                                        // Check if there are more arguments
                 d_stream << sep;                     // Print separator
@@ -120,7 +149,6 @@ namespace Nilib
             (d_stream) << message;
             return *this;
         }
-        
     };
 };
 #endif

@@ -5,7 +5,6 @@
 int main()
 {
     using namespace Nilib;
-    using namespace Nilib::GraphFunctions;
 
     // Step 1. Make a simple graph that stores relations.
     {
@@ -29,7 +28,6 @@ int main()
         graph2.print();
         auto res = Dijkstra(graph2, nodeA, nodeB);
 
-        res.path;
         res.status;
         res.steps;
         res.cost;
@@ -42,12 +40,11 @@ int main()
 
         Nilib::Window window(1024, 800, "GraphDrawing");
 
-        drawGraph(window, graph);
+        // drawGraph(window, graph);
     }
 
     struct NodeData
     {
-        int potential;
         char letter;
     };
 
@@ -55,6 +52,7 @@ int main()
     {
         int capacity;
         float flow;
+        float cost;
     };
 
     // This stores NodeData per nodeid.
@@ -66,17 +64,41 @@ int main()
 
     // This stores data per arc.
     {
-        Graph<void, std::string> graph;
+        Graph<NodeData, ArcData> graph;
 
-        auto b = graph.addNode();
-        auto a = graph.addNode();
+        auto source = graph.addNode(NodeData{.letter = 's'});
+        auto terminal = graph.addNode(NodeData{.letter = 't'});
 
-        for (size_t node_i = 0; node_i < 10; node_i++)
+        size_t n_orders = 2;
+        size_t n_nodes = 4;
+
+        for (size_t node_i = 0; node_i < n_nodes; node_i++)
         {
-            graph.addNode();
+            auto node = graph.addNode(NodeData{.letter = node_i});
+            // The first nodes are the orders.
+            if (node_i < n_orders)
+            {
+                // source -> orders
+                graph.addArc(source, node, ArcData{.capacity = 1, .flow = 0, .cost = 0});
+            }
+            // The remainder are couriers.
+            else
+            {
+                // courier -> terminal
+                int kc = 1; // Courier capacity.
+                graph.addArc(node, terminal, ArcData{.capacity = kc, .flow = 0, .cost = 0});
+            }
         }
 
-        graph.addArc(a, 1, "test");
+        for (size_t oid = 0; oid < n_orders; oid++)
+            for (size_t cid = n_orders; cid < n_nodes; cid++)
+            {
+                //
+                float cij = 10;
+                graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
+            }
+
+        // graph.addArc(a, 1, "test");
 
         graph.print();
     }
@@ -84,11 +106,21 @@ int main()
     // This stores data per node and arc.
     {
         Graph<NodeData, ArcData> graph;
-        auto node1 = graph.addNode(NodeData{5, 'a'});
-        auto node2 = graph.addNode(NodeData{72, 'c'});
+        auto node1 = graph.addNode(NodeData{5});
+        auto node2 = graph.addNode(NodeData{7});
+        auto node3 = graph.addNode(NodeData{7});
 
-        graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10.0f});
-        auto res = Dijkstra(graph, node1, node2);
+        graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10.0f, .cost = 10.0f});
+        graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 1.0f, .cost = 10.0f});
+        auto res = Dijkstra(graph, node1, node3);
+
+        // if (res.status)
+        {
+            LOG_DEBUG("Found shortest path!");
+            LOG_DEBUG(res.costs);
+            LOG_DEBUG(res.predecessor);
+        }
+        res.cost;
     }
 
     LOG_SUCCESS("Completed Graph Example!");
