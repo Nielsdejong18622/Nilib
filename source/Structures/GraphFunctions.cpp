@@ -12,9 +12,9 @@ bool Dijkstra::admissableArc(nodeID const A, nodeID const B) const
     return true;
 }
 
-float Dijkstra::arcCost(nodeID const A, nodeID const B) const
+float Dijkstra::arcCost(nodeID const A, nodeID const B)
 {
-    return 1.0;
+    return 1.0f;
 }
 
 // Shortest path form source -> destination.

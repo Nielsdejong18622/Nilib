@@ -2,11 +2,64 @@
 
 using namespace Nilib;
 
+void Nilib::erdos_renyi(GraphI &graph, size_t const numnodes, float const prob)
+{
+    LOG_INFO("Constructing erdos_renyi graph!");
+
+    graph.clear();
+    graph.addNodes(numnodes);
+
+    for (size_t node_i = 0; node_i < numnodes; ++node_i)
+    {
+        for (size_t node_j = 0; node_j < numnodes; ++node_j)
+        {
+            if (RNG::prob() < prob)
+            {
+                graph.addArc(node_i, node_j);
+            }
+        }
+    }
+}
+
+// C describes how many neighbours there are.
+void Nilib::ring_world(GraphI &graph, size_t const numnodes, size_t const C)
+{
+    LOG_INFO("Constructing ring world graph!");
+    graph.clear();
+
+    graph.addNodes(numnodes);
+
+    size_t c = C / 2;
+    for (nodeID idx = 0; idx < numnodes; idx++)
+        for (nodeID add = 0; add < C; ++add)
+            graph.addArc(idx, ((idx + add - c) + numnodes) % numnodes);
+}
+
+void Nilib::small_world(GraphI &graph, size_t const numnodes, size_t const C, float const rewire_prob)
+{
+    ring_world(graph, numnodes, C);
+
+    // for (auto &&i : graph.nodes())
+    // {
+
+    // }
+}
+
+std::vector<nodeID> AdjacencyList::addNodes(size_t const n)
+{
+    std::vector<nodeID> res;
+    for (size_t i = 0; i < n; ++i)
+    {
+        res.push_back(addNode());
+    }
+    return res;
+};
+
 nodeID AdjacencyList::addNode()
 {
-    size_t nnodes = data.size();
-    data[nodeID{nnodes}];
-    return nodeID{nnodes};
+    nodeID node_id = nodeID{data.size()};
+    data[node_id];
+    return node_id;
 };
 
 void AdjacencyList::remove(nodeID node)
@@ -80,22 +133,19 @@ size_t AdjacencyList::outdegree(nodeID node) const
 };
 
 // Traversal
-std::vector<nodeID> AdjacencyList::down_stream(nodeID node) const
+GraphRange<nodeID> AdjacencyList::down_stream(nodeID const node) const
 {
-    return std::vector<nodeID>(data.at(node).begin(), data.at(node).end());
+    return GraphRange<nodeID>(GraphIterator<nodeID>(std::make_unique<NeighborIteratorImpl>(data.at(node).begin())),
+                              GraphIterator<nodeID>(std::make_unique<NeighborIteratorImpl>(data.at(node).end())));
 };
 
-std::vector<nodeID> AdjacencyList::up_stream(nodeID node) const
+GraphRange<nodeID> AdjacencyList::up_stream(nodeID const node) const
 {
-    std::vector<nodeID> upstream;
-    for (auto &&[nodeid, list] : data)
-        for (auto &&node_l : list)
-            if (node_l == node)
-                upstream.push_back(nodeid);
-    return upstream;
+    return GraphRange<nodeID>(GraphIterator<nodeID>(std::make_unique<RevNeighborIteratorImpl>(node, data.begin(), data.end())),
+                              GraphIterator<nodeID>(std::make_unique<RevNeighborIteratorImpl>(node, data.end(), data.end())));
 };
 
-std::vector<nodeID> AdjacencyList::adjacent(nodeID node) const
+GraphRange<nodeID> AdjacencyList::adjacent(nodeID const node) const
 {
     return down_stream(node);
 };

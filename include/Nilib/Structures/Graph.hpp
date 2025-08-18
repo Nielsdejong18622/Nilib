@@ -44,7 +44,7 @@ namespace Nilib
     class Graph<Node, void, GraphRep> : public GraphRep
     {
     private:
-        nodeID addNode() override { return nodeID{0}; };
+        // nodeID addNode() override { return nodeID{0}; };
 
     public:
         std::unordered_map<nodeID, Node> nodes;
