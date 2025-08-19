@@ -3,6 +3,7 @@
 
 #include "Nilib/Structures/Graph.hpp"
 #include "Nilib/Structures/GraphRepresentation.hpp"
+#include "Nilib/Core/Profiler.hpp"
 
 #include <stack>
 #include <queue>
@@ -33,9 +34,8 @@ namespace Nilib
     struct BellManFord
     {
 
-        typedef float (*ArcCost)(nodeID const, nodeID const);
-
-        BellManFord(GraphI const &graph, nodeID const source, ArcCost arccost)
+        template <typename ArcCost, typename AdmissableArc>
+        BellManFord(GraphI const &graph, nodeID const source, ArcCost arccost, AdmissableArc admissable)
             : costs(graph.numnodes(), std::numeric_limits<float>::max()),
               predecessor(graph.numnodes(), -1)
         {
@@ -50,7 +50,7 @@ namespace Nilib
                 {
                     for (nodeID jdx = 0; jdx < k; ++jdx)
                     {
-                        if (!graph.contains(idx, jdx))
+                        if (!admissable(idx, jdx))
                             continue;
 
                         float const weight = arccost(idx, jdx);
@@ -62,6 +62,24 @@ namespace Nilib
                     }
                 }
             }
+
+            // // Constructing path source -> all other nodes.
+            // for (nodeID destination : graph.nodes())
+            // {
+
+            //     nodeID current = destination;
+            //     while (current != source)
+            //     {
+            //         path.push_back(current);
+            //         path_arcs.push_back({predecessor[current], current});
+            //         current = predecessor[current];
+            //     }
+            //     path.push_back(current);
+            //     std::reverse(path.begin(), path.end());
+            //     std::reverse(path_arcs.begin(), path_arcs.end());
+            //     cost = costs[destination];
+            //     LOG_DEBUG("Found Shortest path!", path, cost);
+            // }
         }
 
         std::vector<float> costs;
@@ -143,7 +161,7 @@ namespace Nilib
                 std::reverse(path.begin(), path.end());
                 std::reverse(path_arcs.begin(), path_arcs.end());
                 cost = costs[destination];
-                LOG_DEBUG("Found Shortest path!", path);
+                LOG_DEBUG("Found Shortest path!", path, cost);
             }
             else
             {
@@ -171,22 +189,37 @@ namespace Nilib
 
         // Using successive shortest path.
         // Single source and single terminal
-        MinCostFlow(GraphI const &graph, int const req_flow, nodeID const source, nodeID const terminal)
+        template <typename Graph>
+        MinCostFlow(Graph &graph, int const req_flow, nodeID const source, nodeID const terminal)
         {
-            for (int k = 0; k < req_flow; k++)
+            PROFILE_FUNCTION();
+            // LOG_DEBUG("MinCostFlow!");
+            int flow = 0;
+            while (flow < req_flow)
             {
                 // Find shortest path source->terminal. Over admissable arcs.
-                auto path = Dijkstra(graph, source, terminal);
+                auto bellman = BellManFord(graph, source, [&graph](nodeID a, nodeID b)
+                                           { return graph.arcData[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
+                                           { return graph.arcData[{a, b}].flow < graph.arcData[{a, b}].capacity; });
 
                 // Push as much flow as possible over that path.
                 int min_flow = 1;
+                flow += min_flow;
 
+                // LOG_DEBUG(bellman.costs, bellman.predecessor);
                 // Alter flows,
-                for (auto &&arc : path.path_arcs)
+                nodeID current = terminal;
+                // std::vector<nodeID> st_path;
+                while (current != source)
                 {
-                    // arc.a
+                    // st_path.push_back(current);
+                    nodeID previous = bellman.predecessor[current];
+                    graph.arcData[{previous, current}].flow += 1;
+                    graph.arcData[{current, previous}].flow -= 1;
+                    current = previous;
                 }
-                
+                // st_path.push_back(source);
+                // std::reverse(st_path.begin(), st_path.end());
             }
         }
     };

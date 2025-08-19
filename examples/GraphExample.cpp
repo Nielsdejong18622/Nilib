@@ -83,7 +83,7 @@ int main()
     struct ArcData
     {
         int capacity;
-        float flow;
+        int flow;
         float cost;
     };
 
@@ -107,23 +107,34 @@ int main()
 
     // This stores data per arc.
     {
-        Graph<NodeData, ArcData> graph;
+        PROFILE_SCOPE("Creating MinCostFlow!");
 
-        auto source = graph.addNode(NodeData{.letter = 's'});
-        auto terminal = graph.addNode(NodeData{.letter = 't'});
-        auto dummy_courier = graph.addNode(NodeData{.letter = 'C'});
-
-        size_t n_orders = 2;
-        size_t n_nodes = 4;
-
-        for (size_t node_i = 0; node_i < n_nodes; node_i++)
+        struct ArcData
         {
-            auto node = graph.addNode(NodeData{.letter = node_i});
+            int capacity;
+            int flow;
+            float cost;
+        };
+
+        Graph<void, ArcData> graph;
+
+        auto source = graph.addNode();
+        auto terminal = graph.addNode();
+        auto dummy_courier = graph.addNode();
+
+        int n_orders = 20;   // Excluding dummy order.
+        int n_couriers = 20; // Excluding dummy courier.
+        int n_nodes = n_orders + n_couriers;
+
+        for (int node_i = 0; node_i < n_nodes; node_i++)
+        {
+            auto node = graph.addNode();
             // The first nodes are the orders.
             if (node_i < n_orders)
             {
                 // source -> orders
                 graph.addArc(source, node, ArcData{.capacity = 1, .flow = 0, .cost = 0});
+                graph.addArc(node, source, ArcData{.capacity = 1, .flow = 1, .cost = -0});
             }
             // The remainder are couriers.
             else
@@ -131,31 +142,53 @@ int main()
                 // courier -> terminal
                 int kc = 1; // Courier capacity.
                 graph.addArc(node, terminal, ArcData{.capacity = kc, .flow = 0, .cost = 0});
+                graph.addArc(terminal, node, ArcData{.capacity = kc, .flow = kc, .cost = -0});
             }
         }
 
-        for (size_t oid = 3; oid < n_orders + 3; oid++)
-            for (size_t cid = n_orders + 3; cid < n_nodes + 3; cid++)
+        for (int oid = 3; oid < n_orders + 3; oid++)
+            for (int cid = n_orders + 3; cid < n_nodes + 3; cid++)
             {
                 //
                 float cij = 10;
                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
-                graph.addArc(cid, oid, ArcData{.capacity = 0, .flow = 1, .cost = -cij});
+                graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
             }
+        // graph.arcData[{3, 5}].cost = 2;
+        // graph.arcData[{5, 3}].cost = -2;
+
+        // graph.arcData[{4, 6}].cost = 20;
+        // graph.arcData[{6, 4}].cost = -20;
 
         // Order -> Dummy courier arcs.
-        for (size_t oid = 3; oid < n_orders + 3; oid++)
-            graph.addArc(oid, dummy_courier, ArcData{.capacity = static_cast<int>(n_orders), .flow = 0, .cost = 0});
+        for (int oid = 3; oid < n_orders + 3; oid++)
+        {
+            graph.addArc(oid, dummy_courier, ArcData{.capacity = 1, .flow = 0, .cost = 100});
+            graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
+        }
+        // Dummy -> terminal arcs.
+        graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = -0});
+        graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
 
-        graph.arcs[{3, 4}].cost = 2;
-        // graph.addArc(a, 1, "test");
+        for (auto &&arc : graph.arcs())
+        {
+            // LOG_DEBUG(arc, "flow:", graph.arcData[arc].flow, "capacity:", graph.arcData[arc].capacity, "cost:", graph.arcData[arc].cost);
+        }
 
         graph.print();
         // auto res = Dijkstra(graph, 0, 1, [&graph](nodeID a, nodeID b)
         //                     { return graph.arcs[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
         //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
         auto res = MinCostFlow(graph, n_orders, source, terminal);
-        // LOG_DEBUG(res.path, res.cost);
+
+        // Print solution.
+        for (auto &&arc : graph.arcs())
+        {
+            if (graph.arcData[arc].flow > 0 && !(arc.a < 3 || arc.b < 3) && arc.a < arc.b)
+            {
+                LOG_INFO("Active arcs:", arc);
+            }
+        }
     }
 
     LOG_SUCCESS("Completed Graph Example!");
