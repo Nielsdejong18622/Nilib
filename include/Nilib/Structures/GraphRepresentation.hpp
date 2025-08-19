@@ -51,7 +51,8 @@ namespace std
         {
             size_t h1 = hash<size_t>()(static_cast<size_t>(s.a)); // Hash the 'a' nodeID
             size_t h2 = hash<size_t>()(static_cast<size_t>(s.b)); // Hash the 'b' nodeID
-            return h1 + 31 * h2;                                  // Combine the hashes using a prime multiplier (31)
+            return h1 + 31 * h2;
+            // return s.a + 167327 * s.b;                                  // Combine the hashes using a prime multiplier (31)
         }
     };
 

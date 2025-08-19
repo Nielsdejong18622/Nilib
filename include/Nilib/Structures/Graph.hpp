@@ -69,7 +69,7 @@ namespace Nilib
 
         void addArc(nodeID a, nodeID b, Arc const &arc)
         {
-            arcData[arcID{a, b}] = arc;
+            arcData[arcID{a, b}] = std::move(arc);
             GraphRep::addArc(a, b);
         };
     };

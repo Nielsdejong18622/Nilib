@@ -46,6 +46,7 @@ namespace Nilib
 
             for (size_t iter = 0; iter < k - 1; ++iter)
             {
+                bool change = false;
                 for (nodeID idx = 0; idx < k; ++idx)
                 {
                     for (nodeID jdx = 0; jdx < k; ++jdx)
@@ -58,9 +59,12 @@ namespace Nilib
                         {
                             costs[jdx] = costs[idx] + weight;
                             predecessor[jdx] = idx;
+                            change = true;
                         }
                     }
                 }
+                if (!change)
+                    break;
             }
 
             // // Constructing path source -> all other nodes.
