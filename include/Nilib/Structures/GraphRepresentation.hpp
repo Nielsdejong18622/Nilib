@@ -30,6 +30,14 @@ namespace Nilib
         {
             return other.a == self.a && other.b == self.b;
         }
+
+        friend std::ostream &operator<<(std::ostream &os, arcID const self)
+        {
+            return os << self.a << '-' << self.b;
+        }
+
+        nodeID first() { return a; }
+        nodeID second() { return b; }
     };
 
 };

@@ -31,8 +31,9 @@ void Nilib::ring_world(GraphI &graph, size_t const numnodes, size_t const C)
 
     size_t c = C / 2;
     for (nodeID idx = 0; idx < numnodes; idx++)
-        for (nodeID add = 0; add < C; ++add)
-            graph.addArc(idx, ((idx + add - c) + numnodes) % numnodes);
+        for (nodeID add = 0; add < C + 1; ++add)
+            if (idx != ((idx + add - c) + numnodes) % numnodes)
+                graph.addArc(idx, ((idx + add - c) + numnodes) % numnodes);
 }
 
 void Nilib::small_world(GraphI &graph, size_t const numnodes, size_t const C, float const rewire_prob)

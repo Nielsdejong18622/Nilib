@@ -68,37 +68,25 @@ namespace Nilib
         std::vector<nodeID> predecessor;
     };
 
-    struct MinCostFlow
-    {
-
-        // Using successive shortest path.
-        MinCostFlow(GraphI const &graph)
-        {
-        }
-    };
-
     struct Dijkstra
     {
 
-        typedef float (*ArcCost)(nodeID const, nodeID const);
+        // typedef float (*ArcCost)(nodeID const, nodeID const);
 
         Dijkstra(GraphI const &graph,
                  nodeID source,
                  nodeID destination)
             : Dijkstra(graph, source, destination,
-                       &Dijkstra::arcCost) // default cost
+                       &Dijkstra::arcCost, &Dijkstra::admissableArc) // default cost and admissable
         {
         }
 
-        // General graph.
-        // template <typename NodeData, typename ArcData>
-        // Dijkstra(Graph<NodeData, ArcData> const &graph,
-        //          nodeID const source,
-        //          nodeID const destination)
+        template <typename ArcCost, typename AdmissableArc>
         Dijkstra(GraphI const &graph,
                  nodeID const source,
                  nodeID const destination,
-                 ArcCost const arccost)
+                 ArcCost const arccost = &Dijkstra::arcCost,
+                 AdmissableArc const admissablearc = &Dijkstra::admissableArc)
             // requires std::is_base_of_v<GraphI, Graph<NodeData, ArcData>>
             : costs(graph.numnodes(), std::numeric_limits<float>::infinity()), predecessor(graph.numnodes(), -1)
         {
@@ -123,10 +111,9 @@ namespace Nilib
                 // Explore the down stream neighbours.
                 for (auto &&neigh : graph.down_stream(node))
                 {
-                    // LOG_DEBUG("Exploring neighbourhood of", node, ":", neigh);
 
                     // Skip admissable arcs. ONLY for Graph with arc data.
-                    if (!admissableArc(node, neigh))
+                    if (!admissablearc(node, neigh))
                         continue;
 
                     float const cost_node_neigh = arccost(node, neigh);
@@ -145,16 +132,18 @@ namespace Nilib
             if (costs[destination] < std::numeric_limits<float>::infinity())
             {
                 // Constructing path source -> sink.
-                // LOG_DEBUG("Found Shortest path!");
                 nodeID current = destination;
                 while (current != source)
                 {
                     path.push_back(current);
+                    path_arcs.push_back({predecessor[current], current});
                     current = predecessor[current];
                 }
                 path.push_back(current);
                 std::reverse(path.begin(), path.end());
+                std::reverse(path_arcs.begin(), path_arcs.end());
                 cost = costs[destination];
+                LOG_DEBUG("Found Shortest path!", path);
             }
             else
             {
@@ -164,13 +153,42 @@ namespace Nilib
 
         static float arcCost(nodeID const A, nodeID const B);
 
-        virtual bool admissableArc(nodeID const A, nodeID const B) const;
+        static bool admissableArc(nodeID const A, nodeID const B);
 
         std::vector<nodeID> predecessor;
         std::vector<nodeID> path;
+        std::vector<arcID> path_arcs;
         std::vector<float> costs;
         int status;
         float cost;
+
+        std::vector<nodeID>::const_iterator begin() const { return path.begin(); };
+        std::vector<nodeID>::const_iterator end() const { return path.end(); };
+    };
+
+    struct MinCostFlow
+    {
+
+        // Using successive shortest path.
+        // Single source and single terminal
+        MinCostFlow(GraphI const &graph, int const req_flow, nodeID const source, nodeID const terminal)
+        {
+            for (int k = 0; k < req_flow; k++)
+            {
+                // Find shortest path source->terminal. Over admissable arcs.
+                auto path = Dijkstra(graph, source, terminal);
+
+                // Push as much flow as possible over that path.
+                int min_flow = 1;
+
+                // Alter flows,
+                for (auto &&arc : path.path_arcs)
+                {
+                    // arc.a
+                }
+                
+            }
+        }
     };
 
     void drawGraph(Window &window, GraphI const &graph);

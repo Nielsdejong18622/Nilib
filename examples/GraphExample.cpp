@@ -75,11 +75,9 @@ int main()
         }
     }
 
-    LOG_SUCCESS("Completed Graph Example!");
-    return EXIT_SUCCESS;
     struct NodeData
     {
-        char letter;
+        nodeID letter;
     };
 
     struct ArcData
@@ -93,15 +91,16 @@ int main()
     {
         Graph<NodeData> graph;
         // erdos_renyi(graph, 100u, 0.05f);
-        ring_world(graph, 100, 1);
+        ring_world(graph, 100, 4);
         graph.print();
 
-        auto res = Dijkstra(graph, 0, 99);
+        auto res = Dijkstra(graph, 0, 40);
 
         // if (res.status)
         {
             LOG_DEBUG("Found shortest path!");
             LOG_DEBUG(res.path);
+            LOG_DEBUG(res.path_arcs);
             // LOG_DEBUG(res.predecessor);
         }
     }
@@ -112,6 +111,7 @@ int main()
 
         auto source = graph.addNode(NodeData{.letter = 's'});
         auto terminal = graph.addNode(NodeData{.letter = 't'});
+        auto dummy_courier = graph.addNode(NodeData{.letter = 'C'});
 
         size_t n_orders = 2;
         size_t n_nodes = 4;
@@ -134,36 +134,49 @@ int main()
             }
         }
 
-        for (size_t oid = 0; oid < n_orders; oid++)
-            for (size_t cid = n_orders; cid < n_nodes; cid++)
+        for (size_t oid = 3; oid < n_orders + 3; oid++)
+            for (size_t cid = n_orders + 3; cid < n_nodes + 3; cid++)
             {
                 //
                 float cij = 10;
                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
+                graph.addArc(cid, oid, ArcData{.capacity = 0, .flow = 1, .cost = -cij});
             }
 
+        // Order -> Dummy courier arcs.
+        for (size_t oid = 3; oid < n_orders + 3; oid++)
+            graph.addArc(oid, dummy_courier, ArcData{.capacity = static_cast<int>(n_orders), .flow = 0, .cost = 0});
+
+        graph.arcs[{3, 4}].cost = 2;
         // graph.addArc(a, 1, "test");
 
         graph.print();
+        // auto res = Dijkstra(graph, 0, 1, [&graph](nodeID a, nodeID b)
+        //                     { return graph.arcs[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
+        //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
+        auto res = MinCostFlow(graph, n_orders, source, terminal);
+        // LOG_DEBUG(res.path, res.cost);
     }
 
-    // This stores data per node and arc.
-    {
-        Graph<NodeData, ArcData> graph;
-        auto node1 = graph.addNode(NodeData{5});
-        auto node2 = graph.addNode(NodeData{7});
-        auto node3 = graph.addNode(NodeData{7});
+    LOG_SUCCESS("Completed Graph Example!");
+    return EXIT_SUCCESS;
+    // // This stores data per node and arc.
+    // {
+    //     Graph<NodeData, ArcData> graph;
+    //     auto node1 = graph.addNode(NodeData{5});
+    //     auto node2 = graph.addNode(NodeData{7});
+    //     auto node3 = graph.addNode(NodeData{7});
 
-        graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10.0f, .cost = 10.0f});
-        graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 1.0f, .cost = 10.0f});
-        auto res = Dijkstra(graph, node1, node3);
+    //     graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10.0f, .cost = 10.0f});
+    //     graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 1.0f, .cost = 10.0f});
+    //     auto res = Dijkstra(graph, node1, node3);
 
-        // if (res.status)
-        {
-            LOG_DEBUG("Found shortest path!");
-            LOG_DEBUG(res.costs);
-            LOG_DEBUG(res.predecessor);
-        }
-        res.cost;
-    }
+    //     // if (res.status)
+    //     {
+    //         LOG_DEBUG("Found shortest path!");
+    //         LOG_DEBUG(res.costs);
+    //         LOG_DEBUG(res.predecessor);
+    //     }
+    //     res.cost;
+    // }
 }

@@ -7,7 +7,7 @@ using namespace Nilib;
 
 #include <queue>
 
-bool Dijkstra::admissableArc(nodeID const A, nodeID const B) const
+bool Dijkstra::admissableArc(nodeID const A, nodeID const B)
 {
     return true;
 }
