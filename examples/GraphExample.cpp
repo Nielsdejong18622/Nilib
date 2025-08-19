@@ -156,7 +156,7 @@ int main()
             for (int cid = n_orders + 3; cid < n_nodes + 3; cid++)
             {
                 //
-                float cij = 10;
+                float cij = -10;
                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
                 // graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
             }
@@ -173,7 +173,7 @@ int main()
             // graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
         }
         // Dummy -> terminal arcs.
-        graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = -0});
+        graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = 0});
         // graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
 
         // for (auto &&arc : graph.arcs())
@@ -187,14 +187,26 @@ int main()
         //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
         int flow = 0;
         int req_flow = n_orders;
+
+        auto cost_fun = [&graph](nodeID a, nodeID b)
+        { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
+        auto use_edge_fun = [](nodeID a, nodeID b)
+        { return true; };
+        
+        // Init the potentials using BELLMAN FORD.
+        auto bellman = BellManFord(graph, source, cost_fun, use_edge_fun);
+        LOG_DEBUG(bellman.costs);
+        for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
+        {
+            graph.nodeData[nod].potential -= bellman.costs[nod];
+        }
+
         while (flow < req_flow)
         {
             // Find shortest path source->terminal. Over admissable arcs.
-            auto cost_fun = [&graph](nodeID a, nodeID b)
-            { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
-            auto use_edge_fun = [](nodeID a, nodeID b) { return true; };
             // { return graph.arcData[{a, b}].flow < graph.arcData[{a, b}].capacity; };
-            Dijkstra bellman = Dijkstra(graph, source, terminal, cost_fun, use_edge_fun);
+
+            auto bellman = Dijkstra(graph, source, terminal, cost_fun, use_edge_fun);
 
             // Push as much flow as possible over that path.
             int min_flow = 1;
@@ -221,7 +233,6 @@ int main()
                     graph.addArc(current, previous, ArcData{.capacity = arcdata.capacity, .flow = arcdata.capacity, .cost = -arcdata.cost});
                     graph.remove(previous, current);
                 }
-                graph.arcData[{current, previous}].flow -= 1;
 
                 current = previous;
             }

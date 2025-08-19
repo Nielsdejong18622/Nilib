@@ -33,10 +33,11 @@ namespace Nilib
     // All pairs shortest paths.
     struct BellManFord
     {
+        using Cost = float;
 
-        template <typename ArcCost, typename AdmissableArc>
-        BellManFord(GraphI const &graph, nodeID const source, ArcCost arccost, AdmissableArc admissable)
-            : costs(graph.numnodes(), std::numeric_limits<float>::max()),
+        template <typename Graph, typename ArcCost, typename AdmissableArc>
+        BellManFord(Graph const &graph, nodeID const source, ArcCost arccost, AdmissableArc admissable)
+            : costs(graph.numnodes(), std::numeric_limits<Cost>::max()),
               predecessor(graph.numnodes(), -1)
         {
             auto k = graph.numnodes();
@@ -47,46 +48,26 @@ namespace Nilib
             for (size_t iter = 0; iter < k - 1; ++iter)
             {
                 bool change = false;
-                for (nodeID idx = 0; idx < k; ++idx)
+                for (auto &&[idx, jdx] : graph.arcs())
                 {
-                    for (nodeID jdx = 0; jdx < k; ++jdx)
-                    {
-                        if (!admissable(idx, jdx))
-                            continue;
 
-                        float const weight = arccost(idx, jdx);
-                        if (costs[idx] + weight < costs[jdx])
-                        {
-                            costs[jdx] = costs[idx] + weight;
-                            predecessor[jdx] = idx;
-                            change = true;
-                        }
+                    if (!admissable(idx, jdx))
+                        continue;
+
+                    Cost const weight = arccost(idx, jdx);
+                    if (costs[idx] + weight < costs[jdx])
+                    {
+                        costs[jdx] = costs[idx] + weight;
+                        predecessor[jdx] = idx;
+                        change = true;
                     }
                 }
                 if (!change)
                     break;
             }
-
-            // // Constructing path source -> all other nodes.
-            // for (nodeID destination : graph.nodes())
-            // {
-
-            //     nodeID current = destination;
-            //     while (current != source)
-            //     {
-            //         path.push_back(current);
-            //         path_arcs.push_back({predecessor[current], current});
-            //         current = predecessor[current];
-            //     }
-            //     path.push_back(current);
-            //     std::reverse(path.begin(), path.end());
-            //     std::reverse(path_arcs.begin(), path_arcs.end());
-            //     cost = costs[destination];
-            //     LOG_DEBUG("Found Shortest path!", path, cost);
-            // }
         }
 
-        std::vector<float> costs;
+        std::vector<Cost> costs;
         std::vector<nodeID> predecessor;
     };
 
