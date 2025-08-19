@@ -8,6 +8,7 @@ int main()
 
     Nilib::RNG::seed();
 
+#ifdef NONE
     // Step 1. Make a simple graph that stores relations.
     {
         Graph graph2;
@@ -104,11 +105,11 @@ int main()
             // LOG_DEBUG(res.predecessor);
         }
     }
-
+#endif
     // This stores data per arc.
     {
         PROFILE_SCOPE("Creating MinCostFlow!");
-
+        LOG_DEBUG("MinCostFlow example!");
         struct ArcData
         {
             int capacity;
@@ -116,25 +117,30 @@ int main()
             float cost;
         };
 
-        Graph<void, ArcData> graph;
+        struct NodeData
+        {
+            float potential = 0.0;
+        };
 
-        auto source = graph.addNode();
-        auto terminal = graph.addNode();
-        auto dummy_courier = graph.addNode();
+        Graph<NodeData, ArcData> graph;
 
-        int n_orders = 20;   // Excluding dummy order.
-        int n_couriers = 20; // Excluding dummy courier.
+        auto source = graph.addNode(NodeData{.potential = 0.0});
+        auto terminal = graph.addNode(NodeData{.potential = 0.0});
+        auto dummy_courier = graph.addNode(NodeData{.potential = 0.0});
+
+        int n_orders = 2;   // Excluding dummy order.
+        int n_couriers = 2; // Excluding dummy courier.
         int n_nodes = n_orders + n_couriers;
 
         for (int node_i = 0; node_i < n_nodes; node_i++)
         {
-            auto node = graph.addNode();
+            auto node = graph.addNode(NodeData{.potential = 0.0});
             // The first nodes are the orders.
             if (node_i < n_orders)
             {
                 // source -> orders
                 graph.addArc(source, node, ArcData{.capacity = 1, .flow = 0, .cost = 0});
-                graph.addArc(node, source, ArcData{.capacity = 1, .flow = 1, .cost = -0});
+                // graph.addArc(node, source, ArcData{.capacity = 1, .flow = 1, .cost = -0});
             }
             // The remainder are couriers.
             else
@@ -142,7 +148,7 @@ int main()
                 // courier -> terminal
                 int kc = 1; // Courier capacity.
                 graph.addArc(node, terminal, ArcData{.capacity = kc, .flow = 0, .cost = 0});
-                graph.addArc(terminal, node, ArcData{.capacity = kc, .flow = kc, .cost = -0});
+                // graph.addArc(terminal, node, ArcData{.capacity = kc, .flow = kc, .cost = -0});
             }
         }
 
@@ -152,35 +158,81 @@ int main()
                 //
                 float cij = 10;
                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
-                graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
+                // graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
             }
-        // graph.arcData[{3, 5}].cost = 2;
+        graph.arcData[{3, 5}].cost = 2;
         // graph.arcData[{5, 3}].cost = -2;
 
-        // graph.arcData[{4, 6}].cost = 20;
+        graph.arcData[{4, 6}].cost = 20;
         // graph.arcData[{6, 4}].cost = -20;
 
         // Order -> Dummy courier arcs.
         for (int oid = 3; oid < n_orders + 3; oid++)
         {
             graph.addArc(oid, dummy_courier, ArcData{.capacity = 1, .flow = 0, .cost = 100});
-            graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
+            // graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
         }
         // Dummy -> terminal arcs.
         graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = -0});
-        graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
+        // graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
 
-        for (auto &&arc : graph.arcs())
-        {
-            // LOG_DEBUG(arc, "flow:", graph.arcData[arc].flow, "capacity:", graph.arcData[arc].capacity, "cost:", graph.arcData[arc].cost);
-        }
-
+        // for (auto &&arc : graph.arcs())
+        // {
+        //     // LOG_DEBUG(arc, "flow:", graph.arcData[arc].flow, "capacity:", graph.arcData[arc].capacity, "cost:", graph.arcData[arc].cost);
+        // }
+        LOG_DEBUG("Graph constructed!");
         graph.print();
         // auto res = Dijkstra(graph, 0, 1, [&graph](nodeID a, nodeID b)
         //                     { return graph.arcs[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
         //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
-        auto res = MinCostFlow(graph, n_orders, source, terminal);
+        int flow = 0;
+        int req_flow = n_orders;
+        while (flow < req_flow)
+        {
+            // Find shortest path source->terminal. Over admissable arcs.
+            auto cost_fun = [&graph](nodeID a, nodeID b)
+            { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
+            auto use_edge_fun = [](nodeID a, nodeID b) { return true; };
+            // { return graph.arcData[{a, b}].flow < graph.arcData[{a, b}].capacity; };
+            Dijkstra bellman = Dijkstra(graph, source, terminal, cost_fun, use_edge_fun);
 
+            // Push as much flow as possible over that path.
+            int min_flow = 1;
+            flow += min_flow;
+
+            LOG_DEBUG(bellman.costs);
+            for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
+            {
+                graph.nodeData[nod].potential -= bellman.costs[nod];
+            }
+
+            // Alter flows,
+            nodeID current = terminal;
+            // std::vector<nodeID> st_path;
+            while (current != source)
+            {
+                // st_path.push_back(current);
+                nodeID previous = bellman.predecessor[current];
+                ArcData &arcdata = graph.arcData[{previous, current}];
+                arcdata.flow += 1;
+                if (arcdata.flow == arcdata.capacity)
+                {
+                    LOG_DEBUG("Adding Reverse arc!", current, previous);
+                    graph.addArc(current, previous, ArcData{.capacity = arcdata.capacity, .flow = arcdata.capacity, .cost = -arcdata.cost});
+                    graph.remove(previous, current);
+                }
+                graph.arcData[{current, previous}].flow -= 1;
+
+                current = previous;
+            }
+
+            for (auto &&[head, tail] : graph.arcs())
+            {
+                LOG_DEBUG(head, tail, graph.arcData[{head, tail}].cost - graph.nodeData[head].potential + graph.nodeData[tail].potential);
+            }
+            // st_path.push_back(source);
+            // std::reverse(st_path.begin(), st_path.end());
+        }
         // Print solution.
         for (auto &&arc : graph.arcs())
         {

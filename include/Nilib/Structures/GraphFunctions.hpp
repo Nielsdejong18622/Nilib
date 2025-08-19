@@ -93,7 +93,7 @@ namespace Nilib
     struct Dijkstra
     {
 
-        // typedef float (*ArcCost)(nodeID const, nodeID const);
+        using Cost = float;
 
         Dijkstra(GraphI const &graph,
                  nodeID source,
@@ -110,14 +110,14 @@ namespace Nilib
                  ArcCost const arccost = &Dijkstra::arcCost,
                  AdmissableArc const admissablearc = &Dijkstra::admissableArc)
             // requires std::is_base_of_v<GraphI, Graph<NodeData, ArcData>>
-            : costs(graph.numnodes(), std::numeric_limits<float>::infinity()), predecessor(graph.numnodes(), -1)
+            : costs(graph.numnodes(), std::numeric_limits<Cost>::infinity()), predecessor(graph.numnodes(), std::numeric_limits<nodeID>::max())
         {
             LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
             CORE_ASSERT(graph.contains(source));
             CORE_ASSERT(graph.contains(destination));
 
             // Min-heap priority queue: (cost, node)
-            std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> Q;
+            std::priority_queue<std::pair<Cost, int>, std::vector<std::pair<Cost, int>>, std::greater<>> Q;
             // Init Queue with vertex priority.
             Q.push({0, source});
 
@@ -128,19 +128,21 @@ namespace Nilib
             while (!Q.empty())
             {
                 auto [cost, node] = Q.top();
-                // LOG_DEBUG("Popped nodeID", node);
+                Q.pop();
+
+                if (cost > costs[node])
+                    continue; // Skip stale entry
 
                 // Explore the down stream neighbours.
                 for (auto &&neigh : graph.down_stream(node))
                 {
-
                     // Skip admissable arcs. ONLY for Graph with arc data.
                     if (!admissablearc(node, neigh))
                         continue;
 
-                    float const cost_node_neigh = arccost(node, neigh);
-
+                    Cost const cost_node_neigh = arccost(node, neigh);
                     ASSERT(cost_node_neigh >= 0.0, "Dijkstra's shortest path requires non-negative arc costs! Got:", cost_node_neigh, "from", node, "to", neigh);
+
                     if (costs[node] + cost_node_neigh < costs[neigh])
                     {
                         costs[neigh] = costs[node] + cost_node_neigh;
@@ -148,8 +150,8 @@ namespace Nilib
                         Q.push({costs[neigh], neigh});
                     }
                 }
-                Q.pop();
             }
+
             // If a path exists!
             if (costs[destination] < std::numeric_limits<float>::infinity())
             {

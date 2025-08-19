@@ -13,8 +13,6 @@ namespace Nilib
     {
 
     private:
-        nodeID addNode() override { return nodeID{0}; };
-        void addArc(nodeID a, nodeID b) override {};
 
     public:
         std::unordered_map<arcID, Arc> arcData;
@@ -28,7 +26,7 @@ namespace Nilib
         };
         void addArc(nodeID a, nodeID b, Arc const &arc)
         {
-            arcData[arcID{a, b}] = arc;
+            arcData[arcID{a, b}] = std::move(arc);
             GraphRep::addArc(a, b);
         };
     };
@@ -44,7 +42,6 @@ namespace Nilib
     class Graph<Node, void, GraphRep> : public GraphRep
     {
     private:
-        // nodeID addNode() override { return nodeID{0}; };
 
     public:
         std::unordered_map<nodeID, Node> nodes;
@@ -62,7 +59,6 @@ namespace Nilib
     class Graph<void, Arc, GraphRep> : public GraphRep
     {
     private:
-        void addArc(nodeID a, nodeID b) override {};
 
     public:
         std::unordered_map<arcID, Arc> arcData;
