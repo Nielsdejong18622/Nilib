@@ -2,6 +2,7 @@
 #define _GRAPH_H
 
 #include "Nilib/Structures/GraphRepresentation.hpp"
+#include "Nilib/Structures/Persistent.hpp"
 #include <vector>
 
 namespace Nilib
@@ -15,7 +16,7 @@ namespace Nilib
     private:
 
     public:
-        std::unordered_map<arcID, Arc> arcData;
+        Nilib::PersistentIndexVector<Arc> arcData;
         std::unordered_map<nodeID, Node> nodeData;
 
         nodeID addNode(Node const &node)

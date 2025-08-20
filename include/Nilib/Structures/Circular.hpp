@@ -100,16 +100,7 @@ namespace Nilib
         std::vector<Type> d_data;
     };
 
-    // When you add a Type to this container you receive an index associated with that type.
-    // This index points to your original type no matter what.
-    // Removal of types does not invalidate previous types.
-    // For example, node_id = PersistentIndex.push(NodeData);
-    // PersistentIndex[node_id] == NodeData, unless node_id was removed.
-    template <typename Type, size_t size>
-    class PersistentIndex
-    {
-        std::array<Type, size> d_data;
-    };
+
 
     // Graph.
 }

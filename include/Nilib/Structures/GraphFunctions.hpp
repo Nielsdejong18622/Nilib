@@ -93,7 +93,7 @@ namespace Nilib
             // requires std::is_base_of_v<GraphI, Graph<NodeData, ArcData>>
             : costs(graph.numnodes(), std::numeric_limits<Cost>::infinity()), predecessor(graph.numnodes(), std::numeric_limits<nodeID>::max())
         {
-            LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
+            // LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
             CORE_ASSERT(graph.contains(source));
             CORE_ASSERT(graph.contains(destination));
 
@@ -148,11 +148,11 @@ namespace Nilib
                 std::reverse(path.begin(), path.end());
                 std::reverse(path_arcs.begin(), path_arcs.end());
                 cost = costs[destination];
-                LOG_DEBUG("Found Shortest path!", path, cost);
+                // LOG_DEBUG("Found Shortest path!", path, cost);
             }
             else
             {
-                LOG_DEBUG("Unable to find path from", source, "to", destination);
+                LOG_WARNING("Unable to find path from", source, "to", destination);
             }
         }
 
