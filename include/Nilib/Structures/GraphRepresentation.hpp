@@ -10,6 +10,7 @@ namespace Nilib
 {
     // IDs.
     using nodeID = std::uint_fast64_t;
+    // using arcID = std::uint_fast64_t;
 
     // struct nodeID
     // {
@@ -22,49 +23,41 @@ namespace Nilib
     //     bool operator==(nodeID const other) const { return id == other.id; }
     // };
 
-    struct arcID
+    struct ArcID
     {
-        nodeID a, b;
+        nodeID from, to;
 
-        friend bool operator==(arcID const other, arcID const self)
+
+        friend bool operator==(ArcID const &other, ArcID const &self)
         {
-            return other.a == self.a && other.b == self.b;
+            return other.from == self.from && other.to == self.to;
         }
 
-        friend std::ostream &operator<<(std::ostream &os, arcID const self)
+        friend std::ostream &operator<<(std::ostream &os, ArcID const &self)
         {
-            return os << self.a << '-' << self.b;
+            return os << self.from << '-' << self.to;
         }
-
-        nodeID first() { return a; }
-        nodeID second() { return b; }
+        nodeID first() { return from; }
+        nodeID second() { return to; }
     };
-
 };
+
 
 namespace std
 {
     template <>
-    struct hash<Nilib::arcID>
+    struct hash<Nilib::ArcID>
     {
-        size_t operator()(Nilib::arcID const &s) const
+        size_t operator()(Nilib::ArcID const &s) const
         {
-            size_t h1 = hash<size_t>()(static_cast<size_t>(s.a)); // Hash the 'a' nodeID
-            size_t h2 = hash<size_t>()(static_cast<size_t>(s.b)); // Hash the 'b' nodeID
+            size_t h1 = hash<size_t>()(static_cast<size_t>(s.from)); // Hash the 'a' nodeID
+            size_t h2 = hash<size_t>()(static_cast<size_t>(s.to)); // Hash the 'b' nodeID
             return h1 + 31 * h2;
             // return s.a + 167327 * s.b;                                  // Combine the hashes using a prime multiplier (31)
         }
     };
-
-    // template <>
-    // struct hash<Nilib::nodeID>
-    // {
-    //     size_t operator()(Nilib::nodeID const &s) const
-    //     {
-    //         return s.id;
-    //     }
-    // };
 }
+
 
 namespace Nilib
 {
@@ -136,26 +129,26 @@ namespace Nilib
     };
 
     // Interface of everything we are allowed to do with a graph class.
-    struct GraphI
+    class GraphI
     {
-        // using arcID = size_t;
-
+    protected:
         // Adding and removing nodes.
         virtual nodeID addNode() = 0;
-        virtual std::vector<nodeID> addNodes(size_t const n) = 0;
         virtual void remove(nodeID node) = 0;
+        virtual std::vector<nodeID> addNodes(size_t const n) = 0;
 
         // Adding and removing arcs/edges.
         virtual void addArc(nodeID node_A, nodeID node_B) = 0;
         // virtual void removeArcs(nodeID node_A, nodeID node_B) = 0;
         virtual void remove(nodeID node_A, nodeID node_B) = 0;
-        // virtual void removeArc(arcID) = 0;
 
+    public:
         // Make the empty graph.
         virtual void clear() = 0;
 
         // Properties.
         virtual size_t numnodes() const = 0;
+        virtual size_t nodes_capacity() const = 0;
         virtual size_t numedges() const = 0;
         virtual bool empty() const = 0;
 
@@ -163,7 +156,7 @@ namespace Nilib
         virtual bool contains(nodeID node) const = 0;
         virtual bool contains(nodeID nodeA, nodeID nodeB) const = 0;
         virtual bool adjacent(nodeID nodeA, nodeID nodeB) const = 0;
-        // virtual bool incident(arcID arcA, arcID arcB) const = 0;ß
+        // virtual bool incident(arcID arcA, arcID arcB) const = 0;
         virtual size_t indegree(nodeID node) const = 0;
         virtual size_t outdegree(nodeID node) const = 0;
         size_t degree(nodeID node) const { return indegree(node) + outdegree(node); };
@@ -177,233 +170,7 @@ namespace Nilib
         virtual GraphRange<nodeID> adjacent(nodeID const node) const = 0;
 
         virtual GraphRange<nodeID> nodes() const = 0;
-        virtual GraphRange<arcID> arcs() const = 0;
-    };
-
-    // Some constructors.
-    void erdos_renyi(GraphI &graph, size_t const numnodes, float const prob);
-    void ring_world(GraphI &graph, size_t const numnodes, size_t const C);
-    void small_world(GraphI &graph, size_t const numnodes, size_t const C, float const rewire_prob);
-
-    // struct AdjacencyRep : GraphI
-    // {
-    //     Nilib::Matrixf adjacency;
-    // };
-
-    // struct Incidence : GraphI
-    // {
-    // };
-
-    struct AdjacencyList : public GraphI
-    {
-        // nodeid -> nodejd -> nodekd
-        std::unordered_map<nodeID, std::list<nodeID>> data;
-
-        // Adding and removing nodes.
-        nodeID addNode() override;
-        std::vector<nodeID> addNodes(size_t const n) override;
-        void remove(nodeID node) override;
-
-        // Adding and removing arcs/edges.
-        void addArc(nodeID node_A, nodeID node_B) override;
-        void remove(nodeID node_A, nodeID node_B) override;
-
-        // Make the empty graph.
-        void clear() override;
-
-        // Properties.
-        size_t numnodes() const override;
-        size_t numedges() const override;
-        bool empty() const override;
-
-        // Some simple operations and checks.
-        bool contains(nodeID node) const override;
-        bool contains(nodeID nodeA, nodeID nodeB) const override;
-        bool adjacent(nodeID nodeA, nodeID nodeB) const override;
-        size_t indegree(nodeID node) const override;
-        size_t outdegree(nodeID node) const override;
-
-        // Traversal
-        GraphRange<nodeID> down_stream(nodeID const node) const override;
-        GraphRange<nodeID> up_stream(nodeID const node) const override;
-        GraphRange<nodeID> adjacent(nodeID const node) const override;
-
-        // Print the representation to LOG.
-        void print() const override;
-
-        // Traversal.
-        class NodeIteratorImpl : public GraphIteratorImpl<nodeID>
-        {
-            using Iter = std::unordered_map<nodeID, std::list<nodeID>>::const_iterator;
-            Iter iter_;
-
-        public:
-            NodeIteratorImpl(Iter it) : iter_(it) {}
-
-            std::unique_ptr<GraphIteratorImpl<nodeID>> clone() const override
-            {
-                return std::make_unique<NodeIteratorImpl>(*this);
-            }
-
-            nodeID operator*() const override { return iter_->first; }
-
-            GraphIteratorImpl<nodeID> &operator++() override
-            {
-                ++iter_;
-                return *this;
-            }
-
-            bool equals(const GraphIteratorImpl<nodeID> &other) const override
-            {
-                const auto *o = dynamic_cast<const NodeIteratorImpl *>(&other);
-                return o && iter_ == o->iter_;
-            }
-        };
-        class NeighborIteratorImpl : public GraphIteratorImpl<nodeID>
-        {
-            using Iter = std::list<nodeID>::const_iterator;
-            Iter iter_;
-
-        public:
-            NeighborIteratorImpl(Iter it) : iter_(it) {}
-
-            std::unique_ptr<GraphIteratorImpl<nodeID>> clone() const override
-            {
-                return std::make_unique<NeighborIteratorImpl>(*this);
-            }
-
-            nodeID operator*() const override { return *iter_; }
-
-            GraphIteratorImpl<nodeID> &operator++() override
-            {
-                ++iter_;
-                return *this;
-            }
-
-            bool equals(const GraphIteratorImpl<nodeID> &other) const override
-            {
-                const auto *o = dynamic_cast<const NeighborIteratorImpl *>(&other);
-                return o && iter_ == o->iter_;
-            }
-        };
-        class RevNeighborIteratorImpl : public GraphIteratorImpl<nodeID>
-        {
-            using Iter = std::unordered_map<nodeID, std::list<nodeID>>::const_iterator;
-            using IterTail = std::list<nodeID>::const_iterator;
-
-            Iter iter_, iter_end;
-            nodeID node_;
-
-        public:
-            RevNeighborIteratorImpl(nodeID const node, Iter it, Iter it_end)
-                : node_(node), iter_(it), iter_end(it_end)
-            {
-                advance_to_valid();
-            }
-
-            std::unique_ptr<GraphIteratorImpl<nodeID>> clone() const override
-            {
-                return std::make_unique<RevNeighborIteratorImpl>(*this);
-            }
-
-            nodeID operator*() const override
-            {
-                return iter_->first;
-            }
-
-            GraphIteratorImpl<nodeID> &operator++() override
-            {
-                ++iter_;
-                advance_to_valid();
-                return *this;
-            }
-
-            bool equals(const GraphIteratorImpl<nodeID> &other) const override
-            {
-                const auto *o = dynamic_cast<const RevNeighborIteratorImpl *>(&other);
-                return o && iter_ == o->iter_ && node_ == o->node_;
-            }
-
-        private:
-            void advance_to_valid()
-            {
-                while (iter_ != iter_end)
-                {
-                    const auto &neighbors = iter_->second;
-                    if (std::find(neighbors.begin(), neighbors.end(), node_) != neighbors.end())
-                    {
-                        break; // Found a predecessor
-                    }
-                    ++iter_;
-                }
-            }
-        };
-        class ArcIteratorImpl : public GraphIteratorImpl<arcID>
-        {
-            using IterHead = std::unordered_map<nodeID, std::list<nodeID>>::const_iterator;
-            IterHead iter_head;
-            IterHead iter_head_end;
-
-            using IterTail = std::list<nodeID>::const_iterator;
-            IterTail iter_tail;
-
-        public:
-            ArcIteratorImpl(IterHead it, IterHead it2) : iter_head(it), iter_head_end(it2)
-            {
-                if (iter_head != iter_head_end)
-                {
-                    iter_tail = iter_head->second.begin();
-                    advance_to_valid();
-                }
-            }
-
-            std::unique_ptr<GraphIteratorImpl<arcID>> clone() const override
-            {
-                return std::make_unique<ArcIteratorImpl>(*this);
-            }
-
-            arcID operator*() const override { return arcID{iter_head->first, *iter_tail}; }
-
-            GraphIteratorImpl<arcID> &operator++() override
-            {
-                ++iter_tail;
-                advance_to_valid();
-                return *this;
-            }
-
-            bool equals(const GraphIteratorImpl<arcID> &other) const override
-            {
-                const auto *o = dynamic_cast<const ArcIteratorImpl *>(&other);
-                return o && (iter_tail == o->iter_tail || iter_head == o->iter_head);
-            }
-
-        private:
-            void advance_to_valid()
-            {
-                while (iter_head != iter_head_end && iter_tail == iter_head->second.end())
-                {
-                    ++iter_head;
-                    if (iter_head != iter_head_end)
-                    {
-                        iter_tail = iter_head->second.begin();
-                    }
-                }
-            }
-        };
-
-        GraphRange<nodeID> nodes() const override
-        {
-            return GraphRange<nodeID>(GraphIterator<nodeID>(std::make_unique<NodeIteratorImpl>(data.begin())),
-                                      GraphIterator<nodeID>(std::make_unique<NodeIteratorImpl>(data.end())));
-        }
-
-        GraphRange<arcID> arcs() const override
-        {
-            return GraphRange<arcID>(GraphIterator<arcID>(
-                                         std::make_unique<ArcIteratorImpl>(data.begin(), data.end())),
-                                     GraphIterator<arcID>(
-                                         std::make_unique<ArcIteratorImpl>(data.end(), data.end())));
-        };
+        virtual GraphRange<ArcID> arcs() const = 0;
     };
 
 } // namespace Nilib

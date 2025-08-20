@@ -8,7 +8,6 @@ int main()
 
     Nilib::RNG::seed();
 
-#ifdef NONE
     // Step 1. Make a simple graph that stores relations.
     {
         Graph graph2;
@@ -16,18 +15,22 @@ int main()
         // Add two nodes
         LOG_DEBUG("Graph2 empty?:", graph2.empty());
         nodeID nodeA = graph2.addNode();
+        CORE_ASSERT(nodeA == 0);
         nodeID nodeB = graph2.addNode();
         nodeID nodeC = graph2.addNode();
         nodeID nodeD = graph2.addNode();
         nodeID nodeE = graph2.addNode();
 
         graph2.addArc(nodeA, nodeB);
+        graph2.addArc(nodeA, nodeB);
         graph2.addArc(nodeB, nodeC);
         graph2.addArc(nodeC, nodeD);
         graph2.addArc(nodeA, nodeE);
-        graph2.addArc(nodeA, nodeB);
         graph2.addArc(nodeE, nodeA);
 
+        graph2.print();
+
+        graph2.remove(nodeD);
         char const name[6] = "ABCDE";
 
         graph2.print();
@@ -35,13 +38,13 @@ int main()
         Graph graph = graph2;
         LOG_DEBUG("Constructed graph with", graph.numnodes(), "nodes and", graph.numedges(), "edges!");
 
-        LOG_DEBUG("First downstream node of nodeA", nodeA, ':', *graph.down_stream(nodeA).begin(), *graph.down_stream(nodeA).end());
-        LOG_DEBUG("First downstream node of nodeB", nodeB, ':', *graph.up_stream(nodeB).begin());
+        // LOG_DEBUG("First downstream node of nodeA", nodeA, ':', *graph.down_stream(nodeA).begin(), *graph.down_stream(nodeA).end());
+        // LOG_DEBUG("First downstream node of nodeB", nodeB, ':', *graph.up_stream(nodeB).begin());
         auto res = Dijkstra(graph2, nodeA, nodeE);
 
-        LOG_INFO("Dijkstra Result:", res.status, res.path, res.cost);
+        LOG_INFO("Dijkstra Result:", res.path(), res.cost);
 
-        Nilib::Window window(1024, 800, "GraphDrawing");
+        // Nilib::Window window(1024, 800, "GraphDrawing");
 
         // drawGraph(window, graph);
 
@@ -71,8 +74,7 @@ int main()
         LOG_PROGRESS("Iterating over arcs!");
         for (auto arc : graph.arcs())
         {
-            LOG_PROGRESS(name[arc.a], name[arc.b]);
-            // LOG_PROGRESS(name[(*arc_it).a], name[(*arc_it).b]);
+            LOG_PROGRESS(name[arc.from], name[arc.to]);
         }
     }
 
@@ -95,17 +97,17 @@ int main()
         ring_world(graph, 100, 4);
         graph.print();
 
-        auto res = Dijkstra(graph, 0, 40);
+        auto dijk = Dijkstra(graph, 0, 40);
 
         // if (res.status)
         {
             LOG_DEBUG("Found shortest path!");
-            LOG_DEBUG(res.path);
-            LOG_DEBUG(res.path_arcs);
+            LOG_DEBUG(dijk.path());
+            LOG_DEBUG(dijk.arcs());
             // LOG_DEBUG(res.predecessor);
         }
     }
-#endif
+
     // This stores data per arc.
     {
         PROFILE_SCOPE("Creating MinCostFlow!");
@@ -160,6 +162,7 @@ int main()
                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
                 // graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
             }
+
         graph.arcData[{3, 5}].cost = 2;
         // graph.arcData[{5, 3}].cost = -2;
 
@@ -192,7 +195,7 @@ int main()
         { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
         auto use_edge_fun = [](nodeID a, nodeID b)
         { return true; };
-        
+
         // Init the potentials using BELLMAN FORD.
         auto bellman = BellManFord(graph, source, cost_fun, use_edge_fun);
         LOG_DEBUG(bellman.costs);
@@ -247,32 +250,32 @@ int main()
         // Print solution.
         for (auto &&arc : graph.arcs())
         {
-            if (graph.arcData[arc].flow > 0 && !(arc.a < 3 || arc.b < 3) && arc.a < arc.b)
+            if (graph.arcData[arc].flow > 0 && !(arc.from < 3 || arc.to < 3) && arc.from < arc.to)
             {
                 LOG_INFO("Active arcs:", arc);
             }
         }
     }
+    // This stores data per node and arc.
+    {
+        Graph<NodeData, ArcData> graph;
+        auto node1 = graph.addNode(NodeData{5});
+        auto node2 = graph.addNode(NodeData{7});
+        auto node3 = graph.addNode(NodeData{7});
+
+        graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10, .cost = 10.0f});
+        graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 10, .cost = 10.0f});
+        auto res = Dijkstra(graph, node1, node3);
+
+        // if (res.status)
+        {
+            LOG_DEBUG("Found shortest path!");
+            LOG_DEBUG(res.costs);
+            LOG_DEBUG(res.predecessor);
+        }
+        res.cost;
+    }
 
     LOG_SUCCESS("Completed Graph Example!");
     return EXIT_SUCCESS;
-    // // This stores data per node and arc.
-    // {
-    //     Graph<NodeData, ArcData> graph;
-    //     auto node1 = graph.addNode(NodeData{5});
-    //     auto node2 = graph.addNode(NodeData{7});
-    //     auto node3 = graph.addNode(NodeData{7});
-
-    //     graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10.0f, .cost = 10.0f});
-    //     graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 1.0f, .cost = 10.0f});
-    //     auto res = Dijkstra(graph, node1, node3);
-
-    //     // if (res.status)
-    //     {
-    //         LOG_DEBUG("Found shortest path!");
-    //         LOG_DEBUG(res.costs);
-    //         LOG_DEBUG(res.predecessor);
-    //     }
-    //     res.cost;
-    // }
 }

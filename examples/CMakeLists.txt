@@ -16,6 +16,7 @@ add_executable(ODE ODE.cpp)
 add_executable(ALNS ALNSdemo.cpp)
 add_executable(Enum Enum.cpp)
 add_executable(Structures Structures.cpp)
+add_executable(Persistent Persistent.cpp)
 
 # Link the static library to the example executable
 target_link_libraries(Triangle PUBLIC Nilib)
@@ -35,3 +36,5 @@ target_link_libraries(ODE PUBLIC Nilib)
 target_link_libraries(ALNS PUBLIC Nilib)
 target_link_libraries(Enum PUBLIC Nilib)
 target_link_libraries(Structures PUBLIC Nilib)
+target_link_libraries(Persistent PUBLIC Nilib)
+

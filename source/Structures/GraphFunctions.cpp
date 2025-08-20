@@ -5,18 +5,6 @@
 
 using namespace Nilib;
 
-#include <queue>
-
-bool Dijkstra::admissableArc(nodeID const A, nodeID const B)
-{
-    return true;
-}
-
-float Dijkstra::arcCost(nodeID const A, nodeID const B)
-{
-    return 1.0f;
-}
-
 // Shortest path form source -> destination.
 
 

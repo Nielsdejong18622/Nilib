@@ -37,8 +37,8 @@ namespace Nilib
 
         template <typename Graph, typename ArcCost, typename AdmissableArc>
         BellManFord(Graph const &graph, nodeID const source, ArcCost arccost, AdmissableArc admissable)
-            : costs(graph.numnodes(), std::numeric_limits<Cost>::max()),
-              predecessor(graph.numnodes(), -1)
+            : costs(graph.nodes_capacity(), std::numeric_limits<Cost>::max()),
+              predecessor(graph.nodes_capacity(), -1)
         {
             auto k = graph.numnodes();
 
@@ -84,16 +84,16 @@ namespace Nilib
         {
         }
 
-        template <typename ArcCost, typename AdmissableArc>
-        Dijkstra(GraphI const &graph,
+        template <typename Graph, typename ArcCost, typename AdmissableArc>
+        Dijkstra(Graph const &graph,
                  nodeID const source,
                  nodeID const destination,
                  ArcCost const arccost = &Dijkstra::arcCost,
                  AdmissableArc const admissablearc = &Dijkstra::admissableArc)
-            // requires std::is_base_of_v<GraphI, Graph<NodeData, ArcData>>
-            : costs(graph.numnodes(), std::numeric_limits<Cost>::infinity()), predecessor(graph.numnodes(), std::numeric_limits<nodeID>::max())
+            requires std::is_base_of_v<GraphI, Graph>
+            : costs(graph.nodes_capacity(), std::numeric_limits<Cost>::infinity()), predecessor(graph.nodes_capacity(), -1)
         {
-            // LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
+            LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
             CORE_ASSERT(graph.contains(source));
             CORE_ASSERT(graph.contains(destination));
 
@@ -140,13 +140,11 @@ namespace Nilib
                 nodeID current = destination;
                 while (current != source)
                 {
-                    path.push_back(current);
+                    d_path.push_back(current);
                     path_arcs.push_back({predecessor[current], current});
                     current = predecessor[current];
                 }
-                path.push_back(current);
-                std::reverse(path.begin(), path.end());
-                std::reverse(path_arcs.begin(), path_arcs.end());
+                d_path.push_back(current);
                 cost = costs[destination];
                 // LOG_DEBUG("Found Shortest path!", path, cost);
             }
@@ -156,19 +154,26 @@ namespace Nilib
             }
         }
 
-        static float arcCost(nodeID const A, nodeID const B);
+        auto arcs()
+        {
+            return std::ranges::subrange(path_arcs.rbegin(), path_arcs.rend());
+        }
 
-        static bool admissableArc(nodeID const A, nodeID const B);
+        auto path()
+        {
+            return std::ranges::subrange(d_path.rbegin(), d_path.rend());
+        }
+        static constexpr Dijkstra::Cost arcCost(nodeID const A, nodeID const B) { return 1.0f; };
+
+        static constexpr bool admissableArc(nodeID const A, nodeID const B) { return true; };
 
         std::vector<nodeID> predecessor;
-        std::vector<nodeID> path;
-        std::vector<arcID> path_arcs;
         std::vector<float> costs;
-        int status;
         float cost;
 
-        std::vector<nodeID>::const_iterator begin() const { return path.begin(); };
-        std::vector<nodeID>::const_iterator end() const { return path.end(); };
+    private:
+        std::vector<nodeID> d_path;
+        std::vector<ArcID> path_arcs;
     };
 
     struct MinCostFlow
