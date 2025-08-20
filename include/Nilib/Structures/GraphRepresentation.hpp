@@ -9,7 +9,7 @@
 namespace Nilib
 {
     // IDs.
-    using nodeID = std::uint_fast64_t;
+    using nodeID = std::uint_fast16_t;
     // using arcID = std::uint_fast64_t;
 
     // struct nodeID
@@ -27,7 +27,6 @@ namespace Nilib
     {
         nodeID from, to;
 
-
         friend bool operator==(ArcID const &other, ArcID const &self)
         {
             return other.from == self.from && other.to == self.to;
@@ -42,22 +41,20 @@ namespace Nilib
     };
 };
 
-
 namespace std
 {
     template <>
     struct hash<Nilib::ArcID>
     {
-        size_t operator()(Nilib::ArcID const &s) const
+        std::size_t operator()(const Nilib::ArcID &a) const
         {
-            size_t h1 = hash<size_t>()(static_cast<size_t>(s.from)); // Hash the 'a' nodeID
-            size_t h2 = hash<size_t>()(static_cast<size_t>(s.to)); // Hash the 'b' nodeID
-            return h1 + 31 * h2;
-            // return s.a + 167327 * s.b;                                  // Combine the hashes using a prime multiplier (31)
+            uintmax_t hash = std::hash<Nilib::nodeID>{}(a.from);
+            hash <<= sizeof(uintmax_t) * 4;
+            hash ^= std::hash<Nilib::nodeID>{}(a.to);
+            return std::hash<uintmax_t>{}(hash);
         }
     };
 }
-
 
 namespace Nilib
 {

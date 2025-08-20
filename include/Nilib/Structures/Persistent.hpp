@@ -15,7 +15,7 @@ namespace Nilib
     // Removal of types does not invalidate previous types.
     // For example, node_id = PersistentIndex.push(NodeData);
     // PersistentIndex[node_id] == NodeData, unless node_id was removed.
-    template <typename Type, typename index_type = size_t>
+    template <typename Type, typename index_type>
     class PersistentIndexVector
     {
     public:
@@ -141,7 +141,7 @@ namespace Nilib
             using pointer = Type *;
             using reference = Type &;
 
-            iterator(PersistentIndexVector<Type> *parent, index current)
+            iterator(PersistentIndexVector<Type, index_type> *parent, index current)
                 : d_parent(parent), d_current(current)
             {
                 skip_invalid();
@@ -177,7 +177,7 @@ namespace Nilib
             index getIndex() const { return d_current; }
 
         private:
-            PersistentIndexVector<Type> *d_parent;
+            PersistentIndexVector<Type, index_type> *d_parent;
             index d_current;
 
             void skip_invalid()
@@ -199,7 +199,7 @@ namespace Nilib
             using pointer = Type const *;
             using reference = Type const &;
 
-            const_iterator(PersistentIndexVector<Type> const *parent, index current)
+            const_iterator(PersistentIndexVector<Type, index_type> const *parent, index current)
                 : d_parent(parent), d_current(current)
             {
                 skip_invalid();
@@ -235,7 +235,7 @@ namespace Nilib
             index getIndex() const { return d_current; }
 
         private:
-            PersistentIndexVector<Type> const *d_parent;
+            PersistentIndexVector<Type, index_type> const *d_parent;
             index d_current;
 
             void skip_invalid()

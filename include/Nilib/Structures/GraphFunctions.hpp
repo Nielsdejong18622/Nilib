@@ -93,7 +93,7 @@ namespace Nilib
             requires std::is_base_of_v<GraphI, Graph>
             : costs(graph.nodes_capacity(), std::numeric_limits<Cost>::infinity()), predecessor(graph.nodes_capacity(), -1)
         {
-            LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
+            // LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
             CORE_ASSERT(graph.contains(source));
             CORE_ASSERT(graph.contains(destination));
 
@@ -113,6 +113,9 @@ namespace Nilib
 
                 if (cost > costs[node])
                     continue; // Skip stale entry
+
+                // if (node == destination)
+                //     break;;
 
                 // Explore the down stream neighbours.
                 for (auto &&neigh : graph.down_stream(node))
