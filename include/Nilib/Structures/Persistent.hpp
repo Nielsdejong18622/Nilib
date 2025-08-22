@@ -15,7 +15,7 @@ namespace Nilib
     // Removal of types does not invalidate previous types.
     // For example, node_id = PersistentIndex.push(NodeData);
     // PersistentIndex[node_id] == NodeData, unless node_id was removed.
-    template <typename Type, typename index_type>
+    template <typename Type, typename index_type = uint_fast16_t>
     class PersistentIndexVector
     {
     public:
