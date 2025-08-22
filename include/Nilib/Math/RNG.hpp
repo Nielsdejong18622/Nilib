@@ -17,12 +17,12 @@ namespace Nilib
         static uint64_t state;
 
     public:
-        static void seed(uint64_t const seed)
+        static inline void seed(uint64_t const seed)
         {
             state = seed;
         }
         // Seed with time.
-        static void seed()
+        static inline void seed()
         {
             auto now = std::chrono::high_resolution_clock::now();
             auto duration = now.time_since_epoch();
@@ -30,55 +30,77 @@ namespace Nilib
             state = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
         }
 
-        // Returns a probability [0, 1]
+        // Returns a probability [0, 1)
         template <typename scalar = float>
-        static float prob()
+        static inline float prob()
         {
-            return static_cast<scalar>(static_cast<float>(wyhash(&state)) /
-                                       static_cast<float>(std::numeric_limits<uint64_t>::max()));
+            double const _wynorm = 1.0 / (1ull << 52);
+            return static_cast<scalar>((wyhash(&state) >> 12) * _wynorm);
+
+            // return static_cast<scalar>(static_cast<float>(wyhash(&state)) /
+            //                            static_cast<float>(std::numeric_limits<uint64_t>::max()));
         }
 
-        static float rounded_uniform(float const min, float const max, int const digits = 2)
+        static inline float rounded_uniform(float const min, float const max, int const digits = 2)
         {
             float const multiplier = std::pow(10.0, digits);
             return std::ceil(uniform(min, max) * multiplier) / multiplier;
         }
 
         // Uniform random variable between [min, max]
-        static float uniform(float const min, float const max)
+        static inline float uniform(float const min, float const max)
         {
             ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::prob() * (max - min);
         }
 
-        static double uniform(double const min, double const max)
+        static inline double uniform(double const min, double const max)
         {
             ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::prob() * (max - min);
         }
 
         // Uniform random variable between [min, max]
-        static int uniform(int const min, int const max)
+        static inline int uniform(int const min, int const max)
         {
             ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::index(max - min);
         }
         // Uniform random variable between [min, max]
-        static size_t uniform(size_t const min, size_t const max)
+        static inline size_t uniform(size_t const min, size_t const max)
         {
             ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::index(max - min);
         }
 
-        static uint64_t rand()
+        static inline uint64_t rand()
         {
-            if (state == 0)
-                seed(); // If the state has not been set. Init it with current time.
             return wyhash(&state);
         }
 
+        // Returns a random index [0, weights.size()), according to weights.
+        template <typename Container>
+        static inline size_t index_weights(Container &weights)
+        {
+            CORE_ASSERT(weights.size() > 0);
+            auto total_weight = 0.0, cumulative = 0.0;
+            for (auto &&w : weights)
+                total_weight += w;
+
+            auto idx = RNG::prob() * total_weight;
+
+            for (size_t i = 0; i < weights.size(); ++i)
+            {
+                cumulative += weights[i];
+                if (idx < cumulative)
+                    return i;
+            }
+            // Due to floating-point precision, fallback to last index
+            return weights.size() - 1;
+        }
+
         // Returns a random index [0, size)
-        static size_t index(size_t const size)
+        static inline size_t index(size_t const size)
         {
             if (size == 0)
                 return 0;
@@ -98,10 +120,17 @@ namespace Nilib
 
         // Generates a value N(0,1)
         template <typename scalar = float>
-        static scalar normal() { return normal(0.0, 1.0); };
+        static inline scalar normal() { return normal(0.0, 1.0); };
+
+        // convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.
+        static inline double wy2gau(uint64_t r)
+        {
+            const double _wynorm = 1.0 / (1ull << 20);
+            return ((r & 0x1fffff) + ((r >> 21) & 0x1fffff) + ((r >> 42) & 0x1fffff)) * _wynorm - 3.0;
+        }
 
         template <typename scalar = float>
-        static scalar normal(scalar const mean, scalar const var)
+        static inline scalar normal(scalar const mean, scalar const var)
         {
             // Box-Muller
             scalar U = prob();
@@ -121,14 +150,14 @@ namespace Nilib
         }
 
         template <typename scalar = float>
-        static scalar lognormal(scalar const mean, scalar const var)
+        static inline scalar lognormal(scalar const mean, scalar const var)
         {
             // TODO: Check lognormal!
             return std::log(normal(mean, var));
         }
 
         template <typename scalar = float>
-        static scalar weibull(scalar const scale, scalar const shape)
+        static inline scalar weibull(scalar const scale, scalar const shape)
         {
             // TODO: Check !
             return scale * std::pow(-1 * std::log(1 - RNG::prob()), 1.0f / shape);
@@ -136,7 +165,7 @@ namespace Nilib
 
         // Shuffles container between [low, high), inplace.
         template <typename Container>
-        static void shuffle(Container &container, size_t const low, size_t const high)
+        static inline void shuffle(Container &container, size_t const low, size_t const high)
         {
             // Length of the subarray to shuffle.
             size_t const nobs = high - low;
@@ -149,9 +178,35 @@ namespace Nilib
         }
 
         template <typename Container>
-        static void shuffle(Container &container)
+        static inline void shuffle(Container &container)
         {
             shuffle(container, 0, container.size());
+        }
+
+        template <typename Container>
+        static inline auto sample(Container const &container) -> decltype(container[0])
+        {
+            CORE_ASSERT(container.size() > 0);
+            return container[RNG::index(container.size())];
+        }
+
+        template <typename Container, typename Weights>
+        static inline auto sample(Container const &container, Weights const &weights) -> decltype(container[0])
+        {
+            auto total_w = 0;
+            for (auto &&w : weights)
+                total_w += w;
+
+            return container[RNG::index(container.size())];
+        }
+
+        // Uniform sample from an initializer list
+        template <typename T>
+        static inline T sample(std::initializer_list<T> list)
+        {
+            CORE_ASSERT(list.size() > 0);
+            std::vector<T> vec(list);
+            return vec[RNG::index(vec.size())];
         }
     };
 
