@@ -246,6 +246,7 @@ namespace Nilib
 
     template <size_t n, size_t m>
     using Mat = Matrix<StaticMatrixData<n, m, float>>;
+    using Mat2x2 = Matrix<StaticMatrixData<2, 2, float>>;
     using Mat3x3 = Matrix<StaticMatrixData<3, 3, float>>;
     using Matrixf = Matrix<DynamicMatrixData<float>>;
     using Matrixd = Matrix<DynamicMatrixData<double>>;
