@@ -18,6 +18,7 @@ namespace Nilib
         void derive(Matrixf const &seed) override;
     };
 
+    using Target = Input;
 }
 
 #endif

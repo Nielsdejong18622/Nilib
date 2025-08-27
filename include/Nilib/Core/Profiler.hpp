@@ -34,8 +34,12 @@ namespace Nilib
 
 #ifndef ENABLE_PROFILE
 #define PROFILE_FUNCTION() (void)(0)
+#define PROFILE_SCOPE_LINE2(name, line) (void)(0)
+#define PROFILE_SCOPE_LINE(name, line) (void)(0)
+#define PROFILE_SCOPE(name) (void)(0)
+#define PROFILE_FUNCTION() (void)(0)
 #else
-   // Marco magic.
+// Macro magic.
 #define PROFILE_SCOPE_LINE2(name, line) ::Nilib::Profiler timer##line(name, __FILE__, line)
 #define PROFILE_SCOPE_LINE(name, line) PROFILE_SCOPE_LINE2(name, line)
 #define PROFILE_SCOPE(name) PROFILE_SCOPE_LINE(name, __LINE__)

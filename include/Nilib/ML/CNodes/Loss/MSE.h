@@ -18,10 +18,11 @@ namespace Nilib
 
         void evaluate()
         {
-            // CORE_ASSERT(prediction && target)
+            CORE_ASSERT(prediction && target)
             target->evaluate();
             prediction->evaluate();
             auto Error = prediction->value - target->value;
+            LOG_DEBUG("Evaluated MSEloss");
             this->value = 0.5 * Nilib::hadamar(Error, Error);
         }
 

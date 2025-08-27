@@ -59,17 +59,17 @@ namespace Nilib
         }
 
         // Returns the sum of all the entries in the Matrix.
-        auto sum() const { return d_data.sum(); }
+        auto sum() const { CORE_ASSERT(d_data.size() > 0); return d_data.sum(); }
         auto avg() const { return d_data.sum() / size(); }
-        Matrix apply(std::function<float(float const)> const &fun) { return d_data.apply(fun); }
+        void apply(std::function<float(float const)> const &fun) { d_data.apply(fun); }
 
         Matrix() = default;
         Matrix(size_t const rows, size_t const cols)
             : d_data(rows, cols) {}
         Matrix(size_t const rows, size_t const cols, MatrixData const &data)
             : d_data(data) {}
-        Matrix(MatrixData const &data)
-            : d_data(data) {}
+        Matrix(Matrix const &data)
+            : d_data(data.d_data) {}
 
         Matrix(std::initializer_list<float> const &data)
             : d_data(data) {}

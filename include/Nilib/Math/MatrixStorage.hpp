@@ -51,10 +51,9 @@ namespace Nilib
         size_t size() const { return n * m; }
 
         type sum() const { return std::accumulate(d_data.begin(), d_data.end(), 0.0); }
-        StaticMatrixData &apply(std::function<type(type)> fun)
+        void apply(std::function<type(type)> fun)
         {
             std::transform(d_data.begin(), d_data.end(), d_data.begin(), fun);
-            return *this;
         }
     };
 
@@ -105,10 +104,9 @@ namespace Nilib
 
         // type sum() const {return std::accumulate(std::begin(d_data), std::end(d_data), 0.0); }
         type sum() const { return d_data.sum(); }
-        DynamicMatrixData &apply(std::function<type(type)> fun)
+        void apply(std::function<type(type)> fun)
         {
             std::transform(std::begin(d_data), std::end(d_data), std::begin(d_data), fun);
-            return *this;
         }
     };
 }

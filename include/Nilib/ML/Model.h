@@ -3,7 +3,6 @@
 
 #include "Nilib/ML/CNodes/CNode.h"
 #include "Nilib/ML/CNodes/Weight.h"
-#include "Nilib/ML/CNodes/Target.h"
 
 namespace Nilib
 {

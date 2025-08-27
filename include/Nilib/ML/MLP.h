@@ -6,7 +6,6 @@
 #include "Nilib/ML/CNodes/Weight.h"
 #include "Nilib/ML/CNodes/Plus.h"
 #include "Nilib/ML/CNodes/Param.h"
-#include "Nilib/ML/CNodes/Target.h"
 #include "Nilib/ML/Cnodes/Layer/DenseLayer.h"
 
 #include "Nilib/ML/Cnodes/Activation/Relu.h"
