@@ -14,16 +14,16 @@ namespace Nilib
 
         Relu(CNode *input, float leaky)
             : d_leaky(leaky), Activation(input,
-                                         std::bind(&Relu::relu, this, std::placeholders::_1),
-                                         std::bind(&Relu::relu_deriv, this, std::placeholders::_1)) {}
+                                         std::bind(&Relu::relu, std::placeholders::_1, leaky),
+                                         std::bind(&Relu::relu_deriv, std::placeholders::_1, leaky)) {}
 
-        float relu(float const t)
+        static float relu(float const t, float const leaky = 0.0001f)
         {
-            return (t > 0) ? t : d_leaky * t;
+            return (t > 0) ? t : leaky * t;
         }
-        float relu_deriv(float const t)
+        static float relu_deriv(float const t, float const leaky = 0.0001f)
         {
-            return (t > 0) ? 1 : d_leaky;
+            return (t > 0) ? 1 : leaky;
         }
     };
 

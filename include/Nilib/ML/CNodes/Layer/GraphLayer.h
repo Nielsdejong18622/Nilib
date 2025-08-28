@@ -3,7 +3,7 @@
 #define _CNODE_GRAPHLAYER_H
 
 #include "Nilib/ML/CNodes/CNode.h"
-#include "Nilib/ML/CNodes/Activation/Sigmoid.h"
+#include "Nilib/ML/CNodes/Activation/Relu.h"
 
 namespace Nilib
 {
@@ -11,19 +11,14 @@ namespace Nilib
     // Takes a node feature vector X -> C where cij = MLP[xi xj]
     struct NN_outerdecoder : public CNode
     {
-        CNode *X, *Wt, *Wb, *b;
+        CNode *X;
+        Weight *Wt, *Wb, *b;
 
         Nilib::Matrixf cache;
         // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
-        NN_outerdecoder(CNode *X, CNode *Wt, CNode *Wb, CNode *b)
+        NN_outerdecoder(CNode *X, Weight *Wt, Weight *Wb, Weight *b)
             : X(X), Wt(Wt), Wb(Wb), b(b)
         {
-            // ASSERT(Wt->value.rows() == X->value.cols(), Wt->value.rows(), "!=", X->value.cols());
-            // ASSERT(Wb->value.rows() == X->value.cols(), Wb->value.rows(), "!=", X->value.cols());
-            // ASSERT(Wt->value.cols() == Wb->value.cols(), Wt->value.rows(), "!=", Wb->value.cols());
-            // CORE_ASSERT(Wt->value.cols() == 1);
-            // CORE_ASSERT(b->value.rows() == 1);
-            // CORE_ASSERT(b->value.cols() == 1);
         }
 
         void evaluate()
@@ -32,11 +27,18 @@ namespace Nilib
             Wt->evaluate();
             Wb->evaluate();
             b->evaluate();
+
+            ASSERT(Wt->value.rows() == X->value.cols(), Wt->value.rows(), "!=", X->value.cols());
+            ASSERT(Wb->value.rows() == X->value.cols(), Wb->value.rows(), "!=", X->value.cols());
+            ASSERT(Wt->value.cols() == Wb->value.cols(), Wt->value.rows(), "!=", Wb->value.cols());
+            CORE_ASSERT(Wt->value.cols() == 1);
+            CORE_ASSERT(b->value.rows() == 1);
+            CORE_ASSERT(b->value.cols() == 1);
+
             size_t const n = X->value.rows();
             size_t const f = X->value.cols();
             // Init the output value.
             this->cache = Nilib::Matrixf(n, n);
-            this->cache.print();
 
             for (size_t i = 0; i < n; i++)
             {
@@ -51,25 +53,42 @@ namespace Nilib
                 }
             }
             this->value = this->cache;
-            this->value.apply(Sigmoid::sigmoid);
+            // this->value.apply(std::bind(Relu::relu, std::placeholders::_1, 0.01f));
             CORE_ASSERT(this->value.rows() == n && this->value.cols() == n);
-            LOG_DEBUG("Evaluated NN_OUTERDECODER");
         }
 
         void derive(Nilib::Matrixf const &seedC)
         {
-            LOG_DEBUG("Derived partialX!");
+            // LOG_DEBUG("Deriving partialX!");
             size_t const n = X->value.rows(); // Number of nodes.
             size_t const f = X->value.cols(); // Input feature dim.
-            Nilib::Matrixf partialX = Nilib::Matrixf::zeros(n, f);
+
+            // this->cache.apply(std::bind(Relu::relu_deriv, std::placeholders::_1, 0.01f));
+
             for (size_t i = 0; i < n; i++)
             {
+                Nilib::Matrixf deriv_x(n, f);
                 for (size_t j = 0; j < n; j++)
                 {
+                    Nilib::Matrixf derivb{seedC(i, j) * this->cache(i, j)};
+                    Nilib::Matrixf deriv_wt(f, 1);
+                    Nilib::Matrixf deriv_wb(f, 1);
+                    this->b->derive(derivb);
+
+                    for (size_t k = 0; k < f; k++)
+                    {
+                        deriv_x(i, k) = seedC(i, j) * this->cache(i, j) * Wb->value(k);
+                        deriv_x(j, k) = seedC(i, j) * this->cache(i, j) * Wb->value(k);
+                        deriv_wt(k, 0) = X->value(i, k) * seedC(i, j) * this->cache(i, j);
+                        deriv_wb(k, 0) = X->value(j, k) * seedC(i, j) * this->cache(i, j);
+                    }
+
+                    Wt->derive(deriv_wt);
+                    Wb->derive(deriv_wb);
                 }
+                X->derive(deriv_x);
             }
-            LOG_DEBUG("Derived partialX!");
-            X->derive(partialX);
+            // LOG_DEBUG("Derived partialX!");
         }
     };
 
@@ -87,7 +106,7 @@ namespace Nilib
             A->evaluate();
             input->evaluate();
             W->evaluate();
-            CORE_ASSERT(A->value.cols() == input->value.rows());
+            ASSERT(A->value.cols() == input->value.rows(), "AX undefined coldim(A):", A->value.cols(), "rowdim(X):", input->value.rows());
             CORE_ASSERT(input->value.cols() == W->value.rows());
             this->value = A->value * input->value * W->value;
         }

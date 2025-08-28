@@ -21,8 +21,9 @@ namespace Nilib
             CORE_ASSERT(prediction && target)
             target->evaluate();
             prediction->evaluate();
+            ASSERT(target->value.rows() == prediction->value.rows() && target->value.cols() == prediction->value.cols(),
+                   target->value.rows(), "!=", prediction->value.rows(), "or", target->value.cols(), "!=", prediction->value.cols())
             auto Error = prediction->value - target->value;
-            LOG_DEBUG("Evaluated MSEloss");
             this->value = 0.5 * Nilib::hadamar(Error, Error);
         }
 
