@@ -22,8 +22,8 @@ namespace Nilib
             target->evaluate();
             prediction->evaluate();
             auto Error = prediction->value - target->value;
-            LOG_DEBUG("Evaluated MSEloss");
-            this->value = 0.5 * Nilib::hadamar(Error, Error);
+            // LOG_DEBUG("Evaluated MSEloss");
+            this->value = 0.5f * Nilib::hadamar(Error, Error);
         }
 
         void derive(Nilib::Matrixf const &seed)
@@ -31,7 +31,7 @@ namespace Nilib
             // CORE_ASSERT(prediction && target)
             auto tmp = Nilib::hadamar(prediction->value - target->value, seed);
             prediction->derive(tmp);
-            target->derive(-1 * tmp);
+            target->derive(-1.0f * tmp);
         }
     };
 }

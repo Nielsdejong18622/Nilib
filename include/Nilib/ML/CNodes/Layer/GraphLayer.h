@@ -121,7 +121,7 @@ namespace Nilib
             CORE_ASSERT(A->value.cols() == input->value.rows());
             CORE_ASSERT(input->value.cols() == W->value.rows());
             CORE_ASSERT(input2->value.cols() == Wself->value.rows());
-            this->value = 0.2 * A->value * input->value * W->value + 0.8 * input2->value * Wself->value;
+            this->value = 0.2f * A->value * input->value * W->value + 0.8f * input2->value * Wself->value;
         }
 
         void derive(Nilib::Matrixf const &seed)
@@ -129,44 +129,11 @@ namespace Nilib
             A->derive(seed * transpose(input->value * W->value));
             input->derive(transpose(A->value) * seed * transpose(W->value));
             W->derive(transpose(A->value * input->value) * seed);
-            input2->derive(0.5 * seed * transpose(Wself->value));
-            Wself->derive(0.5 * transpose(input2->value) * seed);
+            input2->derive(0.5f * seed * transpose(Wself->value));
+            Wself->derive(0.5f * transpose(input2->value) * seed);
         }
     };
 
-    struct OuterProductDecoder2 : public CNode
-    {
-        CNode *X, *W;
-
-        OuterProductDecoder2(CNode *X, CNode *W)
-            : X(X), W(W)
-        {
-        }
-
-        void evaluate()
-        {
-            X->evaluate();
-            W->evaluate();
-            CORE_ASSERT(X->value.cols() == W->value.rows());
-            CORE_ASSERT(X->value.cols() == W->value.cols());
-            float const scalefactor = X->value.rows() * X->value.rows();
-            this->value = X->value * W->value * Nilib::transpose(X->value) / scalefactor;
-            if (RNG::prob() < 0.00001)
-            {
-                LOG_DEBUG("Covar W", W->value, W->value.sum());
-            }
-        }
-
-        void derive(Nilib::Matrixf const &seed)
-        {
-            CORE_ASSERT(seed.cols() == X->value.rows());
-            CORE_ASSERT(X->value.rows() == seed.rows());
-            float const scalefactor = X->value.rows() * X->value.rows();
-            X->derive(seed * X->value * Nilib::transpose(W->value) / scalefactor + Nilib::transpose(seed) * X->value * W->value / scalefactor);
-            W->derive(Nilib::transpose(X->value) * seed * X->value / scalefactor);
-            // X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
-        }
-    };
     struct OuterProductDecoder : public CNode
     {
         CNode *X;
@@ -180,7 +147,8 @@ namespace Nilib
         {
             X->evaluate();
             float scalefactor = X->value.rows(); // * X->value.rows();
-            this->value = X->value * transpose(X->value) / scalefactor;
+            this->value = X->value * transpose(X->value);
+            this->value /= scalefactor;
         }
 
         void derive(Nilib::Matrixf const &seed)
@@ -189,7 +157,6 @@ namespace Nilib
             CORE_ASSERT(X->value.rows() == seed.rows());
             float scalefactor = X->value.rows(); // * X->value.rows();
             X->derive(seed * X->value / scalefactor + Nilib::transpose(Nilib::transpose(X->value) * seed / scalefactor));
-            // X->derive(Nilib::transpose(Nilib::transpose(X->value) * seed) + seed * Nilib::transpose(X->value));
         }
     };
 

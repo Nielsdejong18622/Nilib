@@ -10,92 +10,114 @@ namespace Nilib
     // Linear Algebra Math functions.
 
     // Add two matrices.
-    template <typename data>
-    Matrix<data> operator+(Matrix<data> const &A, Matrix<data> const &B)
+    template <typename scalar, typename data>
+    Matrix<scalar, data> operator+(Matrix<scalar, data> const &A, Matrix<scalar, data> const &B)
     {
         ASSERT(A.rows() == B.rows() && A.cols() == B.cols(), A.rows(), "!=", B.rows(), "or", A.cols(), "!=", B.cols());
-        Matrix<data> result(A);
+        Matrix<scalar, data> result(A);
         result += B;
         return result;
     }
+
     // Subtract two matrices.
-    template <typename data>
-    Matrix<data> operator-(Matrix<data> const &A, Matrix<data> const &B)
+    template <typename scalar, typename data>
+    Matrix<scalar, data> operator-(Matrix<scalar, data> const &A, Matrix<scalar, data> const &B)
     {
         ASSERT(A.rows() == B.rows() && A.cols() == B.cols(), A.rows(), "!=", B.rows(), "or", A.cols(), "!=", B.cols());
-        Matrix<data> result(A);
+        Matrix<scalar, data> result(A);
         result -= B;
         return result;
     }
 
     // Multiplication/Division by scalar.
-    template <typename data, typename scalar>
-    Matrix<data> operator*(Matrix<data> const &A, scalar const lambda)
+    template <typename scalar, typename data>
+    Matrix<scalar, data> operator*(Matrix<scalar, data> const &A, scalar const lambda)
     {
-        Matrix<data> result(A);
+        Matrix<scalar, data> result(A);
         result *= lambda;
         return result;
     }
+    template <typename scalar, typename data>
+    Matrix<scalar, data> operator*(scalar const lambda, Matrix<scalar, data> const &A) { return operator*(A, lambda); }
     template <typename data, typename scalar>
-    Matrix<data> operator*(scalar const lambda, Matrix<data> const &A) { return operator*(A, lambda); }
+    Matrix<scalar, data> operator/(Matrix<scalar, data> const &A, scalar const lambda) { return operator*(A, static_cast<scalar>(1.0 / lambda)); }
     template <typename data, typename scalar>
-    Matrix<data> operator/(Matrix<data> const &A, scalar const lambda) { return operator*(A, 1.0 / lambda); }
-    template <typename data, typename scalar>
-    Matrix<data> operator/(scalar const lambda, Matrix<data> const &A) { return operator*(A, 1.0 / lambda); }
+    Matrix<scalar, data> operator/(scalar const lambda, Matrix<scalar, data> const &A) { return operator*(A, static_cast<scalar>(1.0 / lambda)); }
 
-    // Matrix Matrix Product.
+    // DynMatrix DynMatrix Product.
     template <typename type>
-    Matrix<DynamicMatrixData<type>>
-    operator*(Matrix<DynamicMatrixData<type>> const &A,
-              Matrix<DynamicMatrixData<type>> const &B)
+    Matrix<type, DynamicMatrixData<type>>
+    operator*(Matrix<type, DynamicMatrixData<type>> const &A,
+              Matrix<type, DynamicMatrixData<type>> const &B)
     {
         ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
 
-        Matrix<DynamicMatrixData<type>> res(A.rows(), B.cols());
+        Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
-            for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
-                for (size_t k = 0; k < A.cols(); ++k)
-                    res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
-        return std::move(res);
-    }
-    // Specialization.
-    template <size_t n, size_t m, size_t p, typename type>
-    Matrix<StaticMatrixData<n, p, type>>
-    operator*(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<m, p, type>> const &B)
-    {
-        CORE_ASSERT(A.cols() == B.rows());
-
-        Matrix<StaticMatrixData<n, p, type>> res(A.rows(), B.cols());
-        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
-            for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
-                for (size_t k = 0; k < A.cols(); ++k)
+            for (size_t k = 0; k < A.cols(); ++k)
+                for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
                     res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
         return res;
     }
 
-    // // Matrix Matrix Matrix.    '
-    // template<typename type>
-    // Matrix<DynamicMatrixData<type>>
-    // times(Matrix<DynamicMatrixData<type>> const &lhs,
-    //       Matrix<DynamicMatrixData<type>> const &mid,
-    //       Matrix<DynamicMatrixData<type>> const &rhs) {
-    //     Matrix<DynamicMatrixData<type>> res = lhs * mid * rhs;
-    //     return res;
-    // }
-    // // Matrix Matrix Matrix.    '
-    // template<size_t n, size_t m, size_t p, size_t k, typename type>
-    // Matrix<StaticMatrixData<n,k,type>>
-    // times(Matrix<StaticMatrixData<n,m,type>> const &lhs,
-    //           Matrix<StaticMatrixData<m,p,type>> const &mid,
-    //           Matrix<StaticMatrixData<p,k,type>> const &rhs) {
-    //     Matrix<StaticMatrixData<n, k, type>> res = (lhs * mid) * rhs;
-    //     return res;
-    // }
-
-    template <typename data>
-    Matrix<data> transpose(Matrix<data> const &A)
+    // StatMatrix StatMatrix Product.
+    template <size_t n, size_t m, size_t p, typename type>
+    Matrix<type, StaticMatrixData<n, p, type>>
+    operator*(Matrix<type, StaticMatrixData<n, m, type>> const &A, Matrix<type, StaticMatrixData<m, p, type>> const &B)
     {
-        Matrix<data> result(A.cols(), A.rows());
+        Matrix<type, StaticMatrixData<n, p, type>> res(A.rows(), B.cols());
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t k = 0; k < A.cols(); ++k)
+                for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
+                    res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
+        return res;
+    }
+
+    // StatMatrix DynMatrix Product.
+    template <size_t n, size_t m, typename type>
+    Matrix<type, DynamicMatrixData<type>> operator*(Matrix<type, StaticMatrixData<n, m, type>> const &A, Matrix<type, DynamicMatrixData<type>> const &B)
+    {
+        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t k = 0; k < A.cols(); ++k)
+                for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
+                    res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
+        return res;
+    }
+
+    // DynMatrix StatMatrix Product.
+    template <size_t n, size_t m, typename type>
+    Matrix<type, DynamicMatrixData<type>> operator*(Matrix<type, DynamicMatrixData<type>> const &A, Matrix<type, StaticMatrixData<n, m, type>> const &B)
+    {
+        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t k = 0; k < A.cols(); ++k)
+                for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
+                    res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
+        return res;
+    }
+
+    // SparseMatrix SparseMatrix Product.
+    template <typename type>
+    Matrix<type, SparseMatrixData<type>>
+    operator*(Matrix<type, SparseMatrixData<type>> const &A,
+              Matrix<type, SparseMatrixData<type>> const &B)
+    {
+        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        Matrix<type, SparseMatrixData<type>> res(A.rows(), B.cols());
+        for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+            for (size_t k = 0; k < A.cols(); ++k)
+                for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
+                    res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
+        return res;
+    }
+
+    template <typename value_type, typename storage>
+    Matrix<value_type, storage> transpose(Matrix<value_type, storage> const &A)
+    {
+        Matrix<value_type, storage> result(A.cols(), A.rows());
         for (size_t ridx = 0; ridx < A.cols(); ++ridx)
             for (size_t cidx = 0; cidx < A.rows(); ++cidx)
                 result(ridx, cidx) = A(cidx, ridx);
@@ -119,20 +141,19 @@ namespace Nilib
 
     // Cbind.
     template <size_t n, size_t m, size_t p, typename type>
-    Matrix<StaticMatrixData<n + p, m, type>> cbind(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<p, m, type>> const &B)
+    Matrix<type, StaticMatrixData<n + p, m, type>> cbind(Matrix<type, StaticMatrixData<n, m, type>> const &A, Matrix<type, StaticMatrixData<p, m, type>> const &B)
     {
-        CORE_ASSERT(A.cols() == B.cols());
-        Matrix<StaticMatrixData<n + p, m, type>> res;
+        Matrix<type, StaticMatrixData<n + p, m, type>> res;
         for (size_t nridx = 0; nridx < A.rows() + B.rows(); ++nridx)
             for (size_t ncidx = 0; ncidx < A.cols(); ++ncidx)
                 res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
         return res;
     }
     template <typename type>
-    Matrix<DynamicMatrixData<type>> cbind(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    Matrix<type, DynamicMatrixData<type>> cbind(Matrix<type, DynamicMatrixData<type>> const &A, Matrix<type, DynamicMatrixData<type>> const &B)
     {
         CORE_ASSERT(A.cols() == B.cols());
-        Matrix<DynamicMatrixData<type>> res(A.rows() + B.rows(), B.cols());
+        Matrix<type, DynamicMatrixData<type>> res(A.rows() + B.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows() + B.rows(); ++nridx)
             for (size_t ncidx = 0; ncidx < A.cols(); ++ncidx)
                 res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
@@ -140,38 +161,37 @@ namespace Nilib
     }
     // Rbind.
     template <size_t n, size_t m, size_t p, typename type>
-    Matrix<StaticMatrixData<n + p, m, type>> rbind(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<p, m, type>> const &B)
+    Matrix<type, StaticMatrixData<n + p, m, type>> rbind(Matrix<type, StaticMatrixData<n, m, type>> const &A, Matrix<type, StaticMatrixData<p, m, type>> const &B)
     {
         CORE_ASSERT(A.rows() == B.rows());
-        Matrix<StaticMatrixData<n + p, m, type>> res;
+        Matrix<type, StaticMatrixData<n + p, m, type>> res;
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
             for (size_t ncidx = 0; ncidx < A.cols() + B.cols(); ++ncidx)
                 res(nridx, ncidx) = (ncidx < A.cols()) ? A(nridx, ncidx) : B(nridx, ncidx - A.cols());
         return res;
     }
     template <typename type>
-    Matrix<DynamicMatrixData<type>> rbind(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    Matrix<type, DynamicMatrixData<type>> rbind(Matrix<type, DynamicMatrixData<type>> const &A, Matrix<type, DynamicMatrixData<type>> const &B)
     {
         CORE_ASSERT(A.rows() == B.rows());
-        Matrix<DynamicMatrixData<type>> res(A.rows(), A.cols() + B.cols());
+        Matrix<type, DynamicMatrixData<type>> res(A.rows(), A.cols() + B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
             for (size_t ncidx = 0; ncidx < A.cols() + B.cols(); ++ncidx)
                 res(nridx, ncidx) = (ncidx < A.cols()) ? A(nridx, ncidx) : B(nridx, ncidx - A.cols());
         return res;
     }
 
-    template <typename data>
-    Matrix<data> apply(Matrix<data> const &A, std::function<float(float)> const &fun)
+    template <typename value_type, typename data, typename Callable>
+    Matrix<value_type, data> apply(Matrix<value_type, data> const &A, Callable &&fun)
     {
-        // TODO: make more efficient by using Move :).
-        auto tmp = A;
-        tmp.apply(fun);
+        Matrix<value_type, data> tmp = A;
+        tmp.apply(std::forward<Callable>(fun));
         return tmp;
     }
 
     // Distance functions between Matrices/Vectors.
-    template <typename type, float p>
-    type minkowski(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    template <typename type, typename storage, float p>
+    type minkowski(Matrix<type, storage> const &A, Matrix<type, storage> const &B)
     {
         return std::pow(apply(A - B, [](type t)
                               { return std::pow(std::abs(t), p); })
@@ -179,69 +199,52 @@ namespace Nilib
                         1 / p);
     }
 
-    template <typename type, float p, size_t n, size_t m>
-    type minkowski(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n, m, type>> const &B)
+    template <typename type = float, typename storage = DynamicMatrixData<type>>
+    type euclidean(Matrix<type, storage> const &A, Matrix<type, storage> const &B)
     {
-        return std::pow(apply(A - B, [](type t)
-                              { return std::pow(std::abs(t), p); })
-                            .sum(),
-                        1.0 / p);
+        return minkowski<type, 2.0f>(A, B);
     }
 
     template <typename type>
-    type euclidean(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
+    type euclidean(Vec2<type> const &A, Vec2<type> const &B)
     {
-        return minkowski<type, 2.0f>(A, B);
+        return std::sqrt(euclidean2(A, B));
     }
-
-    template <typename type, size_t n, size_t m>
-    type euclidean(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n, m, type>> const &B)
-    {
-        return minkowski<type, 2.0f>(A, B);
-    }
-
     // Specializations for Vec2
     template <typename type>
-    type euclidean2(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    type euclidean2(Vec2<type> const &A, Vec2<type> const &B)
     {
         // Access the underlying data (assuming a 2x1 static matrix structure)
-        type diff1 = A(0, 0) - B(0, 0);
-        type diff2 = A(1, 0) - B(1, 0);
+        type diff1 = A(0) - B(0);
+        type diff2 = A(1) - B(1);
 
-        // Compute Euclidean distance directly
+        // Compute squared Euclidean distance directly
         return diff1 * diff1 + diff2 * diff2;
     }
-
+    // Specializations for Vec3
     template <typename type>
-    type euclidean(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    type euclidean2(Vec3<type> const &A, Vec3<type> const &B)
     {
-        // Access the underlying data (assuming a 2x1 static matrix structure)
-        type diff1 = A(0, 0) - B(0, 0);
-        type diff2 = A(1, 0) - B(1, 0);
+        // Access the underlying data (assuming a 3x1 static matrix structure)
+        type diff1 = A(0) - B(0);
+        type diff2 = A(1) - B(1);
+        type diff3 = A(2) - B(2);
 
-        // Compute Euclidean distance directly
-        return std::sqrt(diff1 * diff1 + diff2 * diff2);
+        // Compute squared Euclidean distance directly
+        return diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
     }
 
-    template <typename type>
-    type manhattan(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
-    {
-        return apply(A - B, [](type t)
-                     { return std::abs(t); })
-            .sum();
-    }
-
-    template <typename type, size_t n, size_t m>
-    type manhattan(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n, m, type>> const &B)
+    template <typename type, typename storage>
+    type manhattan(Matrix<type, storage> const &A, Matrix<type, storage> const &B)
     {
         return apply(A - B, [](type t)
                      { return std::abs(t); })
             .sum();
     }
 
-    // Specialization for Vec2f.
+    // Specialization for Vec2.
     template <typename type>
-    type manhattan(Matrix<StaticMatrixData<2, 1, type>> const &A, Matrix<StaticMatrixData<2, 1, type>> const &B)
+    type manhattan(Vec2<type> const &A, Vec2<type> const &B)
     {
         // Access the underlying data (assuming a 2x1 static matrix structure)
         type diff1 = A(0, 0) - B(0, 0);
@@ -251,36 +254,26 @@ namespace Nilib
         return std::abs(diff1) + std::abs(diff2);
     }
 
-    template <typename type>
-    type euclidean2(Matrix<DynamicMatrixData<type>> const &A, Matrix<DynamicMatrixData<type>> const &B)
-    {
-        return apply(A - B, [](type t)
-                     { return t * t; })
-            .sum();
-    }
-
-    template <typename type, size_t n, size_t m>
-    type euclidean2(Matrix<StaticMatrixData<n, m, type>> const &A, Matrix<StaticMatrixData<n, m, type>> const &B)
-    {
-        return apply(A - B, [](type t)
-                     { return t * t; })
-            .sum();
-    }
-
-    // Normalize vector.
-    template <typename type>
-    Matrix<type> normalize(Matrix<type> const &A)
+    // Normalize matrix as if it were a vector.
+    template <typename value_type, typename type>
+    Matrix<value_type, type> normalize(Matrix<value_type, type> const &A)
     {
         auto tmp = A;
         return tmp / A.sum();
     }
 
-    template <typename type>
-    Matrix<type> rownormalize(Matrix<type> &A)
+    template <typename value_type, typename type>
+    void normalize(Matrix<value_type, type> &A)
+    {
+        return A / A.sum();
+    }
+
+    template <typename value_type, typename type>
+    Matrix<value_type, type> rownormalize(Matrix<value_type, type> &A)
     {
         for (size_t rdx = 0; rdx < A.rows(); ++rdx)
         {
-            float rowsum = 0.0f;
+            value_type rowsum = 0.0f;
             for (size_t cdx = 0; cdx < A.cols(); ++cdx)
             {
                 rowsum += A(rdx, cdx);

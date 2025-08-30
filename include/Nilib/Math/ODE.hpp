@@ -55,11 +55,11 @@ namespace Nilib
             for (size_t iter = 0; iter < iterations; ++iter)
             {
                 auto k1 = fun(currentval, current_time);
-                auto k2 = fun(currentval + timestep * k1 / 2, current_time + timestep / 2);
-                auto k3 = fun(currentval + timestep * k2 / 2, current_time + timestep / 2);
+                auto k2 = fun(currentval + timestep * k1 / 2.0f, current_time + timestep / 2.0f);
+                auto k3 = fun(currentval + timestep * k2 / 2.0f, current_time + timestep / 2.0f);
                 auto k4 = fun(currentval + k3 * timestep, current_time + timestep);
 
-                auto m = (k1 + k4) / 6 + (k2 + k3) / 3;
+                auto m = (k1 + k4) / 6.0f + (k2 + k3) / 3.0f;
 
                 currentval += m * timestep;
                 current_time += timestep;

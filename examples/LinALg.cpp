@@ -3,18 +3,36 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Profiler.hpp"
 
-#include <assert.h>
+#include <complex>
 
 using namespace Nilib;
 
 int main()
 {
-    Matrixf A{{4}};
+    Matrixf A{4};
 
     Matrixd D({{1, 1, 1}, {-1, 2, 3}});
     Matrixd D1({{-1, -1, -1}, {-1, 2, 3}});
-    Matrixd D2({{-1, -1, -1}, {-1, 2, 3}, {0, 0, 0}});
+    Matrixf D2({{-1, -1, -1}, {-1, 2, 3}, {0, 0, 0}});
     Mat3x3 B({1, 1, 1, 1, 1, 1, 1.322, 1, 1});
+
+    using namespace std::complex_literals;
+
+    // using MatC = Matrix<std::complex<double>, StaticMatrixData<2, 2, std::complex<double>>>;
+
+    // MatC ic;
+    // MatC Complex({std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0),
+    //               std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0)});
+    // ic.print();
+
+    // Sparse
+
+    using SparseMatrixf = Matrix<float, SparseMatrixData<float>>;
+
+    SparseMatrixf my_sparsemat = SparseMatrixf::diag(5, 5, 8.8f);
+
+    LOG_PROGRESS("My SparseMat:", my_sparsemat);
+    my_sparsemat.print();
 
     B.apply([](float const t)
             { return std::sin(t + 1); });
@@ -26,8 +44,13 @@ int main()
     A *= 2;
     A.print();
 
+    // Static * Dynamic Matrix:
+    auto res_stat_dyn = B * D2;
+    LOG_DEBUG("Result of Static * Dynamic:", res_stat_dyn);
+    res_stat_dyn.print();
+
     auto Asin = apply(D1 - D, [](float const t)
-                      { return std::sin(t + 1); });
+                      { return std::sin(t + 1.0); });
 
     LOG_INFO("Asin: ", Asin);
     Asin.print();
@@ -63,18 +86,18 @@ int main()
     auto R = Matrixd::rand(10, 10);
     auto b = Matrixd::rand(10, 1);
     auto c = Matrixd::rand(1, 10);
-    auto p = Matrixd::all(10, 10, 10);
-    auto p2 = Matrixd::all(10);
+    auto p = Matrixd::all(10, 10, 9.5);
+    auto p2 = Matrixd::all(10, 10, -1.0);
 
-    auto p1 = Mat<10, 10>::all(10, 10, 10);
+    auto p1 = Mat<10, 10>::all(9.5);
     LOG_INFO("P:", p);
     p.print();
     LOG_INFO("Random Matrix R", c * R * b);
     (c * R * b + Matrixd::rand(1, 1)).print();
 
-    auto R1 = Mat<10, 10>::rand(10, 10);
+    auto R1 = Mat<10, 10>::rand();
     auto b1 = Mat<10, 1>::rand();
-    auto c1 = Mat<1, 10>::randn(1, 10, 0.0, 1.0);
+    auto c1 = Mat<1, 10>::randn(0.0, 1.0);
     LOG_INFO("Random Matrix R1", c1 * R1 * b1);
     auto res1 = (c1 * R1 * b1);
     res1.print();
@@ -90,13 +113,13 @@ int main()
     // Stress test.
     // Dynamic memory.
     RNG::seed(127);
-    size_t const tests = 1'000;
+    size_t const tests = 1'0;
     size_t const prints = 5;
     constexpr size_t const m_size = 50;
     {
+        float sum = 0;
         for (size_t j = 0; j < prints; j++)
         {
-            float sum = 0;
             PROFILE_FUNCTION();
             for (size_t i = 0; i < tests; i++)
             {
@@ -107,15 +130,15 @@ int main()
                 // LOG_DEBUG(i, res.sum() / 10000);
                 sum += res.sum();
             }
-            LOG_INFO("Sum:", sum);
         }
+        LOG_INFO("Sum:", sum);
     }
     RNG::seed(127);
     // Static (on the stack)
     {
+        float sum = 0;
         for (size_t j = 0; j < prints; j++)
         {
-            float sum = 0;
             PROFILE_FUNCTION();
             for (size_t i = 0; i < tests; i++)
             {
@@ -125,7 +148,25 @@ int main()
                 auto res = M2 * M2 * b;
                 sum += res.sum();
             }
-            LOG_INFO("Sum:", sum);
         }
+        LOG_INFO("Sum:", sum);
+    }
+
+    // Sparse
+    {
+        float sum = 0;
+        for (size_t j = 0; j < prints; j++)
+        {
+            PROFILE_FUNCTION();
+            for (size_t i = 0; i < tests; i++)
+            {
+                auto M = SparseMatrixf::rand(m_size, m_size);
+                auto b = SparseMatrixf::rand(m_size, 90);
+                auto M2 = M * M;
+                auto res = M2 * M2 * b;
+                sum += res.sum();
+            }
+        }
+        LOG_INFO("Sum:", sum);
     }
 }
