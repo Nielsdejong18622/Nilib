@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     MLP model_start = model;
 
     // Make the model fit the data in 250'000 epochs.
-    model.train(data, 500, 4);
+    model.train(data, 25'0000, 4);
 
     // LOG_DEBUG("Network Final Weights:");
     // for (auto &&weight : model.weights)

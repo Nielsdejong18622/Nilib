@@ -274,7 +274,8 @@ namespace Nilib
         {
             if constexpr (IsDynamicMatrixData<MatrixData, value_type>)
                 return diag(n, n, static_cast<value_type>(1));
-            return diag(static_cast<value_type>(1));
+            else
+                return diag(static_cast<value_type>(1));
         }
 
         // Generalized x(), y(), z(), and a() methods

@@ -24,12 +24,8 @@ namespace Nilib
             ASSERT(target->value.rows() == prediction->value.rows() && target->value.cols() == prediction->value.cols(),
                    target->value.rows(), "!=", prediction->value.rows(), "or", target->value.cols(), "!=", prediction->value.cols())
             auto Error = prediction->value - target->value;
-<<<<<<< HEAD
             // LOG_DEBUG("Evaluated MSEloss");
             this->value = 0.5f * Nilib::hadamar(Error, Error);
-=======
-            this->value = 0.5 * Nilib::hadamar(Error, Error);
->>>>>>> 0b079ed9ebe0bb838047ad1e2f39e93b3dd6701e
         }
 
         void derive(Nilib::Matrixf const &seed)
