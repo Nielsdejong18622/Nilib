@@ -261,6 +261,12 @@ namespace Nilib
         auto tmp = A;
         return tmp / A.sum();
     }
+    // Normalize vector.
+    template <typename type>
+    Matrix<type> normalize(Matrix<type>  &A)
+    {
+        return A / A.sum();
+    }
 
     template <typename value_type, typename type>
     void normalize(Matrix<value_type, type> &A)
