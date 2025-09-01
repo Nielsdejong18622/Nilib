@@ -186,13 +186,13 @@ namespace Nilib
 
         inline type &operator()(size_t const idx)
         {
-            CORE_ASSERT(idx < d_data.size());
+            ASSERT(idx < d_data.size(), idx, '<', d_data.size());
             return d_data[idx];
         };
 
         inline type operator()(size_t const idx) const
         {
-            CORE_ASSERT(idx < d_data.size());
+            ASSERT(idx < d_data.size(), idx, '<', d_data.size());
             return d_data[idx];
         };
 

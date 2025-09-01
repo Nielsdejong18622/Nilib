@@ -34,8 +34,9 @@ namespace Nilib
         Plus TOTLOS;
 
     public:
-        MLP(size_t inputdimn, size_t inputdim, size_t neurons1, size_t neurons2, size_t outputdim);
-        MLP(MLP const &other);
+        // sigmoid(sigmoid(input * W1 + b1) * W2 + b2)
+        MLP(size_t inputdim_n, size_t inputdim_m, size_t neurons1, size_t outputdim_m);
+        MLP(MLP const &other) = delete;
     };
 } // namespace Nilib
 

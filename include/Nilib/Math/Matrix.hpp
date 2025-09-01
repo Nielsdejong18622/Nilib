@@ -74,7 +74,18 @@ namespace Nilib
             return d_data.sum();
         }
 
-        inline value_type avg() const { return d_data.sum() / size(); }
+        inline value_type avg() const
+        {
+            // More numerically stable.
+            value_type mean = 0.0;
+            size_t count = 0;
+            for (count = 0; count < d_data.size(); ++count)
+            {
+                ++count;
+                mean += (d_data(count - 1) - mean) / count;
+            }
+            return mean;
+        }
 
         template <typename Callable>
         void apply(Callable &&fun) { d_data.apply(std::forward<Callable>(fun)); }
