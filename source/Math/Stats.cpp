@@ -44,19 +44,17 @@ RunningStats& RunningStats::operator+=(RunningStats const &other)
     if (other.d_n == 0) return *this;
     if (d_n == 0) return (*this = other);
 
-    const size_t n1 = d_n;
-    const size_t n2 = other.d_n;
-    const size_t n = n1 + n2;
-
-    const float delta = other.d_M1 - d_M1;
-    const float delta2 = delta * delta;
-    const float delta3 = delta2 * delta;
-    const float delta4 = delta3 * delta;
-
-    const float n1n2 = static_cast<float>(n1 * n2);
-    const float n1f = static_cast<float>(n1);
-    const float n2f = static_cast<float>(n2);
-    const float nf = static_cast<float>(n);
+    size_t const n1 = d_n;
+    size_t const n2 = other.d_n;
+    size_t const n = n1 + n2;
+    float const delta = other.d_M1 - d_M1;
+    float const delta2 = delta * delta;
+    float const delta3 = delta2 * delta;
+    float const delta4 = delta3 * delta;
+    float const n1n2 = static_cast<float>(n1 * n2);
+    float const n1f = static_cast<float>(n1);
+    float const n2f = static_cast<float>(n2);
+    float const nf = static_cast<float>(n);
 
     d_sum += other.d_sum;
     d_max = std::max(d_max, other.d_max);
@@ -94,14 +92,18 @@ Nilib::RunningStats Nilib::operator+(Nilib::RunningStats lhs, Nilib::RunningStat
 
 std::ostream &Nilib::operator<<(std::ostream &os, RunningStats const &stats)
 {
-    return os << std::fixed //<< std::setprecision(4)
-              << "Mean:" << stats.mean()
-              << '(' << stats.stddev()
-              << ") Min:" << stats.min()
-              << " Max:" << stats.max()
-              << " skew:" << stats.skewness()
-              << " kurtosis:" << stats.kurtosis()
-              << " n:" << stats.n()
-              << " sum:" << stats.sum()
-              << " lag:" << stats.lag();
+    if (stats.d_n > 0)
+        return os << std::fixed << std::setprecision(2)
+                << "Mean:" << stats.mean()
+                << '(' << stats.stddev()
+                << ") Min:" << stats.min()
+                << " Max:" << stats.max()
+                << " skew:" << stats.skewness()
+                << " kurtosis:" << stats.kurtosis()
+                << " n:" << stats.n()
+                << " sum:" << stats.sum()
+                << " lag:" << stats.lag();
+    return os << "Stat is empty!";
+
+
 }
