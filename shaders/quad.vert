@@ -5,7 +5,11 @@ layout(location = 1) in vec4 vertexColor;  // Vertex color (with alpha)
 
 out vec4 fragColor;  // Output color to fragment shader
 
+uniform vec3 camera;
+
 void main() {
-    gl_Position = vec4(position, 1.0);
-    fragColor = vertexColor;  // Pass the color with alpha to fragment shader
+
+    gl_Position = vec4(position - camera, 1.0);
+
+    fragColor = vec4(vertexColor.xyz, 1.0);  // Pass the color with alpha to fragment shader
 }

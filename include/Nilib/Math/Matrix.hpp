@@ -217,7 +217,7 @@ namespace Nilib
         }
 
         // Creates a random matrix filled with [lower-upper].
-        [[nodiscard]] static Matrix randunif(size_t const n, size_t const m, auto const lower, auto const upper)
+        [[nodiscard]] static Matrix randunif(size_t const n, size_t const m, value_type const lower, value_type const upper)
             requires(IsDynamicMatrixData<MatrixData, value_type>)
         {
             Matrix result(n, m);
@@ -225,7 +225,7 @@ namespace Nilib
                 result.d_data(idx) = RNG::uniform(lower, upper);
             return result;
         }
-        [[nodiscard]] static Matrix randunif(auto const lower, auto const upper)
+        [[nodiscard]] static Matrix randunif(value_type const lower, value_type const upper)
             requires(!IsDynamicMatrixData<MatrixData, value_type>)
         {
             Matrix result;
@@ -235,7 +235,7 @@ namespace Nilib
         }
 
         // Creates a random matrix filled with N(mean, sd)
-        [[nodiscard]] static Matrix randn(size_t const n, size_t const m, auto const mean, auto const sd)
+        [[nodiscard]] static Matrix randn(size_t const n, size_t const m, value_type const mean, value_type const sd)
             requires(IsDynamicMatrixData<MatrixData, value_type>)
         {
             Matrix result(n, m);
@@ -244,7 +244,7 @@ namespace Nilib
             return result;
         }
 
-        [[nodiscard]] static Matrix randn(auto const mean, auto const sd)
+        [[nodiscard]] static Matrix randn(value_type const mean, value_type const sd)
             requires(!IsDynamicMatrixData<MatrixData, value_type>)
         {
             Matrix result;
@@ -332,12 +332,67 @@ namespace Nilib
         {
             return d_data(3);
         }
+
+        value_type &x()
+            requires std::is_same_v<MatrixData, StaticMatrixData<1, 1, value_type>>
+        {
+            return d_data(0);
+        }
+        value_type &x()
+            requires std::is_same_v<MatrixData, StaticMatrixData<2, 1, value_type>>
+        {
+            return d_data(0);
+        }
+        value_type &x()
+            requires std::is_same_v<MatrixData, StaticMatrixData<3, 1, value_type>>
+        {
+            return d_data(0);
+        }
+        value_type &x()
+            requires std::is_same_v<MatrixData, StaticMatrixData<4, 1, value_type>>
+        {
+            return d_data(0);
+        }
+
+        value_type &y()
+            requires std::is_same_v<MatrixData, StaticMatrixData<2, 1, value_type>>
+        {
+            return d_data(1);
+        }
+        value_type &y()
+            requires std::is_same_v<MatrixData, StaticMatrixData<3, 1, value_type>>
+        {
+            return d_data(1);
+        }
+        value_type &y()
+            requires std::is_same_v<MatrixData, StaticMatrixData<4, 1, value_type>>
+        {
+            return d_data(1);
+        }
+
+        value_type &z()
+            requires std::is_same_v<MatrixData, StaticMatrixData<3, 1, value_type>>
+        {
+            return d_data(2);
+        }
+        value_type &z()
+            requires std::is_same_v<MatrixData, StaticMatrixData<4, 1, value_type>>
+        {
+            return d_data(2);
+        }
+
+        value_type &a()
+            requires std::is_same_v<MatrixData, StaticMatrixData<4, 1, value_type>>
+        {
+            return d_data(3);
+        }
     };
 
     template <size_t n, size_t m>
     using Mat = Matrix<float, StaticMatrixData<n, m, float>>;
     using Mat2x2 = Matrix<float, StaticMatrixData<2, 2, float>>;
     using Mat3x3 = Matrix<float, StaticMatrixData<3, 3, float>>;
+    using Mat4x4 = Matrix<float, StaticMatrixData<4, 4, float>>;
     using Matrixf = Matrix<float, DynamicMatrixData<float>>;
     using Matrixd = Matrix<double, DynamicMatrixData<double>>;
     using Matrixi = Matrix<int, DynamicMatrixData<int>>;

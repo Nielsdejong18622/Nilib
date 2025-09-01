@@ -2,6 +2,8 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
 
+#include <math.h>
+
 #include "Glad/glad.h"
 #include <GLFW/glfw3.h>
 
@@ -29,8 +31,8 @@ ShaderProgram::~ShaderProgram()
 unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *shaderSource)
 {
     LOG_DEBUG("Compiling", ((shaderType == 0x8B31) ? "VertexShader" : "FragmentShader"));
-    ASSERT(glfwGetCurrentContext(), "No associated GLAD context!");
-    
+    ASSERT(glfwGetCurrentContext(), "No associated GLFW window context! Has Window been constructed?");
+
     // Initialize GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -86,7 +88,6 @@ ShaderProgram ShaderProgram::createFromFiles(const char *vertexsourcefilename, c
 // Function to create a shader program
 ShaderProgram ShaderProgram::createFromStrings(const char *vertexSource, const char *fragmentSource)
 {
-    LOG_DEBUG("Creating shader!");
     unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
     unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 

@@ -10,7 +10,7 @@ namespace Nilib
     struct Camera
     {
         Vec3f position = {0.0f, 0.0f, 0.0f};
-        Vec3f direction = {1.0f, 0.0f, 0.0f}; // Normalized ?
+        Vec3f direction = {0.0f, 0.0f, -1.0f}; // Normalized ?
 
         // Projection matrix?
 
@@ -25,11 +25,19 @@ namespace Nilib
         }
         void move_left()
         {
-            // position += 0.1 * Nilib::norm(direction);
+            position.x() -= 0.1f;
+        }
+        void move_right()
+        {
+            position.x() += 0.1f;
         }
         void move_up()
         {
-            //;
+            position.y() += 0.1f;
+        }
+        void move_down()
+        {
+            position.y() -= 0.1f;
         }
     };
 

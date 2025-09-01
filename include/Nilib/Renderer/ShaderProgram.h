@@ -16,6 +16,8 @@ namespace Nilib
         static ShaderProgram createFromFiles(char const *vertexfilename, char const *fragmentfilename);
 
 
+        // ID (for OpenGL).
+        unsigned int id = 0;
     private:
         ShaderProgram(int shaderid);
         // Constructors.
@@ -24,8 +26,6 @@ namespace Nilib
         // Helper function.
         static unsigned int compileShader(unsigned int shaderType, char const *shaderSource);
 
-        // ID (for OpenGL).
-        unsigned int id = 0;
     };
 
 }

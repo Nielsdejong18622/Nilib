@@ -43,9 +43,6 @@ namespace Nilib
             Window *owner = nullptr;
             std::map<KeyEvent, Callback> keybindings;
 
-            // Advanced mode rendering.
-            Camera camera;
-
             // Immediate mode rendering.
             float xmin = -1.0f;
             float xmax = +1.0f;
@@ -79,7 +76,7 @@ namespace Nilib
         void requestAttention() const;
 
         // Bind Key Callbacks.
-        void bindkey(Callback const &fun, int key, int action, int mods);
+        void bindkey(Callback const &fun, int key, int action, int mods = 0);
         void bindkey(Callback const &bindfun, int key);
 
         inline float getXlim_min() const { return d_data.xmin; };

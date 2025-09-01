@@ -3,7 +3,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 
-
 using namespace Nilib;
 
 size_t Window::s_windowsactive = 0;
@@ -189,7 +188,7 @@ void Window::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 
 void Window::cursorPos_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    //LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
 }
 
 void Window::open()
@@ -270,19 +269,21 @@ void Window::screenshotPNG(char const *filename)
     int height = d_data.height;
     LOG_PROGRESS("Saving Framebuffer screenshot to file", filename, "dimensions", width, 'x', height);
     // Step 1: Create a buffer to store pixel data
-    unsigned char* pixels = new unsigned char[3 * width * height];
+    unsigned char *pixels = new unsigned char[3 * width * height];
 
     // Step 2: Read the pixels from the framebuffer
     glfwSwapBuffers(d_window);
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
     // Step 3: Flip the image vertically (OpenGL's origin is bottom-left)
-    unsigned char* flippedPixels = new unsigned char[3 * width * height];
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
+    unsigned char *flippedPixels = new unsigned char[3 * width * height];
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
             int srcIdx = (y * width + x) * 3;
             int dstIdx = ((height - y - 1) * width + x) * 3;
-            flippedPixels[dstIdx] = pixels[srcIdx];       // R
+            flippedPixels[dstIdx] = pixels[srcIdx];         // R
             flippedPixels[dstIdx + 1] = pixels[srcIdx + 1]; // G
             flippedPixels[dstIdx + 2] = pixels[srcIdx + 2]; // B
         }

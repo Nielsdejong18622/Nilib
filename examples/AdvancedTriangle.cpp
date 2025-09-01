@@ -4,58 +4,60 @@
 #include "Nilib/Renderer/ShaderProgram.h"
 #include "Nilib/Renderer/Renderer.h"
 
-int main() 
+int main()
 {
     using namespace Nilib;
 
     Window window = Window(1024, 812, "RenderTest2");
-    window.bindkey(std::bind(&Window::close, &window), Key::Escape);
+    Renderer renderer;
 
     window.open();
 
     window.clearColor(Colors::Gray);
 
-    // Create and compile the shader program
-    ShaderProgram triangleshader = ShaderProgram::createFromFiles("shaders/vertex.hlsl", "shaders/fragment.hlsl");
+    window.bindkey(std::bind(&Window::close, &window), Key::Escape);
+    window.bindkey(std::bind(&Renderer::toggleWireFrameMode, &renderer), Key::R);
 
-    if (triangleshader) {
-        LOG_ERROR("Shader Program creation failed!");
-        return -1; 
-    }
-
-    Renderer renderer;
-
-    renderer.submitTriangle({{ 0.0f, 0.5f, 0.0f}, Colors::Cyan},
-                            {{-0.2f,-0.5f, 0.0f}, Colors::Coral},
-                            {{ 0.5f,-0.4f, 0.0f}, Colors::Maroon});
+    // Pan camera.
+    window.bindkey(std::bind(&Camera::move_left, &renderer.camera), Key::A, Key::Hold);
+    window.bindkey(std::bind(&Camera::move_right, &renderer.camera), Key::D, Key::Hold);
+    window.bindkey(std::bind(&Camera::move_up, &renderer.camera), Key::W, Key::Hold);
+    window.bindkey(std::bind(&Camera::move_down, &renderer.camera), Key::S, Key::Hold);
     
-    renderer.submitTriangle({{ 0.0f, 0.5f, 0.0f}, Colors::Red},
-                            {{-0.5f,-0.5f, 1.0f}, Colors::Blue},
-                            {{ 0.5f,-0.5f, 0.0f}, Colors::Lavender});
-    renderer.submitTriangle({{-1.0f, -1.0f, 0.0f}, Colors::Green},
-                            {{-0.5f, -0.5f, 0.0f}, Colors::Grey},
-                            {{ 0.0f, -1.0f, 0.0f}, Colors::Purple});
+    window.bindkey(std::bind(&Camera::move_left, &renderer.camera), Key::A, Key::Press);
+    window.bindkey(std::bind(&Camera::move_right, &renderer.camera), Key::D, Key::Press);
+    window.bindkey(std::bind(&Camera::move_up, &renderer.camera), Key::W, Key::Press);
+    window.bindkey(std::bind(&Camera::move_down, &renderer.camera), Key::S, Key::Press);
 
+    renderer.submitQuad({{0.0f, 0.0f, 0.0f}, Colors::Red},
+                        {{0.0f, -0.5f, 0.0f}, Colors::Green},
+                        {{-0.5f, -0.5f, 0.0f}, Colors::Blue},
+                        {{-0.5f, 0.0f, 0.0f}, Colors::Yellow});
+
+    renderer.submitQuad({{0.0f, 0.0f, 0.0f}, Colors::Red},
+                        {{0.0f, 1.f, 0.0f}, Colors::Green},
+                        {{0.9f, 1.f, 0.0f}, Colors::Blue},
+                        {{1.f, 0.0f, 0.0f}, Colors::Yellow});
+
+    renderer.submitTriangle({{0.0f, 0.5f, 0.0f}, Colors::Cyan},
+                            {{-0.2f, -0.5f, 0.0f}, Colors::Coral},
+                            {{0.5f, -0.4f, 0.0f}, Colors::Maroon});
 
     while (window.opened())
     {
-        // Window 1. 
+        // Window 1.
         window.startScene(); // Check if window is open.
-        
-        // Use our triangleshader. 
-        triangleshader.bind();
-        
+
         renderer.drawCalls();
 
         // Some immediate mode rendering.
         window.color(Colors::Magenta);
         window.drawArc({0.0, -1.0}, {1.0, 0.0}, 5.0);
 
-        window.endScene(); // Renders the geometry. 
+        window.endScene(); // Renders the geometry.
 
-        Window::updateidletasks();
+        Window::update();
     }
-
 
     LOG_SUCCESS("Termination of Example!");
     return EXIT_SUCCESS;
