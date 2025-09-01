@@ -36,7 +36,7 @@ namespace Nilib
     public:
         // sigmoid(sigmoid(input * W1 + b1) * W2 + b2)
         MLP(size_t inputdim_n, size_t inputdim_m, size_t neurons1, size_t outputdim_m);
-        MLP(MLP const &other) = delete;
+        MLP(MLP const &other);
     };
 } // namespace Nilib
 

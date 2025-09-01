@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
     // Define the Computational Graph.
 
-    MLP model(1, 2, 5, 1, 1);
+    MLP model(1, 2, 5, 1);
     MLP model_start = model;
 
     // Make the model fit the data in 250'000 epochs.

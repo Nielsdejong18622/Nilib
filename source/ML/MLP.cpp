@@ -30,4 +30,25 @@ namespace Nilib
     for (auto &&weight : this->weights)
       LOG_DEBUG(*weight);
   }
+
+  MLP::MLP(MLP const &other)
+      : Model({&x}, {&W1, &b1, &W2, &b2}, &out, &y, &TOTLOS),
+        labda(other.labda),
+        // X(inputdimn, inputdimm) *
+        W1(other.W1),
+        b1(other.b1),
+        W2(other.W2),
+        b2(other.b2),
+
+        H1(&x, &W1, &b1),
+        H2(&H1), // 0.01f),
+        H3(&H2, &W2, &b2),
+        out(&H3), // 0.01f),
+        MSE(&out, &y),
+        REG({&W1, &b1, &W2, &b2}, &labda),
+        TOTLOS(&MSE, &REG)
+  {
+    for (auto &&weight : this->weights)
+      LOG_DEBUG(*weight);
+  }
 }

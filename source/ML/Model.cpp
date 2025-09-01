@@ -115,21 +115,20 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
             // Logging.
             validation.push(loss->value.sum());
         }
-        LOG_PROGRESS_TO("MyLogger2") << epoch + 1
-                                     << ','
-                                     << batch.mean()
-                                     << ','
-                                     << batch.stddev()
-                                     << ','
-                                     << validation.mean()
-                                     << ','
-                                     << validation.stddev()
-                                     << "\n";
+        // LOG_PROGRESS_TO("MyLogger2") << epoch + 1
+        //                              << ','
+        //                              << batch.mean()
+        //                              << ','
+        //                              << batch.stddev()
+        //                              << ','
+        //                              << validation.mean()
+        //                              << ','
+        //                              << validation.stddev()
+        //                              << "\n";
         auto current_time = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
-        if (elapsed.count() > 100 || epoch == numepochs - 1)
+        if (elapsed.count() > 10 || epoch == numepochs - 1)
         {
-
             LOG_PROGRESS() << "Epoch "
                            << epoch + 1
                            << " loss "
@@ -138,8 +137,8 @@ void Model::train(MLData const &data, size_t numepochs, size_t batch_size)
                            //<< batch.variance()
                            //<< ')'
                            << " validation "
-                           << validation.mean()
-                           << "\n";
+                           << validation.mean() 
+                           << '\r';
             start_time = current_time;
         }
     }

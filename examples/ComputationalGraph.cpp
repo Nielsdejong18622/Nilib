@@ -1,5 +1,4 @@
 #include "Nilib/ML/ML.h"
-
 #include "Nilib/ML/MLData.h"
 #include "Nilib/ML/MLP.h"
 
@@ -10,19 +9,19 @@ int main()
     using namespace Nilib;
 
     // Set up the data to learn from.
-    MLData data = MLData::CIRCLE(700);
+    MLData data = MLData::CIRCLE();
 
     // Define the Computational Graph.
 
-    MLP model(1, 2, 500, 1, 1);
-    MLP model_start = model;
+    MLP model(1, 2, 5, 1);
+    MLP model_start(model);
 
     // Make the model fit the data in 250'000 epochs.
-    model.train(data, 500, 4);
+    model.train(data, 25000, 4);
 
-    // LOG_DEBUG("Network Final Weights:");
-    // for (auto &&weight : model.weights)
-    //     LOG_DEBUG(*weight);
+    LOG_DEBUG("Network Final Weights:");
+    for (auto &&weight : model.weights)
+        LOG_DEBUG(*weight);
 
     for (size_t sample = data.test_obs(); sample < data.obs(); ++sample)
     {
