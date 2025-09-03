@@ -20,7 +20,10 @@ namespace Nilib
 
         static void signal_handler(int signal)
         {
-            LOG_ERROR("Received signal:", signal);
+            if (signal == 2)
+                LOG_WARNING("Received signal: SIG_KILL (CTRL-C)");
+            else
+                LOG_WARNING("Received signal:", signal);
             if (signal == SIGINT)
             {
                 running = false;

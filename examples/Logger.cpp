@@ -20,7 +20,7 @@ int main()
 
     LOG_DEBUG("MyLogger", "Test123", "Test456", A); // Fine.
 
-    LOG_DEBUG_TO("MyLogger3") << "Test1232 " << "TEST 987\n"; // Allowed
+    LOG_DEBUG_TO("MyLogger2") << "Test1232 " << "TEST 987\n"; // Allowed
     for (size_t i = 0; i < 15000; i++)
     {
         LOG_DEBUG() << "Loop" << i << ((i == 15000 - 1) ? '\n' : '\r');

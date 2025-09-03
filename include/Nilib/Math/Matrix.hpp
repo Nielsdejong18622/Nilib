@@ -25,6 +25,19 @@ namespace Nilib
 
     public:
         using scalar = value_type;
+        template <typename OtherScalar, typename OtherMatrixData>
+        Matrix(Matrix<OtherScalar, OtherMatrixData> const &other)
+        {
+            size_t rows = other.rows();
+            size_t cols = other.cols();
+            for (size_t i = 0; i < rows; ++i)
+            {
+                for (size_t j = 0; j < cols; ++j)
+                {
+                    d_data(i, j) = static_cast<value_type>(other(i, j));
+                }
+            }
+        }
 
         value_type operator()(size_t const row, size_t const col) const { return d_data(row * d_data.cols() + col); }
         value_type &operator()(size_t const row, size_t const col) { return d_data(row * d_data.cols() + col); }
@@ -419,6 +432,9 @@ namespace Nilib
     using Vec3 = Matrix<scalar, StaticMatrixData<3, 1, scalar>>;
     template <typename scalar>
     using Vec4 = Matrix<scalar, StaticMatrixData<4, 1, scalar>>;
+
+    template <size_t n>
+    using Vecf = Matrix<float, StaticMatrixData<n, 1, float>>;
 
 }
 

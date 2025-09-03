@@ -38,9 +38,32 @@ namespace Nilib
         friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats);
     };
 
-    RunningStats operator+(RunningStats lhs, RunningStats const &rhs);
-    std::ostream &operator<<(std::ostream &os, RunningStats const &stats);
+    class Reservoir
+    {
+        std::array<float, 1024> d_reservoir;
+        size_t d_n = 0;
 
+    public:
+        void push(float const obs);
+        void reset();
+        inline size_t n() const { return d_n; }
+        float mean() const;
+        float sum() const;
+        float variance() const;
+        float stddev() const;
+
+        float Q0();
+        float Q1();
+        float Q2();
+        float Q3();
+        float Q4();
+        friend std::ostream &operator<<(std::ostream &os, Reservoir &stats);
+    };
+
+    RunningStats operator+(RunningStats lhs, RunningStats const &rhs);
+
+    std::ostream &operator<<(std::ostream &os, Reservoir &stats);
+    std::ostream &operator<<(std::ostream &os, RunningStats const &stats);
 } // namespace Nilib
 
 #endif

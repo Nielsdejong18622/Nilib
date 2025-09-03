@@ -93,10 +93,9 @@ public:
         size_t n, m;
         readRaw(n);
         readRaw(m);
-        LOG_DEBUG("Reading Matrix", n, 'x', m);
+        // LOG_DEBUG("Reading Matrix", n, 'x', m);
         data = Nilib::Matrix<T>(n, m);
-        // Use the conversion operator to write the vector data.
-        for (size_t i = 0; i < n * m; i++)
+        for (size_t i = 0; i < n * m; ++i)
         {
             readRaw(data(i));
         }
@@ -106,7 +105,7 @@ public:
     // Specialization for CNode.
     bool readCNode(Nilib::CNode &data)
     {
-        LOG_DEBUG("Reading CNode");
+        // LOG_DEBUG("Reading CNode");
         readMatrix(data.value);
         return true;
     }

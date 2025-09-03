@@ -11,18 +11,19 @@ namespace Nilib
     {
         float multiplier;
         Tanh(CNode *input, float const multiplier)
-            : Tanh(input) { this->multiplier = multiplier;}
+            : Tanh(input) { this->multiplier = multiplier; }
 
         Tanh(CNode *input)
             : Activation(input,
                          std::bind(&Tanh::tanh, this, std::placeholders::_1),
-                         std::bind(&Tanh::tanh_deriv, this, std::placeholders::_1)), multiplier(1.0f) {}
+                         std::bind(&Tanh::tanh_deriv, this, std::placeholders::_1)),
+              multiplier(1.0f) {}
 
         float tanh(float const t) { return multiplier * std::tanh(t / multiplier); }
         float tanh_deriv(float const t)
         {
-            float tmp = std::tanh(t / multiplier);
-            return 1 - tmp * tmp;
+            float tmp = std::cosh(t / multiplier);
+            return multiplier / (tmp * tmp);
         }
     };
 

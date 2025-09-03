@@ -106,8 +106,8 @@ namespace Nilib
             A->evaluate();
             input->evaluate();
             W->evaluate();
-            ASSERT(A->value.cols() == input->value.rows(), "AX undefined coldim(A):", A->value.cols(), "rowdim(X):", input->value.rows());
-            CORE_ASSERT(input->value.cols() == W->value.rows());
+            ASSERT(A->value.cols() == input->value.rows(), "AX undefined, coldim(A):", A->value.cols(), "rowdim(X):", input->value.rows());
+            ASSERT(input->value.cols() == W->value.rows(), "XW undefined, coldim(X):",  input->value.cols(), "rowdim(W):", W->value.rows() );
             this->value = A->value * input->value * W->value;
         }
 

@@ -53,6 +53,9 @@ namespace Nilib
             input->evaluate();
             W->evaluate();
             b->evaluate();
+            ASSERT(input->value.cols() == W->value.rows(), input->value.cols(), "!=", W->value.rows());
+            ASSERT(input->value.rows() == b->value.rows(), input->value.rows(), "!=", b->value.rows());
+            ASSERT(W->value.cols() == b->value.cols(), W->value.cols(), "!=", b->value.cols());
             this->value = input->value * W->value + b->value;
         }
 

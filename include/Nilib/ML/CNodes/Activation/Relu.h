@@ -10,7 +10,7 @@ namespace Nilib
     {
         float d_leaky;
         Relu(CNode *input)
-            : Relu(input, 0.0f) {};
+            : Relu(input, 0.0001f) {};
 
         Relu(CNode *input, float leaky)
             : d_leaky(leaky), Activation(input,
@@ -31,7 +31,7 @@ namespace Nilib
     {
         float d_leaky;
         NegRelu(CNode *input)
-            : NegRelu(input, 0.0f) {};
+            : NegRelu(input, 0.0001f) {};
 
         NegRelu(CNode *input, float leaky)
             : d_leaky(leaky), Activation(input,
