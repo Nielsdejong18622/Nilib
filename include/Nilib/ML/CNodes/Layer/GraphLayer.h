@@ -14,7 +14,6 @@ namespace Nilib
         CNode *X;
         Weight *Wt, *Wb, *b;
 
-        Nilib::Matrixf cache;
         // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
         NN_outerdecoder(CNode *X, Weight *Wt, Weight *Wb, Weight *b)
             : X(X), Wt(Wt), Wb(Wb), b(b)
@@ -38,21 +37,20 @@ namespace Nilib
             size_t const n = X->value.rows();
             size_t const f = X->value.cols();
             // Init the output value.
-            this->cache = Nilib::Matrixf(n, n);
+            this->value = Nilib::Matrixf(n, n);
 
             for (size_t i = 0; i < n; i++)
             {
                 for (size_t j = 0; j < n; j++)
                 {
-                    cache(i, j) = b->value(0, 0);
+                    value(i, j) = b->value(0, 0);
                     for (size_t k = 0; k < f; k++)
                     {
-                        this->cache(i, j) += X->value(i, k) * Wt->value(k, 0);
-                        this->cache(i, j) += X->value(j, k) * Wb->value(k, 0);
+                        this->value(i, j) += X->value(i, k) * Wt->value(k, 0);
+                        this->value(i, j) += X->value(j, k) * Wb->value(k, 0);
                     }
                 }
             }
-            this->value = this->cache;
             // this->value.apply(std::bind(Relu::relu, std::placeholders::_1, 0.01f));
             CORE_ASSERT(this->value.rows() == n && this->value.cols() == n);
         }
@@ -63,24 +61,24 @@ namespace Nilib
             size_t const n = X->value.rows(); // Number of nodes.
             size_t const f = X->value.cols(); // Input feature dim.
 
-            // this->cache.apply(std::bind(Relu::relu_deriv, std::placeholders::_1, 0.01f));
+            // this->value.apply(std::bind(Relu::relu_deriv, std::placeholders::_1, 0.01f));
 
             for (size_t i = 0; i < n; i++)
             {
                 Nilib::Matrixf deriv_x(n, f);
                 for (size_t j = 0; j < n; j++)
                 {
-                    Nilib::Matrixf derivb{seedC(i, j) * this->cache(i, j)};
+                    Nilib::Matrixf derivb{seedC(i, j) * this->value(i, j)};
                     Nilib::Matrixf deriv_wt(f, 1);
                     Nilib::Matrixf deriv_wb(f, 1);
                     this->b->derive(derivb);
 
                     for (size_t k = 0; k < f; k++)
                     {
-                        deriv_x(i, k) = seedC(i, j) * this->cache(i, j) * Wb->value(k);
-                        deriv_x(j, k) = seedC(i, j) * this->cache(i, j) * Wb->value(k);
-                        deriv_wt(k, 0) = X->value(i, k) * seedC(i, j) * this->cache(i, j);
-                        deriv_wb(k, 0) = X->value(j, k) * seedC(i, j) * this->cache(i, j);
+                        deriv_x(i, k) = seedC(i, j) * this->value(i, j) * Wb->value(k);
+                        deriv_x(j, k) = seedC(i, j) * this->value(i, j) * Wb->value(k);
+                        deriv_wt(k, 0) = X->value(i, k) * seedC(i, j) * this->value(i, j);
+                        deriv_wb(k, 0) = X->value(j, k) * seedC(i, j) * this->value(i, j);
                     }
 
                     Wt->derive(deriv_wt);
@@ -88,6 +86,95 @@ namespace Nilib
                 }
                 X->derive(deriv_x);
             }
+            // LOG_DEBUG("Derived partialX!");
+        }
+    };
+
+    // Takes a node feature vector X -> C where cij = MLP[xi xj]
+    struct NN_outerdecoderMLP : public CNode
+    {
+        CNode *X = nullptr;
+        MultilayerPerceptron mlp;
+
+        // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
+        NN_outerdecoderMLP(CNode *X, size_t const neurons)
+            : X(X), mlp(nullptr, neurons, 1)
+        {
+        }
+
+        void evaluate()
+        {
+            CORE_ASSERT(X);
+            X->evaluate();
+            // mlp.evaluate();
+            size_t const n = X->value.rows();
+            size_t const f = X->value.cols();
+            // Init the output value.
+            this->value = Nilib::Matrixf(n, n);
+
+            for (size_t i = 0; i < n; i++)
+            {
+                for (size_t j = 0; j < n; j++)
+                {
+                    Nilib::Matrixf xi(1, f);
+                    Nilib::Matrixf xj(1, f);
+                    for (size_t k = 0; k < f; k++)
+                    {
+                        xi(k) = X->value(i, k);
+                        xj(k) = X->value(j, k);
+                    }
+
+                    Input x_i(xi);
+                    Input x_j(xj);
+                    Rbind x_i_xj(&x_i, &x_j);
+
+                    mlp.x = &x_i_xj;
+                    mlp.evaluate();
+                    this->value(i, j) = mlp.value(0);
+                }
+            }
+            // this->value.apply(std::bind(Relu::relu, std::placeholders::_1, 0.01f));
+            CORE_ASSERT(this->value.rows() == n && this->value.cols() == n);
+        }
+
+        void derive(Nilib::Matrixf const &seedC)
+        {
+            // LOG_DEBUG("Deriving partialX!");
+            size_t const n = X->value.rows(); // Number of nodes.
+            size_t const f = X->value.cols(); // Input feature dim.
+
+            Nilib::Matrixf deriv_x = Nilib::Matrixf::zeros(n, f);
+            for (size_t i = 0; i < n; i++)
+            {
+                for (size_t j = 0; j < n; j++)
+                {
+                    // Get the i-th and j-th row.
+                    Nilib::Matrixf xi(1, f);
+                    Nilib::Matrixf xj(1, f);
+                    for (size_t k = 0; k < f; k++)
+                    {
+                        xi(k) = X->value(i, k);
+                        xj(k) = X->value(j, k);
+                    }
+                    Input x_i(xi);
+                    Input x_j(xj);
+
+                    // Concatenate.
+                    Rbind x_i_xj(&x_i, &x_j);
+
+                    // Derive through the local mlp.
+                    mlp.x = &x_i_xj;
+                    mlp.derive({seedC(i, j)});
+
+                    // Add the result to the deriv.
+                    for (size_t k = 0; k < f; k++)
+                    {
+                        deriv_x(i, k) += x_i.partial(i, k);
+                        deriv_x(j, k) += x_j.partial(j, k);
+                    }
+                }
+            }
+            X->derive(deriv_x);
             // LOG_DEBUG("Derived partialX!");
         }
     };
@@ -107,7 +194,7 @@ namespace Nilib
             input->evaluate();
             W->evaluate();
             ASSERT(A->value.cols() == input->value.rows(), "AX undefined, coldim(A):", A->value.cols(), "rowdim(X):", input->value.rows());
-            ASSERT(input->value.cols() == W->value.rows(), "XW undefined, coldim(X):",  input->value.cols(), "rowdim(W):", W->value.rows() );
+            ASSERT(input->value.cols() == W->value.rows(), "XW undefined, coldim(X):", input->value.cols(), "rowdim(W):", W->value.rows());
             this->value = A->value * input->value * W->value;
         }
 

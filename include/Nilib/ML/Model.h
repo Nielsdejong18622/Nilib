@@ -4,18 +4,83 @@
 #include "Nilib/ML/CNodes/CNode.h"
 #include "Nilib/ML/CNodes/Weight.h"
 
+#include "Nilib/Core/Serializer.hpp"
+#include "Nilib/Core/Deserializer.hpp"
+
 namespace Nilib
 {
 
-    class MLData;
-
-    // In charge of updating the weight of a Model.
+    // In charge of updating the selected weights of a computational graph.
     class Optimizer
     {
-        CNode **weightupdates;
-        size_t weights;
+    public:
+        Optimizer(std::vector<Weight *> weights)
+            : weights(weights) {}
+
+        // Apply the gradients using some rule.
+        virtual void step() {};
+
+        void save(std::string const &filename) const
+        {
+            Serializer writer(filename);
+            for (Weight const *w : weights)
+                writer.writeMatrix(w->value);
+        }
+        void load(std::string const &filename) const
+        {
+            Deserializer loader(filename);
+            for (Weight *w : weights)
+                loader.readMatrix(w->value);
+        }
+
+    protected:
+        std::vector<Weight *> weights;
+        // Checks if all the weights have gradients initialized!
+        bool checkgradients() const
+        {
+            for (Weight const *w : weights)
+                if (w->partial.rows() == 0 || w->partial.cols() == 0)
+                    return false;
+            return true;
+        }
     };
 
+    struct Genetic : public Optimizer
+    {
+
+        Genetic(std::vector<Weight *> weights)
+            : Optimizer(weights)
+        {
+        }
+
+        void step() override
+        {
+            ASSERT(checkgradients(), "One or more gradients are not yet calculated!");
+            for (Weight *w : weights)
+            {
+                w->value += Nilib::Matrixf::randn(w->value.rows(), w->value.cols(), 0.0f, 0.01f);
+            }
+        }
+    };
+
+    class Adam : public Optimizer
+    {
+        // Make a copy of the weights for the momentum and variance of each parameter.
+        std::vector<Weight> momentum;
+        std::vector<Weight> variance;
+
+    public:
+        Adam(std::vector<Weight *> weights)
+            : Optimizer(weights)
+        {
+        }
+
+        void step() override
+        {
+        }
+    };
+
+    class MLData;
     // A non-owning abstraction over a computational graph.
     class Model
     {
@@ -51,7 +116,6 @@ namespace Nilib
         void train(MLData const &data, size_t numepochs, size_t batch_size);
         // void train(MLEnv);
     };
-
 }
 
 #endif

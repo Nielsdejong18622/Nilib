@@ -12,14 +12,14 @@ namespace Nilib
         CNode *lhs = nullptr, *rhs = nullptr;
         Multiply(CNode *lhs, CNode *rhs) : lhs(lhs), rhs(rhs) {}
 
-        void evaluate()
+        void evaluate() override
         {
             lhs->evaluate();
             rhs->evaluate();
             this->value = lhs->value * rhs->value;
         }
 
-        void derive(Matrixf const &seed)
+        void derive(Matrixf const &seed) override
         {
             lhs->derive(seed * transpose(rhs->value));
             rhs->derive(transpose(lhs->value) * seed);
