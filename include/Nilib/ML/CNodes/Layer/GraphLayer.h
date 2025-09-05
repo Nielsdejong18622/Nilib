@@ -11,7 +11,6 @@ namespace Nilib
     // Takes a node feature vector sigmoid(AXW) -> X', G, e -> F where fij = MLP([x_i, x_j, e_ij])
     // x_i [xpos, ypos, isdummy, isorder/courier, if courier then #orders_to`, ]
     // e_ij = [distance, manhattan distance, ]
-
     class NN_outerdecoderMLP : public CNode
     {
         Input x_i;
@@ -234,11 +233,11 @@ namespace Nilib
         }
     };
 
-    // F (nxn) -> [f(1xn), (E)_ij] -> MLP -> Q (1,1)
+    // Flattens n dimensions into F (nxf) -> f (1xf)
     struct GraphPoolAverage : public CNode
     {
         CNode *X = nullptr;
-        Matrixf iota;
+        float cached_rows = 0.0f;
 
         GraphPoolAverage(CNode *X)
             : X(X)
@@ -249,17 +248,23 @@ namespace Nilib
         {
             CORE_ASSERT(X);
             X->evaluate();
-            iota = Matrixf::all(1, X->value.rows(), 1.0f);
-            this->value = (1.0f / X->value.rows()) * iota * X->value;
+
+            cached_rows = X->value.rows();
+            this->value = Nilib::Matrixf::zeros(1, X->value.cols());
+            for (size_t col_idx = 0; col_idx < X->value.cols(); col_idx++)
+                for (size_t row_idx = 0; row_idx < cached_rows; row_idx++)
+                    this->value(0, col_idx) += X->value(row_idx, col_idx);
+
+            this->value /= cached_rows;
         }
 
         void derive(Nilib::Matrixf const &seed)
         {
-            // std::cerr << "Deriving GraphPoolAverage!" << std::endl;
             CORE_ASSERT(X);
-            CORE_ASSERT(X->value.rows() > 0);
-            CORE_ASSERT(iota.rows() == seed.rows());
-            X->derive((1.0f / X->value.rows()) * Nilib::transpose(iota) * seed);
+            CORE_ASSERT(cached_rows > 0.0);
+            CORE_ASSERT(seed.rows() == 1);
+            Matrixf iota = Matrixf::ones(cached_rows, 1); // Already transposed.
+            X->derive(iota * seed / cached_rows);
         }
     };
 }

@@ -34,10 +34,10 @@ namespace Nilib
             CORE_ASSERT(input);
             CORE_ASSERT(seed.rows() == input->value.rows());
             CORE_ASSERT(seed.cols() == input->value.cols());
-            // auto tmp = input->value; // Get a copy of the input.
-            input->value.apply(deriv);
+            auto tmp = input->value; // Get a copy of the input.
+            tmp.apply(deriv);
             // LOG_DEBUG("Deriving activaition function2!", this);
-            input->derive(Nilib::hadamar(seed, input->value));
+            input->derive(Nilib::hadamar(seed, tmp));
         }
     };
 }
