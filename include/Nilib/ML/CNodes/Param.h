@@ -5,8 +5,7 @@
 
 namespace Nilib
 {
-
-    // Input CNode.
+    // Single float Input node.
     struct Param : public Input
     {
         Param(float value);

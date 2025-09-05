@@ -2,8 +2,7 @@
 #ifndef _CNODE_GRAPHLAYER_H
 #define _CNODE_GRAPHLAYER_H
 
-#include "Nilib/ML/CNodes/CNode.h"
-#include "Nilib/ML/CNodes/Activation/Relu.h"
+#include "Nilib/ML/ML.h"
 
 namespace Nilib
 {
