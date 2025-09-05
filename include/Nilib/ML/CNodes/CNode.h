@@ -17,8 +17,8 @@ namespace Nilib
 
         virtual void evaluate() = 0;
         virtual void derive(Nilib::Matrixf const &seed) = 0;
-        virtual void weights(std::vector<CNode *> &weights) const {};
-        virtual void print() const { LOG_DEBUG("CNode", this, "value", value); };
+        // virtual void weights(std::vector<CNode *> &weights) const {};
+        // virtual void print() const { LOG_DEBUG("CNode", this, "value", value); };
 
         friend std::ostream &operator<<(std::ostream &os, CNode const &node);
     };

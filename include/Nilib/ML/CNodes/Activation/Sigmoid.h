@@ -6,48 +6,17 @@
 namespace Nilib
 {
 
-    struct Sigmoid : public Activation
+    struct Sigmoid_fun
     {
-        Sigmoid(CNode *input)
-            : Activation(input,
-                         std::bind(&Sigmoid::sigmoid, std::placeholders::_1),
-                         std::bind(&Sigmoid::sigmoid_deriv, std::placeholders::_1)) {}
+        static float evaluate(float const t) { return 1.0f / (1.0f + std::exp(-1.0f * t)); }
 
-        static float sigmoid(float const t) { return 1.0f / (1.0f + std::exp(-1.0f * t)); }
-
-        static float sigmoid_deriv(float const t)
+        static float derivative(float const t)
         {
-            float tmp = sigmoid(t);
+            float tmp = evaluate(t);
             return tmp * (1.0f - tmp);
         }
     };
 
-    struct SigmoidLinear : public Activation
-    {
-        SigmoidLinear(CNode *input)
-            : Activation(input,
-                         std::bind(&SigmoidLinear::sigmoidlinear, this, std::placeholders::_1),
-                         std::bind(&SigmoidLinear::sigmoidlinear_deriv, this, std::placeholders::_1)) {}
-
-        float sigmoidlinear(float const t)
-        {
-            if (t > 10.0f)
-                return t;
-            if (t < -6.0f)
-                return -0.0f;
-            return t / (1.0f + std::exp(-1.0f * t));
-        }
-
-        float sigmoidlinear_deriv(float const t)
-        {
-            if (t > 10.0f)
-                return 1.0f;
-            if (t < -6.0f)
-                return 0.0;
-            float const e_t = std::exp(-1.0f * t);
-            float const tmp = 1.0f + e_t;
-            return (tmp + t * e_t) / (tmp * tmp);
-        }
-    };
+    using Sigmoid = Activation<Sigmoid_fun>;
 }
 #endif

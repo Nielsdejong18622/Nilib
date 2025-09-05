@@ -18,7 +18,7 @@ namespace Nilib
         Input e_ij;
         Rbind x_i_xj;
         Rbind features;
-        Sigmoid sig;
+        Tanh act;
 
     public:
         CNode *X = nullptr;
@@ -30,8 +30,8 @@ namespace Nilib
             : X(X),
               x_i_xj(&x_i, &x_j), features(&x_i_xj, &e_ij),
               mlp(&features, neurons, neurons),
-              sig(&mlp),
-              pp(&sig, neurons)
+              act(&mlp),
+              pp(&act, neurons)
         {
         }
 
