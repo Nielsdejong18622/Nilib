@@ -18,11 +18,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_STANDALONE)
 
-# Definitons of Preprocessor directives.
-target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=1)
-target_compile_definitions(Nilib PUBLIC $<$<NOT:$<CONFIG:Debug>>:ASSERT_OFF>)
-
-# Default log levels (can be reordered
 # Only LEVELS higher than or equal to LOG_LEVEL are displayed.
 # define LOG_LEVEL_TRACE 1
 # define LOG_LEVEL_DEBUG 2
@@ -31,7 +26,18 @@ target_compile_definitions(Nilib PUBLIC $<$<NOT:$<CONFIG:Debug>>:ASSERT_OFF>)
 # define LOG_LEVEL_SUCCESS 5
 # define LOG_LEVEL_ERROR 5
 # define LOG_LEVEL_PROGRESS 6
-target_compile_definitions(Nilib PUBLIC LOG_LEVEL=1)
+
+# Definitons of Preprocessor directives.
+target_compile_options(Nilib PRIVATE
+  ${CMAKE_CXX_FLAGS}
+  -Wall
+  -Werror
+  -pedantic
+  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
+  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DENABLE_PROFILE=0>
+  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-LOG_LEVEL=5> # Display only progress and errors. 
+  $<$<CONFIG:Debug>:-LOG_LEVEL=1>
+)
 
 if(NILIB_STANDALONE)
   enable_testing()

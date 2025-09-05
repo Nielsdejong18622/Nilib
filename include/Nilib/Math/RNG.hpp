@@ -120,7 +120,7 @@ namespace Nilib
 
         // Generates a value N(0,1)
         template <typename scalar = float>
-        static inline scalar normal() { return normal(0.0, 1.0); };
+        static inline scalar normal() { return normal(0.0, 1.0); }
 
         // convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.
         static inline double wy2gau(uint64_t r)

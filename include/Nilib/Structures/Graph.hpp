@@ -15,6 +15,9 @@ namespace Nilib
     class Graph : public GraphRep
     {
     public:
+        using GraphRep::addNode;
+        using GraphRep::addArc;
+
         // Node data storage if Node != void
         std::conditional_t<!std::is_void_v<Node>,
                            PersistentIndexVector<Node, nodeID>,
@@ -41,8 +44,8 @@ namespace Nilib
         nodeID addNode(N const &node)
         {
             nodeID id1 = GraphRep::addNode();
-            nodeID id2 = nodeData.add(node);
-            CORE_ASSERT(id1 == id2);
+            // nodeID id2 = nodeData.add(node);
+            CORE_ASSERT(false); // Something does not add up here. 
             return id1;
         }
 

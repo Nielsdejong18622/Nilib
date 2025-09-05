@@ -20,11 +20,11 @@ namespace Nilib
 
     public:
         BasicFileLogger(std::string const &filename)
-            : d_fstream(filename, std::ios::out), d_filename(filename), Logger(d_fstream)
+            : Logger(d_fstream), d_fstream(filename, std::ios::out), d_filename(filename)
         {
         }
         BasicFileLogger(char const *filename)
-            : d_fstream(filename, std::ios::out), d_filename(filename), Logger(d_fstream)
+            : Logger(d_fstream), d_fstream(filename, std::ios::out), d_filename(filename)
         {
         }
 
@@ -53,7 +53,7 @@ namespace Nilib
             d_fstream = std::ofstream(d_filename, std::ios::out);
         }
 
-        // Close and open the File. 
+        // Close and open the File.
         void reset()
         {
             close();

@@ -81,14 +81,14 @@ Solution Solution::feasibleSolution(Instance const &inst)
     random_shuffle(customers.begin(), customers.end());
 
     // Start creating routes
-    int currentIndex = 0; // Tracks the index of the customer
+    size_t currentIndex = 0; // Tracks the index of the customer
 
     while (currentIndex < numLocations - 1)
     {
         std::vector<int> route;
         route.push_back(0); // Start from the depot
 
-        int currentCapacity = 0;
+        size_t currentCapacity = 0;
 
         // Add customers to the route while respecting the vehicle capacity
         while (currentIndex < numLocations - 1 && currentCapacity < VEHICLE_CAP)

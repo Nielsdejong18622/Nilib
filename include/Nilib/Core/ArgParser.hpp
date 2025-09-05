@@ -17,7 +17,7 @@ namespace Nilib
         };
 
         bool d_failed_parse;
-        int d_succesfully_parsed_args;
+        size_t d_succesfully_parsed_args;
         std::string d_program_name;
         std::vector<std::string> d_positional_argument_map;
         std::vector<Argument> d_helpmap;
@@ -227,7 +227,7 @@ namespace Nilib
             d_program_name = argv[0];
 
             d_positional_argument_map.reserve(argc);
-            for (size_t i = 0; i < argc; i++)
+            for (int i = 0; i < argc; i++)
             {
                 d_positional_argument_map.emplace_back(argv[i]);
             }

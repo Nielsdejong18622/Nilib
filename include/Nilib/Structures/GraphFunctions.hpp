@@ -12,24 +12,6 @@ namespace Nilib
 {
     class Window;
 
-    // // Search for all node agreeing with a predicate in a graph.
-    // struct DepthFirstSearch
-    // {
-    //     std::stack<nodeID> list;
-
-    //     using nodePredicateFunction = bool;
-
-    //     DepthFirstSearch(GraphI const &graph, nodeID const start, nodePredicateFunction function);
-    // };
-    // struct BreadthFirstSearch
-    // {
-    //     std::queue<nodeID> list;
-
-    //     using nodePredicateFunction = bool;
-
-    //     BreadthFirstSearch(GraphI const &graph, nodeID const start, nodePredicateFunction function);
-    // };
-
     // All pairs shortest paths.
     struct BellManFord
     {
@@ -91,7 +73,7 @@ namespace Nilib
                  ArcCost const arccost = &Dijkstra::arcCost,
                  AdmissableArc const admissablearc = &Dijkstra::admissableArc)
             requires std::is_base_of_v<GraphI, Graph>
-            : costs(graph.nodes_capacity(), std::numeric_limits<Cost>::infinity()), predecessor(graph.nodes_capacity(), -1)
+            : costs(graph.nodes_capacity(), std::numeric_limits<Cost>::infinity()), predecessor(graph.nodes_capacity(), -1), cost(0.0)
         {
             // LOG_PROGRESS("Searching for shortest path from", source, "to", destination, "using Dijkstra's algorithm.");
             CORE_ASSERT(graph.contains(source));
@@ -170,8 +152,8 @@ namespace Nilib
 
         static constexpr bool admissableArc(nodeID const A, nodeID const B) { return true; };
 
-        std::vector<nodeID> predecessor;
         std::vector<float> costs;
+        std::vector<nodeID> predecessor;
         float cost;
 
     private:

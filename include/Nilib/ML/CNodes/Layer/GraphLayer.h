@@ -12,25 +12,16 @@ namespace Nilib
     // e_ij = [distance, manhattan distance, ]
     class NN_outerdecoderMLP : public CNode
     {
-        Input x_i;
-        Input x_j;
-        Input e_ij;
-        Rbind x_i_xj;
-        Rbind features;
-        Tanh act;
-
     public:
-        CNode *X = nullptr;
-        MultilayerPerceptron mlp;
-        Perceptron pp;
-
         // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
         NN_outerdecoderMLP(CNode *X, size_t const neurons)
             : X(X),
-              x_i_xj(&x_i, &x_j), features(&x_i_xj, &e_ij),
               mlp(&features, neurons, neurons),
-              act(&mlp),
-              pp(&act, neurons)
+              pp(&act, neurons),
+              x_i{}, x_j{}, e_ij{},
+              x_i_xj(&x_i, &x_j),
+              features(&x_i_xj, &e_ij),
+              act(&mlp)
         {
         }
 
@@ -58,7 +49,7 @@ namespace Nilib
                     // Euclidean Distance.
                     eij(0) = Nilib::euclidean(Vec2f{X->value(i, 2), X->value(i, 3)}, Vec2f{X->value(j, 2), X->value(j, 3)});
                     // Is order-courier or courier-order?
-                    eij(1) = (X->value(i, 1) > 0.5f | X->value(j, 1) > 0.5f);
+                    eij(1) = (X->value(i, 1) > 0.0f) | (X->value(j, 1) > 0.0f);
                     for (size_t k = 0; k < f; k++)
                     {
                         xi(k) = X->value(i, k);
@@ -100,7 +91,7 @@ namespace Nilib
                     // Euclidean Distance.
                     eij(0) = Nilib::euclidean(Vec2f{X->value(i, 2), X->value(i, 3)}, Vec2f{X->value(j, 2), X->value(j, 3)});
                     // Is order-courier or courier-order?
-                    eij(1) = (X->value(i, 1) > 0.5f | X->value(j, 1) > 0.5f);
+                    eij(1) = (X->value(i, 1) > 0.0f) | (X->value(j, 1) > 0.5f);
                     for (size_t k = 0; k < f; k++)
                     {
                         xi(k) = X->value(i, k);
@@ -131,6 +122,18 @@ namespace Nilib
             // LOG_DEBUG("Derived NN_outerDecoderMLP!");
             X->derive(deriv_x);
         }
+
+        CNode *X;
+        MultilayerPerceptron mlp;
+        Perceptron pp;
+
+    private:
+        Input x_i;
+        Input x_j;
+        Input e_ij;
+        Rbind x_i_xj;
+        Rbind features;
+        Tanh act;
     };
 
     // GCN.

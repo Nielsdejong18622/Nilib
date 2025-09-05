@@ -4,6 +4,22 @@
 #include "Nilib/Logger/Log.hpp"
 #include <sstream>
 
+namespace Nilib
+{
+
+    class CSVfile : public BasicFileLogger
+    {
+        size_t lines = 0;
+
+        template <typename T, typename... Rest>
+        CSVfile(char const *filename, T &&first, Rest &&...rest)
+            : BasicFileLogger(filename)
+        {
+        }
+    };
+
+};
+
 namespace Nilib::CSVhelper
 {
     template <typename T>
@@ -28,7 +44,7 @@ namespace Nilib::CSVhelper
     }
 }
 
-// MACRO for dumping variables to CSVfile. Automatically inserts header based on variable name.
+// MACRO for dumping variables to CSVfile. Automatically inserts header based on variable names.
 #define CSV_STRINGIFY(...) #__VA_ARGS__
 #define CSV(filename, ...)                                                                    \
     do                                                                                        \

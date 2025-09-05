@@ -110,8 +110,8 @@ namespace Nilib
             using Iter = PersistentIndexVector<std::list<nodeID>, nodeID>::const_iterator;
             using IterTail = std::list<nodeID>::const_iterator;
 
-            Iter iter_, iter_end;
             nodeID node_;
+            Iter iter_, iter_end;
 
         public:
             RevNeighborIteratorImpl(nodeID const node, Iter it, Iter it_end)

@@ -87,7 +87,7 @@ namespace Nilib
             static std::unordered_map<value, std::string> const map = [] {           \
                 std::unordered_map<value, std::string> m;                            \
                 std::string const names = #__VA_ARGS__;                              \
-                size_t pos = 0, index = 0;                                           \
+                size_t pos = 0;                                                      \
                 int enumVal = 0;                                                     \
                 while (pos < names.size()) {                                         \
                     size_t comma = names.find(',', pos);                             \

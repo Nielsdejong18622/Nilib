@@ -19,7 +19,7 @@ namespace Nilib
         Progress = 0 // To show to the end user.
     };
 
-    // Meta programming. 
+    // Meta programming.
     template <typename T>
     constexpr bool is_range =
         requires(T t) {
@@ -43,8 +43,9 @@ namespace Nilib
 
         bool d_requireheader = true;
 
-    public:
         bool endl = true;
+
+    public:
         char sep = ' ';
 
         Logger(std::ostream &stream)
