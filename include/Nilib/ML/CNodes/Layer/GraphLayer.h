@@ -8,107 +8,31 @@
 namespace Nilib
 {
 
-    // Takes a node feature vector X -> C where cij = MLP[xi xj]
-    struct NN_outerdecoder : public CNode
-    {
-        CNode *X;
-        Weight *Wt, *Wb, *b;
-
-        // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
-        NN_outerdecoder(CNode *X, Weight *Wt, Weight *Wb, Weight *b)
-            : X(X), Wt(Wt), Wb(Wb), b(b)
-        {
-        }
-
-        void evaluate()
-        {
-            X->evaluate();
-            Wt->evaluate();
-            Wb->evaluate();
-            b->evaluate();
-
-            ASSERT(Wt->value.rows() == X->value.cols(), Wt->value.rows(), "!=", X->value.cols());
-            ASSERT(Wb->value.rows() == X->value.cols(), Wb->value.rows(), "!=", X->value.cols());
-            ASSERT(Wt->value.cols() == Wb->value.cols(), Wt->value.rows(), "!=", Wb->value.cols());
-            CORE_ASSERT(Wt->value.cols() == 1);
-            CORE_ASSERT(b->value.rows() == 1);
-            CORE_ASSERT(b->value.cols() == 1);
-
-            size_t const n = X->value.rows();
-            size_t const f = X->value.cols();
-            // Init the output value.
-            this->value = Nilib::Matrixf(n, n);
-
-            for (size_t i = 0; i < n; i++)
-            {
-                for (size_t j = 0; j < n; j++)
-                {
-                    value(i, j) = b->value(0, 0);
-                    for (size_t k = 0; k < f; k++)
-                    {
-                        this->value(i, j) += X->value(i, k) * Wt->value(k, 0);
-                        this->value(i, j) += X->value(j, k) * Wb->value(k, 0);
-                    }
-                }
-            }
-            // this->value.apply(std::bind(Relu::relu, std::placeholders::_1, 0.01f));
-            CORE_ASSERT(this->value.rows() == n && this->value.cols() == n);
-        }
-
-        void derive(Nilib::Matrixf const &seedC)
-        {
-            LOG_DEBUG("Deriving zz!");
-            size_t const n = X->value.rows(); // Number of nodes.
-            size_t const f = X->value.cols(); // Input feature dim.
-
-            // this->value.apply(std::bind(Relu::relu_deriv, std::placeholders::_1, 0.01f));
-
-            for (size_t i = 0; i < n; i++)
-            {
-                Nilib::Matrixf deriv_x(n, f);
-                for (size_t j = 0; j < n; j++)
-                {
-                    Nilib::Matrixf derivb{seedC(i, j) * this->value(i, j)};
-                    Nilib::Matrixf deriv_wt(f, 1);
-                    Nilib::Matrixf deriv_wb(f, 1);
-                    this->b->derive(derivb);
-
-                    for (size_t k = 0; k < f; k++)
-                    {
-                        deriv_x(i, k) = seedC(i, j) * this->value(i, j) * Wb->value(k);
-                        deriv_x(j, k) = seedC(i, j) * this->value(i, j) * Wb->value(k);
-                        deriv_wt(k, 0) = X->value(i, k) * seedC(i, j) * this->value(i, j);
-                        deriv_wb(k, 0) = X->value(j, k) * seedC(i, j) * this->value(i, j);
-                    }
-
-                    Wt->derive(deriv_wt);
-                    Wb->derive(deriv_wb);
-                }
-                X->derive(deriv_x);
-            }
-            // LOG_DEBUG("Derived partialX!");
-        }
-    };
-
     // Takes a node feature vector sigmoid(AXW) -> X', G, e -> F where fij = MLP([x_i, x_j, e_ij])
     // x_i [xpos, ypos, isdummy, isorder/courier, if courier then #orders_to`, ]
     // e_ij = [distance, manhattan distance, ]
 
-    // Critic F (nxn) + S = (G, X, e) -> Quality scalar.
-    struct NN_outerdecoderMLP : public CNode
+    class NN_outerdecoderMLP : public CNode
     {
-        CNode *X = nullptr;
-
         Input x_i;
         Input x_j;
         Input e_ij;
         Rbind x_i_xj;
         Rbind features;
+        Sigmoid sig;
+
+    public:
+        CNode *X = nullptr;
         MultilayerPerceptron mlp;
+        Perceptron pp;
 
         // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
         NN_outerdecoderMLP(CNode *X, size_t const neurons)
-            : X(X), x_i_xj(&x_i, &x_j), features(&x_i_xj, &e_ij), mlp(&features, neurons, 1)
+            : X(X),
+              x_i_xj(&x_i, &x_j), features(&x_i_xj, &e_ij),
+              mlp(&features, neurons, neurons),
+              sig(&mlp),
+              pp(&sig, neurons)
         {
         }
 
@@ -146,10 +70,11 @@ namespace Nilib
                     x_i.set(xi);
                     x_j.set(xj);
                     e_ij.set(eij);
-                    mlp.x = &features;
-                    mlp.evaluate();
-                    CORE_ASSERT(mlp.value.size() > 0);
-                    this->value(i, j) = mlp.value(0);
+                    pp.evaluate();
+                    CORE_ASSERT(pp.value.size() > 0);
+                    CORE_ASSERT(pp.value.cols() == 1);
+                    CORE_ASSERT(pp.value.rows() == 1);
+                    this->value(i, j) = pp.value(0);
                 }
             }
             // this->value.apply(std::bind(Relu::relu, std::placeholders::_1, 0.01f));
@@ -158,7 +83,6 @@ namespace Nilib
 
         void derive(Nilib::Matrixf const &seedC)
         {
-            // std::cerr << "Deriving NN_outerdecoerMLP!" << std::endl;
             CORE_ASSERT(X);
             size_t const n = X->value.rows(); // Number of nodes.
             size_t const f = X->value.cols(); // Input feature dim.
@@ -188,9 +112,11 @@ namespace Nilib
                     x_i.set(xi);
                     x_j.set(xj);
                     e_ij.set(eij);
-                    mlp.x = &features;
-                    mlp.evaluate();
-                    mlp.derive({seedC(i, j)});
+                    pp.evaluate();
+                    CORE_ASSERT(pp.value.size() > 0);
+                    CORE_ASSERT(pp.value.cols() == 1);
+                    CORE_ASSERT(pp.value.rows() == 1);
+                    pp.derive({seedC(i, j)});
 
                     // Add the result to the deriv.
                     CORE_ASSERT(x_i.partial.rows() == 1);

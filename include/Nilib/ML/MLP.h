@@ -24,9 +24,9 @@ namespace Nilib
         Weight W;
         Weight b;
 
-        Perceptron(CNode *x, size_t inputdim)
+        Perceptron(CNode *x, size_t x_col)
             : x(x),
-              W(inputdim, 1),
+              W(x_col, 1),
               b(1, 1)
         {
         }
@@ -47,8 +47,8 @@ namespace Nilib
             ASSERT(seed.rows() == 1, "Output of perceptron is 1x1!");
             ASSERT(seed.cols() == 1, "Output of perceptron is 1x1!");
             b.derive(seed);
-            W.derive(seed * Nilib::transpose(x->value));
-            this->partial = Nilib::transpose(W.value) * seed;
+            W.derive(Nilib::transpose(x->value) * seed);
+            this->partial = seed * Nilib::transpose(W.value);
             x->derive(this->partial);
         }
     };
@@ -59,10 +59,10 @@ namespace Nilib
         Weight W;
         Weight b;
 
-        MultilayerPerceptron(CNode *x, size_t inputdim, size_t outputdim)
+        MultilayerPerceptron(CNode *x, size_t x_col, size_t neurons)
             : x(x),
-              W(inputdim, outputdim),
-              b(1, outputdim)
+              W(x_col, neurons),
+              b(1, neurons)
         {
         }
 
@@ -114,17 +114,17 @@ namespace Nilib
 
         void evaluate() override
         {
-            x->evaluate();
-            mlp1.evaluate();
+            LOG_DEBUG("Eval 2NN");
+            CORE_ASSERT(x);
+            mlp1.x = x;
             mlp2.evaluate();
             this->value = mlp2.value;
         }
 
         void derive(Nilib::Matrixf const &seed) override
         {
+            LOG_DEBUG("Derive 2NN");
             mlp2.derive(seed);
-            mlp1.derive(mlp2.partial);
-            x->derive(mlp1.partial);
         }
     };
 
