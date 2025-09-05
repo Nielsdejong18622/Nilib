@@ -13,8 +13,6 @@ endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glfw)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
 
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
-
 # Add subdirectories for the Nilibrary
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
@@ -22,9 +20,7 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 
 # Definitons of Preprocessor directives.
 target_compile_definitions(Nilib PUBLIC ENABLE_PROFILE=1)
-# target_compile_definitions(Nilib PUBLIC
-#   $<$<NOT:$<CONFIG:Debug>>:ASSERT_OFF>
-# )
+target_compile_definitions(Nilib PUBLIC $<$<NOT:$<CONFIG:Debug>>:ASSERT_OFF>)
 
 # Default log levels (can be reordered
 # Only LEVELS higher than or equal to LOG_LEVEL are displayed.
