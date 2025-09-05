@@ -109,7 +109,7 @@ int main()
 
         Weight W(training.front().fX, f2);
 
-        // DenseGraphLayer H1(&A, &X, &W);
+        // GCN H1(&A, &X, &W);
         // Relu H2(&H1);
 
         Weight Wt(training.front().fX, 1);
@@ -183,10 +183,10 @@ int main()
         Weight W(training.front().fX, f2);
         Weight W2(f2, training.front().fY);
 
-        DenseGraphLayer H1(&A, &X, &W);
+        GCN H1(&A, &X, &W);
         Relu H2(&H1, 0.001f);
 
-        DenseGraphLayer H3(&A, &H2, &W2);
+        GCN H3(&A, &H2, &W2);
         Relu H4(&H3, 0.001f);
 
         MSELoss L(&H4, &Y);

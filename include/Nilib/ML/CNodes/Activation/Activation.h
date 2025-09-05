@@ -24,16 +24,20 @@ namespace Nilib
         {
             CORE_ASSERT(input);
             input->evaluate();
-            this->value = input->value; // Copy the input.
+            this->value = input->value;
             this->value.apply(actfun);
         }
 
         void derive(Nilib::Matrixf const &seed)
         {
+            // LOG_DEBUG("Deriving activaition function!", this);
             CORE_ASSERT(input);
-            auto tmp = input->value; // Get a copy of the input.
-            tmp.apply(deriv);
-            input->derive(Nilib::hadamar(seed, tmp));
+            CORE_ASSERT(seed.rows() == input->value.rows());
+            CORE_ASSERT(seed.cols() == input->value.cols());
+            // auto tmp = input->value; // Get a copy of the input.
+            input->value.apply(deriv);
+            // LOG_DEBUG("Deriving activaition function2!", this);
+            input->derive(Nilib::hadamar(seed, input->value));
         }
     };
 }

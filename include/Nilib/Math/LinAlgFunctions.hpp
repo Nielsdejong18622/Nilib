@@ -263,7 +263,7 @@ namespace Nilib
     }
     // Normalize vector.
     template <typename type>
-    Matrix<type> normalize(Matrix<type>  &A)
+    Matrix<type> normalize(Matrix<type> &A)
     {
         return A / A.sum();
     }
@@ -293,7 +293,6 @@ namespace Nilib
         }
         return A;
     }
-
 
 }
 #endif

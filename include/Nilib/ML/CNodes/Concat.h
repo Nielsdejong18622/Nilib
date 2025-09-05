@@ -46,11 +46,14 @@ namespace Nilib
     // A, B -> [A, B]
     struct Rbind : public CNode
     {
-        CNode *lhs = nullptr, *rhs = nullptr;
+        CNode *lhs = nullptr;
+        CNode *rhs = nullptr;
         Rbind(CNode *lhs, CNode *rhs) : lhs(lhs), rhs(rhs) {}
 
         void evaluate()
         {
+            CORE_ASSERT(lhs);
+            CORE_ASSERT(rhs);
             lhs->evaluate();
             rhs->evaluate();
             CORE_ASSERT(lhs->value.rows() == rhs->value.rows());
@@ -59,6 +62,8 @@ namespace Nilib
 
         void derive(Matrixf const &seed)
         {
+            CORE_ASSERT(lhs);
+            CORE_ASSERT(rhs);
             Matrixf seedlhs(lhs->value.rows(), lhs->value.cols());
             Matrixf seedrhs(rhs->value.rows(), rhs->value.cols());
 

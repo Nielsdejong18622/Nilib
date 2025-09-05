@@ -9,7 +9,7 @@ namespace Nilib
 
     struct Tanh : public Activation
     {
-        float multiplier;
+        float multiplier = 1.0f;
         Tanh(CNode *input, float const multiplier)
             : Tanh(input) { this->multiplier = multiplier; }
 

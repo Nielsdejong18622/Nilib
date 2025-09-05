@@ -33,6 +33,7 @@ namespace Nilib
 
         void evaluate() override
         {
+            CORE_ASSERT(x);
             x->evaluate();
             W.evaluate();
             b.evaluate();
@@ -79,11 +80,22 @@ namespace Nilib
 
         void derive(Nilib::Matrixf const &seed) override
         {
-            ASSERT(seed.rows() == 1, "Output of MultilayerPerceptron is 1 x outputdim!");
+            // LOG_DEBUG("Derive multilayer perceptron", this, "with seed:", seed);
+            CORE_ASSERT(x);
+            ASSERT(seed.rows() == b.value.rows(), "Output of MultilayerPerceptron is 1 x outputdim!");
             ASSERT(seed.cols() == b.value.cols(), "Output of MultilayerPerceptron is 1 x outputdim!");
             b.derive(seed);
-            this->partial = Nilib::transpose(W.value) * seed;
-            W.derive(seed * Nilib::transpose(x->value));
+
+            CORE_ASSERT(x->value.rows() == seed.rows());
+            auto tmp = Nilib::transpose(x->value) * seed;
+            CORE_ASSERT(tmp.rows() == W.value.rows());
+            CORE_ASSERT(tmp.cols() == W.value.cols());
+            W.derive(tmp);
+
+            CORE_ASSERT(seed.cols() == W.value.cols());
+            this->partial = seed * Nilib::transpose(W.value);
+            CORE_ASSERT(this->partial.rows() == x->value.rows());
+            CORE_ASSERT(this->partial.cols() == x->value.cols());
             x->derive(this->partial);
         }
     };
