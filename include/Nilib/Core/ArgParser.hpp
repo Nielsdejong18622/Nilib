@@ -106,76 +106,22 @@ namespace Nilib
             }
         }
 
-        template <typename Type>
-        void argument(Type &store, std::string const &arg_desc, std::string const &description, bool const required = false)
-        {
-            argument<Type>(store, '\0', arg_desc, description, required);
-        }
+        // template <typename Type>
+        // void required_argument(Type &store, char const *arg_desc, char const *description)
+        // {
+        //     argument<Type>(store, '\0', arg_desc, description, true);
+        // }
 
         template <typename Type>
-        void argument(Type &store, char arg_short, std::string const &arg_desc, std::string const &description, bool const required = false)
+        void argument(Type &store, std::string_view argc_name, std::string_view const description)
         {
-            UserArg arg;
-            arg.arg_desc = arg_desc;
-            arg.arg_short = arg_short;
-            arg.description = description;
-            arg.required = required;
-            arg.parsed = false;
-            arg.option = false;
-            d_user.push_back(arg);
-
-            ASSERT(arg_desc != "help", "--help is reserved for help info.");
-            ASSERT(arg_short != 'h', "-h is reserved for help info.");
-
-            // Search for shorthand space, e.g. '-i myfile.csv'
-            CommandLineArg const shorthand = std::string("-") + arg_short;
-            if (!space_arg<Type>(shorthand, store))
-                return;
-
-            // Search for command lines starting with shorthand_eq, e.g. '-i='
-            CommandLineArg const shorthand_eq = std::string("-") + arg_short + '=';
-            if (!equality_arg<Type>(shorthand_eq, store))
-                return;
-
-            // Search for shorthand space, e.g. '--inputfile myfile.csv'
-            CommandLineArg const arg_space = std::string("--") + arg_desc;
-            if (!space_arg<Type>(arg_space, store))
-                return;
-
-            // Search for command lines starting with shorthand_eq, e.g. '-i='
-            CommandLineArg const arg_eq = std::string("--") + arg_desc + '=';
-            if (!equality_arg<Type>(arg_eq, store))
-                return;
+            argument_interal<Type>(store, argc_name, description, false);
         }
 
-        // If the option is found. Toggle store.
-        void option(bool &store, char arg_short, std::string const &arg_desc, std::string const &description, bool const required = false)
+        bool option(bool &store, std::string_view arg_desc, std::string_view description, char const arg_short = '\0')
         {
-            UserArg arg;
-            arg.arg_desc = arg_desc;
-            arg.arg_short = arg_short;
-            arg.description = description;
-            arg.required = required;
-            arg.parsed = false;
-            arg.option = true;
-
-            CommandLineArg const shorthand = std::string("-") + arg_short;
-            CommandLineArg const longhand = std::string("--") + arg_desc;
-            size_t command1_id = find(d_commandline, shorthand);
-            size_t command2_id = find(d_commandline, longhand);
-            if (command1_id < d_commandline.size())
-            {
-                d_commandline[command1_id].parsed = true;
-                arg.parsed = true;
-                store = !store;
-            }
-            else if (command2_id < d_commandline.size())
-            {
-                d_commandline[command2_id].parsed = true;
-                arg.parsed = true;
-                store = !store;
-            }
-            d_user.push_back(arg);
+            option_internal(store, arg_desc, description, arg_short);
+            return store;
         }
 
         // Displays the help (-h) command.
@@ -389,6 +335,71 @@ namespace Nilib
                 }
             }
             return true;
+        }
+        // If the option is found. Toggle store.
+        void option_internal(bool &store, std::string_view arg_desc, std::string_view description, char arg_short = '\0')
+        {
+            UserArg arg;
+            arg.arg_desc = arg_desc;
+            arg.arg_short = arg_short;
+            arg.description = description;
+            arg.required = false;
+            arg.parsed = false;
+            arg.option = true;
+
+            CommandLineArg const longhand = std::string("--") + std::string(arg_desc);
+            size_t command2_id = find(d_commandline, longhand);
+            CommandLineArg const shorthand = std::string("-") + arg_short;
+            size_t command1_id = find(d_commandline, shorthand);
+            if (command1_id < d_commandline.size())
+            {
+                d_commandline[command1_id].parsed = true;
+                arg.parsed = true;
+                store = !store;
+            }
+            else if (command2_id < d_commandline.size())
+            {
+                d_commandline[command2_id].parsed = true;
+                arg.parsed = true;
+                store = !store;
+            }
+            d_user.push_back(arg);
+        }
+
+        template <typename Type>
+        void argument_interal(Type &store, std::string_view arg_desc, std::string_view description, bool const required = false, char arg_short = '\0')
+        {
+            UserArg arg;
+            arg.arg_desc = arg_desc;
+            arg.arg_short = arg_short;
+            arg.description = description;
+            arg.required = required;
+            arg.parsed = false;
+            arg.option = false;
+            d_user.push_back(arg);
+
+            CORE_ASSERT(arg.arg_desc != "help");
+            CORE_ASSERT(arg.arg_short != 'h');
+
+            // Search for shorthand space, e.g. '-i myfile.csv'
+            CommandLineArg const shorthand = std::string("-") + arg_short;
+            if (!space_arg<Type>(shorthand, store))
+                return;
+
+            // Search for command lines starting with shorthand_eq, e.g. '-i='
+            CommandLineArg const shorthand_eq = std::string("-") + arg_short + '=';
+            if (!equality_arg<Type>(shorthand_eq, store))
+                return;
+
+            // Search for shorthand space, e.g. '--inputfile myfile.csv'
+            CommandLineArg const arg_space = std::string("--") + std::string(arg_desc);
+            if (!space_arg<Type>(arg_space, store))
+                return;
+
+            // Search for command lines starting with shorthand_eq, e.g. '-i='
+            CommandLineArg const arg_eq = std::string("--") + std::string(arg_desc) + '=';
+            if (!equality_arg<Type>(arg_eq, store))
+                return;
         }
     };
 

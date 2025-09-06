@@ -3,8 +3,8 @@
 #define _CNODE_GRAPHLAYER_H
 
 #include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
-
 #include "Nilib/ML/Models/Perceptron.hpp"
+#include "Nilib/ML/CNodes/Concat.h"
 #include "Nilib/ML/CNodes/Activation/Tanh.h"
 
 namespace Nilib
@@ -15,6 +15,19 @@ namespace Nilib
     // e_ij = [distance, manhattan distance, ]
     class NN_outerdecoderMLP : public CNode
     {
+    public:
+        CNode *X;
+        MultilayerPerceptron mlp;
+        Perceptron pp;
+
+    private:
+        Input x_i;
+        Input x_j;
+        Input e_ij;
+        Rbind x_i_xj;
+        Rbind features;
+        Tanh act;
+
     public:
         // X, C_ij = sigmoid(xi * Wt + xj * Wb + b)
         NN_outerdecoderMLP(CNode *X, size_t const neurons)
@@ -125,18 +138,6 @@ namespace Nilib
             // LOG_DEBUG("Derived NN_outerDecoderMLP!");
             X->derive(deriv_x);
         }
-
-        CNode *X;
-        MultilayerPerceptron mlp;
-        Perceptron pp;
-
-    private:
-        Input x_i;
-        Input x_j;
-        Input e_ij;
-        Rbind x_i_xj;
-        Rbind features;
-        Tanh act;
     };
 
     // GCN.

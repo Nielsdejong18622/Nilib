@@ -32,12 +32,13 @@ target_compile_options(Nilib PRIVATE
   ${CMAKE_CXX_FLAGS}
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DENABLE_PROFILE=0>
-  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-LOG_LEVEL=5> # Display only progress and errors. 
+  # $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-LOG_LEVEL=5> # Display only progress and errors.
   $<$<CONFIG:Debug>:-LOG_LEVEL=1>
   $<$<CONFIG:Debug>:-Wall>
   $<$<CONFIG:Debug>:-Werror>
   $<$<CONFIG:Debug>:-pedantic>
 )
+message(STATUS "Nilib Build type: ${CMAKE_BUILD_TYPE}")
 
 if(NILIB_STANDALONE)
   enable_testing()

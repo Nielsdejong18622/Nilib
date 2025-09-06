@@ -22,8 +22,8 @@ namespace Nilib
 
         void register_logger(char const *loggername, Logger *logger);
         bool exists_logger(char const *loggername) const;
-        
-        // Flush all loggers. 
+
+        // Flush all loggers.
         void flush_loggers() const;
     };
 
