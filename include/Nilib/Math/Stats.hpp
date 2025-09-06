@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <math.h>
 #include <array>
+#include <algorithm>
 
 namespace Nilib
 {

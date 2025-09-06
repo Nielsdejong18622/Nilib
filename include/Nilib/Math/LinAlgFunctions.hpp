@@ -1,8 +1,6 @@
 #ifndef _LINALG_FUNCTIONS_H
 #define _LINALG_FUNCTIONS_H
 
-#include <format>
-
 #include "Nilib/Math/LinAlg.hpp"
 
 namespace Nilib
@@ -50,7 +48,7 @@ namespace Nilib
     operator*(Matrix<type, DynamicMatrixData<type>> const &A,
               Matrix<type, DynamicMatrixData<type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
 
         Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
@@ -77,7 +75,8 @@ namespace Nilib
     template <size_t n, size_t m, typename type>
     Matrix<type, DynamicMatrixData<type>> operator*(Matrix<type, StaticMatrixData<n, m, type>> const &A, Matrix<type, DynamicMatrixData<type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+
         Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
             for (size_t k = 0; k < A.cols(); ++k)
@@ -90,7 +89,8 @@ namespace Nilib
     template <size_t n, size_t m, typename type>
     Matrix<type, DynamicMatrixData<type>> operator*(Matrix<type, DynamicMatrixData<type>> const &A, Matrix<type, StaticMatrixData<n, m, type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+
         Matrix<type, DynamicMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
             for (size_t k = 0; k < A.cols(); ++k)
@@ -105,7 +105,8 @@ namespace Nilib
     operator*(Matrix<type, SparseMatrixData<type>> const &A,
               Matrix<type, SparseMatrixData<type>> const &B)
     {
-        ASSERT(A.cols() == B.rows(), std::format("A:{}x{} B:{}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+
         Matrix<type, SparseMatrixData<type>> res(A.rows(), B.cols());
         for (size_t nridx = 0; nridx < A.rows(); ++nridx)
             for (size_t k = 0; k < A.cols(); ++k)
@@ -129,8 +130,9 @@ namespace Nilib
     template <typename data>
     Matrix<data> hadamar(Matrix<data> const &A, Matrix<data> const &B)
     {
-        ASSERT(A.rows() == B.rows(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
-        ASSERT(A.cols() == B.cols(), std::format("{}x{} != {}x{}", A.rows(), A.cols(), B.rows(), B.cols()));
+        ASSERT(A.rows() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+        ASSERT(A.cols() == B.cols(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+
         Matrix<data> res(A.rows(), B.cols());
 
         for (size_t ridx = 0; ridx < A.rows(); ++ridx)

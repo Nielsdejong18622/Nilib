@@ -5,6 +5,7 @@
 #include <list>
 #include "Nilib/Math/Matrix.hpp"
 #include <functional>
+#include <memory>
 
 namespace Nilib
 {

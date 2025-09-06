@@ -5,6 +5,8 @@
 #include "Nilib/Structures/Persistent.hpp"
 #include <vector>
 #include <unordered_map>
+#include <variant>
+#include <utility>
 
 namespace Nilib
 {

@@ -130,8 +130,9 @@ namespace Nilib
         template <typename data>
         void operator+=(Matrix<value_type, data> const &B)
         {
-            ASSERT(d_data.rows() == B.d_data.rows(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
-            ASSERT(d_data.cols() == B.d_data.cols(), std::format("{}x{} += {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols()));
+            ASSERT(d_data.rows() == B.rows(), "A:", d_data.rows(), "x", d_data.cols(), "B:", B.rows(), "x", B.cols());
+            ASSERT(d_data.cols() == B.cols(), "A:", d_data.rows(), "x", d_data.cols(), "B:", B.rows(), "x", B.cols());
+
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) += B.d_data(idx);
         }

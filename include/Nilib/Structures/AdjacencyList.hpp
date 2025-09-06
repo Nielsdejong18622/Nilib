@@ -4,6 +4,8 @@
 #include "Nilib/Structures/Persistent.hpp"
 #include "Nilib/Structures/GraphRepresentation.hpp"
 
+#include <memory>
+
 namespace Nilib
 {
 

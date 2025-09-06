@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <numeric>
+#include <vector>
 #include <chrono>
 
 #include "Nilib/Core/Assert.hpp"
