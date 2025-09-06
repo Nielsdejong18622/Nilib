@@ -12,10 +12,11 @@ namespace Nilib
     class Optimizer
     {
     public:
-        Optimizer(std::vector<Weight *> weights);
+        using Weightptrs = std::vector<Weight *>;
 
-        virtual void updateGrad() const;
+        Optimizer(Weightptrs const &weights);
 
+        virtual void updateGrad(float const multiplier);
         void zeroGrad() const;
 
         void save(std::string const &filename) const;
@@ -24,7 +25,7 @@ namespace Nilib
     protected:
         bool checkgradients() const;
 
-        std::vector<Weight *> weights;
+        Weightptrs weights;
     };
 
 } // namespace Nilib

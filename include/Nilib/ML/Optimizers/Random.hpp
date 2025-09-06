@@ -14,7 +14,7 @@ namespace Nilib
         {
         }
 
-        void updateGrad() const override
+        void updateGrad(float const multiplier) override
         {
             ASSERT(checkgradients(), "One or more gradients are not yet calculated!");
             for (Weight *w : weights)

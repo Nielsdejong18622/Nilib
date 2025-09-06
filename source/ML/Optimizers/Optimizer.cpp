@@ -1,14 +1,16 @@
 #include "Nilib/ML/Optimizers/Optimizer.hpp"
 #include "Nilib/ML/CNodes/Weight.h"
 
-Nilib::Optimizer::Optimizer(std::vector<Weight *> weights)
+Nilib::Optimizer::Optimizer(Weightptrs const &weights)
     : weights(weights)
 {
+    zeroGrad();
 }
 
-void Nilib::Optimizer::updateGrad() const
+void Nilib::Optimizer::updateGrad(float const multiplier)
 {
     // To be overridden.
+    CORE_ASSERT(false);
 }
 
 void Nilib::Optimizer::zeroGrad() const
@@ -34,7 +36,9 @@ void Nilib::Optimizer::load(std::string const &filename) const
 bool Nilib::Optimizer::checkgradients() const
 {
     for (Weight const *w : weights)
-        if (w->partial.rows() == 0 || w->partial.cols() == 0)
+    {
+        if (w == nullptr || w->partial.rows() == 0 || w->partial.cols() == 0)
             return false;
+    }
     return true;
 }

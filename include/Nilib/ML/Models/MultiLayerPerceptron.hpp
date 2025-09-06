@@ -1,7 +1,7 @@
 #ifndef _ML_MLP_H
 #define _ML_MLP_H
 
-#include "Nilib/Math/LinAlgFunctions.hpp"
+#include "Nilib/Math/LinALg.hpp"
 
 #include "Nilib/ML/CNodes/Weight.h"
 

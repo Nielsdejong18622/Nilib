@@ -27,9 +27,9 @@ struct DemoSolution : public Nilib::ALNS::Solution
         // return 100 * (0.5 + (sin(sqrt(parabola)) * sin(sqrt(parabola)) - 0.5) / (denom * denom));
     }
 
-    bool feasible() const 
+    bool feasible() const
     {
-        // Always feasible. 
+        // Always feasible.
         return true;
     }
 };
@@ -56,15 +56,15 @@ int main(int argc, char **argv)
 
     Nilib::Argparser parser(argc, argv);
     Nilib::RNG::seed();
-    
+
     Nilib::ALNS::ALNSparams params;
 
     DemoSolution demo(40.0f, 10.0f);
 
     std::vector<Nilib::ALNS::Solver<DemoSolution>::Operator> operators = {op1, op2};
 
-    params.history_filename = parser.argument<std::string>("--outputfile", "-o", "ALNS history filename (.csv)", "ALNS.csv");
-    params.max_iterations = parser.argument<size_t>("--iterations", "-i", "ALNS maximum number of iterations", 1000);
+    parser.argument<std::string>(params.history_filename, "--outputfile", "-o", "ALNS history filename (.csv)");
+    parser.argument<size_t>(params.max_iterations, "--iterations", "-i", "ALNS maximum number of iterations");
     parser.check();
 
     Nilib::ALNS::Solver<DemoSolution> solver(params, operators, demo);

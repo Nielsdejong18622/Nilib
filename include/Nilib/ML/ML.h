@@ -8,7 +8,6 @@
 #include "Nilib/ML/CNodes/GaussianNoise.h"
 #include "Nilib/ML/CNodes/Loss/MSE.h"
 
-#include "Nilib/ML/CNodes/Layer/DenseLayer.h"
 #include "Nilib/ML/CNodes/Layer/GraphLayer.h"
 
 #include "Nilib/ML/CNodes/Activation/Activation.h"

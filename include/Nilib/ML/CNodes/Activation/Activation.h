@@ -3,7 +3,7 @@
 #define _CNODE_ACTVIVATION_H
 
 #include "Nilib/ML/CNodes/CNode.h"
-#include "Nilib/Math/LinAlgFunctions.hpp"
+#include "Nilib/Math/LinALg.hpp"
 
 namespace Nilib
 {

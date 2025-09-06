@@ -3,6 +3,7 @@
 
 // This header defines the ASSERT and CORE ASSERT macros.
 #include "Nilib/Logger/Log.hpp"
+#include <assert.h>
 
 namespace Nilib
 {
@@ -16,6 +17,7 @@ namespace Nilib
             LOG_ERROR("Assertion (", #condition, ") failed!", __VA_OPT__(__VA_ARGS__));               \
             LOG_ERROR() << "Call: __" << __func__ << "__ in " << __FILE__ << ':' << __LINE__ << '\n'; \
             ::Nilib::LoggerPool::instance().flush_loggers();                                          \
+            assert(condition);                                                                        \
             std::exit(EXIT_FAILURE);                                                                  \
         }                                                                                             \
     }

@@ -11,7 +11,9 @@ namespace Nilib
         {                                                                            \
             __VA_ARGS__                                                              \
         };                                                                           \
-                                                                                     \
+        EnumName()                                                                   \
+        {                                                                            \
+        }                                                                            \
         EnumName(value v) : val(v)                                                   \
         {                                                                            \
         }                                                                            \
@@ -58,6 +60,22 @@ namespace Nilib
             throw std::invalid_argument("Invalid enum name: " + str);                \
         }                                                                            \
                                                                                      \
+        friend std::stringstream &operator>>(std::stringstream &os, EnumName &self)  \
+        {                                                                            \
+            std::string token;                                                       \
+            os >> token;                                                             \
+            try                                                                      \
+            {                                                                        \
+                int val = std::stoi(token);                                          \
+                self = fromInt(val);                                                 \
+            }                                                                        \
+            catch (const std::invalid_argument &)                                    \
+            {                                                                        \
+                self = fromName(token);                                              \
+            }                                                                        \
+            return os;                                                               \
+        }                                                                            \
+                                                                                     \
         [[nodiscard]] static EnumName fromInt(int const i)                           \
         {                                                                            \
             for (auto const &[num, name] : valueToStringMap())                       \
@@ -65,7 +83,8 @@ namespace Nilib
                 if (num == i)                                                        \
                     return EnumName(num);                                            \
             }                                                                        \
-            return EnumName(static_cast<value>(i));                                  \
+            throw std::invalid_argument("Invalid enum value: " + i)                 \
+            ;                                                                        \
         }                                                                            \
                                                                                      \
         bool operator==(EnumName const &other) const { return val == other.val; }    \

@@ -2,6 +2,8 @@
 #define ARGS_H
 
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Core/Enum.hpp"
+#include "Nilib/Core/Assert.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -10,464 +12,386 @@ namespace Nilib
 {
     class Argparser
     {
-
-        struct Argument
-        {
-            std::string argument_descriptor, argument_descriptor_shorthand, description;
-        };
-
-        bool d_failed_parse;
-        size_t d_succesfully_parsed_args;
-        std::string d_program_name;
-        std::vector<std::string> d_positional_argument_map;
-        std::vector<Argument> d_helpmap;
-
-        template <typename Type>
-        Type getNextEnumArgument(std::string const &argument_key)
-        {
-            // We found the short hand, e.g. -i
-            auto argument_iter = std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_key);
-            if (argument_iter == d_positional_argument_map.end())
-            {
-                LOG_ERROR("No argument following", argument_key);
-                std::exit(EXIT_FAILURE);
-            }
-
-            auto argval = next(argument_iter);
-            if (argval == d_positional_argument_map.end())
-            {
-                LOG_ERROR("No argument following", argument_key);
-                std::exit(EXIT_FAILURE);
-            }
-
-            Type value = Type::fromString(*argval);
-            d_succesfully_parsed_args++; // We also passed the argument here.
-            return value;
-        }
-
-        template <typename Type>
-        Type getNextArgument(std::string const &argument_key)
-        {
-            // We found the short hand, e.g. -i
-            auto argument_iter = std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_key);
-            Type value; // Default constructed value.
-            if (argument_iter == d_positional_argument_map.end())
-            {
-                LOG_ERROR("No argument following", argument_key);
-                std::exit(EXIT_FAILURE);
-                return value;
-            }
-
-            d_succesfully_parsed_args++; // We found the key.
-
-            auto argval = next(argument_iter);
-            if (argval == d_positional_argument_map.end())
-            {
-                LOG_ERROR("No argument following", argument_key);
-                d_succesfully_parsed_args++;
-                std::exit(EXIT_FAILURE);
-                return value;
-            }
-
-            std::stringstream convert(*argval);
-            if (!(convert >> value) || !(convert >> std::ws).eof())
-            {
-                LOG_ERROR("Failed parsing of argument:", *argval, "given after ", argument_key);
-                return value;
-            }
-
-            d_succesfully_parsed_args++; // We also passed the argument here.
-            return value;
-        }
-
     public:
         Argparser(int argc, char **argv)
-            : d_failed_parse(false),
-              d_succesfully_parsed_args(1) // The program name.
         {
             parse(argc, argv);
         }
 
-        inline std::string const &programName() { return d_program_name; }
+        Argparser(std::string const &program_description, int argc, char **argv)
+            : d_program_descr(program_description)
+        {
+            parse(argc, argv);
+        }
+
+        ~Argparser()
+        {
+            if (!d_checked)
+            {
+                LOG_WARNING("Do not forget to check the ArgParser!");
+                check();
+            }
+        }
+
+        inline std::string const programName() const
+        {
+            auto pos = d_commandline.begin()->data.find_last_of("\\");
+            if (pos + 1 != std::string::npos)
+                return d_commandline.begin()->data.substr(pos + 1);
+            return d_commandline.begin()->data;
+        }
 
         // Check if parsing went well. Throws error if not!
         void check()
         {
-            auto &&argv = d_positional_argument_map;
-            // Look for "-h" or "--help"
-            if (std::find(argv.begin(), argv.end(), "-h") != argv.end() ||
-                std::find(argv.begin(), argv.end(), "--help") != argv.end() ||
-                std::find(argv.begin(), argv.end(), "--h") != argv.end())
+            d_checked = true;
+
+            // // Look for "-h" or "--help"
+            CommandLineArg hstr("-h");
+            CommandLineArg helpstr("--help");
+            if (contains(d_commandline, hstr) | contains(d_commandline, helpstr))
             {
-                helpinfo();
-                std::exit(EXIT_FAILURE);
+                help();
+                return;
             }
-            if (d_positional_argument_map.size() > d_succesfully_parsed_args)
+
+            size_t user_parsed = std::count_if(d_user.begin(), d_user.end(), [](UserArg const &arg)
+                                               { return arg.parsed; });
+            size_t command_parsed = std::count_if(d_commandline.begin(), d_commandline.end(), [](CommandLineArg const &arg)
+                                                  { return arg.parsed; });
+
+            LOG_DEBUG("Check: userArgs:", user_parsed, '/', d_user.size(), "commandLineArgs:", command_parsed, '/', d_commandline.size());
+            if (command_parsed < d_commandline.size())
             {
-                LOG_ERROR("Received", d_positional_argument_map.size(), "arguments but succesfully parsed", d_succesfully_parsed_args, "arguments!");
-                helpinfo();
-                std::exit(EXIT_FAILURE);
+                for (auto &&c_arg : d_commandline)
+                {
+                    if (!c_arg.parsed)
+                    {
+                        if (std::count(d_commandline.begin(), d_commandline.end(), c_arg) > 1)
+                        {
+                            LOG_ERROR("Duplicate command line argument:", c_arg.data);
+                        }
+                        else if (c_arg.data.size() <= 3)
+                        {
+                            LOG_ERROR("Unrecognized command line option:", c_arg.data);
+                        }
+                        // else if (c_arg.data.starts_with("-"))
+                        // {
+                        //     LOG_ERROR("Unrecognized command line argument:", c_arg.data, "did you mean", '-' + c_arg.data);
+                        // }
+                        else
+                        {
+                            LOG_ERROR("Unrecognized command line argument:", c_arg.data);
+                        }
+                    }
+                }
+                help();
+                fail();
+                return;
+            }
+            size_t missing = 0;
+            for (auto &&user_arg : d_user)
+            {
+                if (user_arg.required && !user_arg.parsed)
+                {
+                    missing++;
+                    LOG_ERROR("Missing command line argument:", user_arg.arg_desc);
+                }
+            }
+            if (missing > 0)
+            {
+
+                help();
+                fail();
             }
         }
 
         template <typename Type>
-        Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description)
+        void argument(Type &store, std::string const &arg_desc, std::string const &description, bool const required = false)
         {
-            return argument<Type>(argument_descriptor, argument_shorthand, description, Type(), false);
+            argument<Type>(store, '\0', arg_desc, description, required);
         }
 
         template <typename Type>
-        Type enum_argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description, Type const &defaultType, bool const required = true)
+        void argument(Type &store, char arg_short, std::string const &arg_desc, std::string const &description, bool const required = false)
         {
-            d_helpmap.emplace_back(argument_descriptor, argument_shorthand, description);
+            UserArg arg;
+            arg.arg_desc = arg_desc;
+            arg.arg_short = arg_short;
+            arg.description = description;
+            arg.required = required;
+            arg.parsed = false;
+            arg.option = false;
+            d_user.push_back(arg);
 
-            // First search for the shorthand.
-            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_shorthand) != d_positional_argument_map.end())
-            {
-                return getNextEnumArgument<Type>(argument_shorthand);
-            }
-            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_descriptor) != d_positional_argument_map.end())
-            {
-                return getNextEnumArgument<Type>(argument_descriptor);
-            }
-            if (required)
-                LOG_ERROR("Program requires argument:", description);
-            return defaultType;
+            ASSERT(arg_desc != "help", "--help is reserved for help info.");
+            ASSERT(arg_short != 'h', "-h is reserved for help info.");
+
+            // Search for shorthand space, e.g. '-i myfile.csv'
+            CommandLineArg const shorthand = std::string("-") + arg_short;
+            if (!space_arg<Type>(shorthand, store))
+                return;
+
+            // Search for command lines starting with shorthand_eq, e.g. '-i='
+            CommandLineArg const shorthand_eq = std::string("-") + arg_short + '=';
+            if (!equality_arg<Type>(shorthand_eq, store))
+                return;
+
+            // Search for shorthand space, e.g. '--inputfile myfile.csv'
+            CommandLineArg const arg_space = std::string("--") + arg_desc;
+            if (!space_arg<Type>(arg_space, store))
+                return;
+
+            // Search for command lines starting with shorthand_eq, e.g. '-i='
+            CommandLineArg const arg_eq = std::string("--") + arg_desc + '=';
+            if (!equality_arg<Type>(arg_eq, store))
+                return;
         }
 
-        template <typename Type>
-        Type argument(std::string const &argument_descriptor, std::string const &argument_shorthand, std::string const &description, Type const &defaultType, bool const required = false)
+        // If the option is found. Toggle store.
+        void option(bool &store, char arg_short, std::string const &arg_desc, std::string const &description, bool const required = false)
         {
+            UserArg arg;
+            arg.arg_desc = arg_desc;
+            arg.arg_short = arg_short;
+            arg.description = description;
+            arg.required = required;
+            arg.parsed = false;
+            arg.option = true;
 
-            // Log the argument in the help map.
-            d_helpmap.emplace_back(argument_descriptor, argument_shorthand, description);
-
-            // If parsing failed on a previous argument, skip this argument parsing to get to the help message.
-            if (d_failed_parse)
-                return Type{defaultType};
-
-            // Parse the argument.
-            // If the argument can not be located/parsed, set failbit and return default constructed value.
-
-            // First search for the shorthand.
-            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_shorthand) != d_positional_argument_map.end())
+            CommandLineArg const shorthand = std::string("-") + arg_short;
+            CommandLineArg const longhand = std::string("--") + arg_desc;
+            size_t command1_id = find(d_commandline, shorthand);
+            size_t command2_id = find(d_commandline, longhand);
+            if (command1_id < d_commandline.size())
             {
-                return getNextArgument<Type>(argument_shorthand);
+                d_commandline[command1_id].parsed = true;
+                arg.parsed = true;
+                store = !store;
             }
-            if (std::find(d_positional_argument_map.begin(), d_positional_argument_map.end(), argument_descriptor) != d_positional_argument_map.end())
+            else if (command2_id < d_commandline.size())
             {
-                return getNextArgument<Type>(argument_descriptor);
+                d_commandline[command2_id].parsed = true;
+                arg.parsed = true;
+                store = !store;
             }
-            if (std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_shorthand](std::string const &x)
-                             { return x.rfind(argument_shorthand) == 0; }) != d_positional_argument_map.end())
-            {
-                return parseEqualityArgument<Type>(argument_shorthand);
-            }
-            if (std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_descriptor](std::string const &x)
-                             { return x.rfind(argument_descriptor) == 0; }) != d_positional_argument_map.end())
-            {
-                return parseEqualityArgument<Type>(argument_descriptor);
-            }
-            if (required)
-                LOG_ERROR("Program requires argument:", description);
-            return Type{defaultType};
-        }
-
-        bool option(std::string const &argument_descriptor, std::string const &argument_descriptor_shorthand, std::string const &description)
-        {
-            d_helpmap.emplace_back(argument_descriptor, argument_descriptor_shorthand, description);
-            // If the option (-h) is found in the argument map, it is true.
-            // Otherwise it is false.
-            auto &argv = d_positional_argument_map;
-            bool const find_shorthand = std::find(argv.begin(), argv.end(), argument_descriptor_shorthand) != argv.end();
-            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
-            d_succesfully_parsed_args += find_shorthand || find_descriptor;
-            return find_shorthand || find_descriptor;
-        }
-
-        template <typename Type = bool>
-        bool option(std::string const &argument_descriptor, std::string const &description)
-        {
-            d_helpmap.emplace_back(argument_descriptor, "", description);
-            // If the option (-h) is found in the argument map, it is true.
-            // Otherwise it is false.
-            auto &argv = d_positional_argument_map;
-            bool const find_descriptor = std::find(argv.begin(), argv.end(), argument_descriptor) != argv.end();
-            d_succesfully_parsed_args += find_descriptor;
-            return find_descriptor;
-        }
-
-        // Prints all arguments and values.
-        void print() const
-        {
-            LOG_DEBUG("Program:", d_program_name);
-            for (auto &&v : d_positional_argument_map)
-            {
-                LOG_DEBUG(v);
-            }
+            d_user.push_back(arg);
         }
 
         // Displays the help (-h) command.
-        void helpinfo() const
+        void help() const
         {
-            LOG_PROGRESS("Usage", d_program_name);
-            for (size_t argument_idx = 0; argument_idx < d_helpmap.size(); ++argument_idx)
+            std::stringstream required;
+            const int indentWidth = 16; // Adjust based on longest arg name
+
+            // Print usage.
+            for (auto &&userArg : d_user)
             {
-                Argument arg = d_helpmap[argument_idx];
-                LOG_PROGRESS("\t", arg.argument_descriptor_shorthand, arg.argument_descriptor, arg.description);
+                if (userArg.required)
+                    required << ' ' << userArg.arg_desc << ' ';
+            }
+            LOG_PROGRESS(" Usage:");
+            if (!required.str().empty())
+                LOG_PROGRESS(" ", programName(), "[Options]", required.str(), "[Arguments]");
+            else
+                LOG_PROGRESS(" ", programName(), "[Options] [Arguments]");
+            LOG_PROGRESS(' ');
+            if (!d_program_descr.empty())
+            {
+                LOG_PROGRESS(d_program_descr);
+                LOG_PROGRESS(' ');
             }
 
-            LOG_PROGRESS("\t -h --help shows this menu");
+            LOG_PROGRESS(" Arguments:");
+            for (auto &&userArg : d_user)
+            {
+                if (!userArg.option)
+                {
+                    LOG_PROGRESS() << "  "
+                                   << std::left << std::setw(indentWidth)
+                                   << ("--" + userArg.arg_desc)
+                                   << ((userArg.arg_short == '\0') ? " \t" : (std::string("[-") + userArg.arg_short + "]\t"))
+                                   << userArg.description << '\n';
+                }
+            }
+
+            LOG_PROGRESS(" ");
+            LOG_PROGRESS(" Options:");
+            for (auto &&userArg : d_user)
+            {
+                if (userArg.option)
+                {
+                    LOG_PROGRESS() << "  "
+                                   << std::left << std::setw(indentWidth)
+                                   << ("--" + userArg.arg_desc)
+                                   << ((userArg.arg_short == '\0') ? " \t" : (std::string("[-") + userArg.arg_short + "]\t"))
+                                   << userArg.description << '\n';
+                }
+            }
+
+            LOG_PROGRESS() << "  "
+                           << std::left << std::setw(indentWidth)
+                           << "--help"
+                           << "[-h]\tShows this menu.\n";
         };
 
     private:
+        struct UserArg
+        {
+            std::string arg_desc, description;
+            char arg_short;
+            bool parsed;
+            bool option;
+            bool required;
+        };
+
+        struct CommandLineArg
+        {
+            std::string data;
+            bool parsed;
+
+            CommandLineArg(std::string const &data) : data(data), parsed(false) {}
+
+            operator std::string &() { return data; } // Implicit conversion.
+            friend bool operator==(CommandLineArg const &self, CommandLineArg const &other) { return self.data == other.data; }
+        };
+
+        std::vector<CommandLineArg> d_commandline;
+        std::vector<UserArg> d_user;
+        std::string d_program_descr;
+        bool d_checked;
+
+        // Utility functions.
+        template <typename Type>
+        size_t find(std::vector<Type> const &search, Type const &key)
+        {
+            return std::distance(std::begin(search), std::find(std::begin(search), std::end(search), key));
+        }
+
+        size_t find_substr(std::vector<CommandLineArg> const &search, std::string const &prefix, std::vector<CommandLineArg>::const_iterator const &start)
+        {
+            auto pred = [&prefix](CommandLineArg const &type)
+            { return type.data.starts_with(prefix); };
+            return std::distance(std::begin(search), std::find_if(start, std::end(search), pred));
+        }
+
+        template <typename Type>
+        bool contains(std::vector<Type> const &search, Type const &key)
+        {
+            return find(search, key) != search.size();
+        }
+
         void parse(int argc, char **argv)
         {
-            // Loop through all the required positional arguments and process them.
-            d_program_name = argv[0];
-
-            d_positional_argument_map.reserve(argc);
+            d_commandline.reserve(argc);
             for (int i = 0; i < argc; i++)
             {
-                d_positional_argument_map.emplace_back(argv[i]);
+                d_commandline.emplace_back(argv[i]);
             }
+            d_commandline[0].parsed = true;
         }
-        template <typename Type>
-        Type parseEqualityArgument(std::string const &argument_key)
-        {
-            auto argument = std::find_if(d_positional_argument_map.begin(), d_positional_argument_map.end(), [&argument_key](std::string const &x)
-                                         { return x.rfind(argument_key) == 0; });
-            Type value{0}; // Default constructed value.
 
-            std::string argstr = *argument;
-            if (argstr.length() <= argument_key.length() + 1)
+        void fail()
+        {
+            std::exit(EXIT_FAILURE);
+            throw std::runtime_error{std::string("Failure while parsing") + programName()};
+        }
+
+        template <typename Type>
+        bool equality_arg(CommandLineArg const &shorthand_eq, Type &store)
+        {
+            size_t short_it = find_substr(d_commandline, shorthand_eq.data, d_commandline.begin());
+            if (short_it < d_commandline.size())
             {
-                // Case --inputfile=
-                LOG_ERROR("Expected argument after", argstr);
-                return value;
+                // If it was already parsed, the symbol has been used before.
+                if (d_commandline[short_it].parsed)
+                {
+                    LOG_ERROR("Argument", shorthand_eq.data, "is supplied more than once!");
+                    fail();
+                    return false;
+                }
+                d_commandline[short_it].parsed = true;
+
+                // Otherwise we parse it.
+                std::string value = d_commandline[short_it].data.substr(shorthand_eq.data.size());
+                std::stringstream convert(value);
+                try
+                {
+                    if (!(convert >> store) || !(convert >> std::ws).eof())
+                    {
+                        LOG_ERROR("Failed parsing of argument:", d_commandline[short_it].data, value);
+                        fail();
+                        return false;
+                    }
+                    d_user.back().parsed = true;
+                }
+                catch (const std::exception &e)
+                {
+                    LOG_ERROR("Failed parsing of argument:", d_commandline[short_it].data, value);
+                    fail();
+                    return false;
+                }
             }
-            std::string arg_str = argstr.substr(argument_key.length() + 1); // length of -i=
-            std::stringstream convert(arg_str);
-            if (!(convert >> value) || !(convert >> std::ws).eof())
+            return true;
+        }
+
+        template <typename Type>
+        bool space_arg(CommandLineArg const &arg, Type &store)
+        {
+            if (contains(d_commandline, arg))
             {
-                LOG_ERROR("Failed parsing of argument:", arg_str);
-                return value;
+                size_t short_it = find(d_commandline, arg);
+                // If it was already parsed, the symbol has been used before.
+                if (d_commandline[short_it].parsed)
+                {
+                    LOG_ERROR("Argument", arg.data, "is supplied more than once!");
+                    fail();
+                    return false;
+                }
+                d_commandline[short_it].parsed = true;
+
+                // This must be the value of the argument.
+                size_t val_it = short_it + 1;
+                if (val_it >= d_commandline.size())
+                {
+                    LOG_ERROR("Expected argument value following", arg.data);
+                    fail();
+                    return false;
+                }
+                if (d_commandline[val_it].data == "-h" || d_commandline[val_it].data == "--help")
+                {
+                    return false;
+                }
+                else if (d_commandline[val_it].data.starts_with('-'))
+                {
+                    LOG_ERROR("Expected argument value following", arg.data, "but got", d_commandline[val_it].data);
+                    fail();
+                    return false;
+                }
+                d_commandline[val_it].parsed = true;
+                try
+                {
+                    // Otherwise we parse it.
+                    std::stringstream convert(d_commandline[val_it].data);
+                    if (!(convert >> store) || !(convert >> std::ws).eof())
+                    {
+                        LOG_ERROR("Failed parsing of argument:", arg.data, d_commandline[val_it].data);
+                        fail();
+                        return false;
+                    }
+                    d_user.back().parsed = true;
+                }
+                catch (const std::exception &e)
+                {
+                    LOG_ERROR("Failed parsing of argument:", arg.data, d_commandline[val_it].data);
+                    fail();
+                    return false;
+                }
             }
-            d_succesfully_parsed_args++;
-            return value;
+            return true;
         }
     };
 
 } // namespace Nilib
 
-/*
-
-
-class Argparser
-{
-public:
-    Argparser(char const *argdescr = "", char const *version = "1.0")
-        : d_argdescr(argdescr), d_version(version)
-    {
-    }
-
-    // A toggleable boolean flag. Examples -v or --v. or -verbose or --verbose
-    void flag(std::string name, std::string const &descr = "")
-    {
-        d_flags[strtolower(name)] = false;
-        d_flagdesc[strtolower(name)] = descr;
-    }
-
-    // An option like -n=40 or -n 40 or -N 40.
-    void option(std::string name, std::string const &descr = "")
-    {
-        d_options[strtolower(name)] = std::string();
-        d_optiondesc[strtolower(name)] = descr;
-    }
-
-    // Check if a flag is True or False.
-    std::string const operator[](std::string &&at)
-    {
-        std::string lat = strtolower(at);
-        if (d_options.find(lat) != d_options.end())
-        {
-            return d_options[lat];
-        }
-        return d_flags[lat] ? "True" : "False";
-    }
-
-    // Parse the command line arguments.
-    void parse(int argc, char **argv)
-    {
-        this->argv.clear();
-        this->argv.reserve(argc);
-
-        if (argc == 1)
-        {
-        }
-        this->argv.push_back(argv[0]);
-        try
-        {
-            parse_internal(argc, argv);
-            LOG_DEBUG() << "Done parsing all the command line arguments.\n";
-            this->argc = this->argv.size();
-            checkoptions();
-        }
-        catch (...)
-        {
-            // Log the help text and terminate the program.
-            printHelpText();
-            throw std::runtime_error("Unable to parse command line arguments!");
-        }
-    }
-
-    void printHelpText()
-    {
-        // For every flag and option required. There is a description of correct usage.
-        LOG_INFO() << "Usage: " << argv[0]
-                   << " "
-                   << "[options] "
-                   << "[flags] "
-                   << d_argdescr
-                   << '\n';
-        LOG_INFO() << "Options:\n";
-        for (auto const &[key, val] : d_options)
-        {
-            LOG_INFO() << "\t-" << key << "\t\t\t" << d_optiondesc[key] << '\n';
-        }
-
-        LOG_INFO() << "Flags:\n";
-        for (auto const &[key, val] : d_flags)
-        {
-            LOG_INFO() << "\t-" << key << "\t\t\t\t" << d_flagdesc[key] << '\n';
-        }
-        LOG_INFO() << argv[0] << ' ' << d_version << '\n';
-        exit(0);
-    }
-
-public:
-    size_t argc = 0;
-    std::vector<std::string> argv;
-
-private:
-    // Remove the prefix dashes -(-)  before a string.
-    std::string &removeprefixdash(std::string &str)
-    {
-        while (str[0] == '-')
-            str.erase(0, 1);
-        return str;
-    }
-
-    // Convert string to lower.
-    std::string &strtolower(std::string &str)
-    {
-        for (auto &c : str)
-            c = tolower(c);
-        return str;
-    }
-
-    // Check if all required options where parsed, print those missing.
-    void checkoptions()
-    {
-        for (auto const &[key, val] : d_options)
-        {
-            if (val.empty())
-            {
-                LOG_ERROR() << "Missing option:" << key << '\n';
-                throw std::runtime_error("Expected an missing option!");
-            }
-        }
-    }
-
-    char const *d_argdescr;
-    char const *d_version;
-    std::unordered_map<std::string, std::string> d_options;
-    std::unordered_map<std::string, std::string> d_optiondesc;
-    std::unordered_map<std::string, bool> d_flags;
-    std::unordered_map<std::string, std::string> d_flagdesc;
-
-    // Trims withespace characters from sting.
-    inline std::string &trim(std::string &str)
-    {
-        str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
-        str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
-        return str;
-    }
-
-    void parse_internal(int argc, char **argv)
-    {
-        // Previous arg and bool.
-        std::string prarg(argv[0]);
-        bool nextoptionarg = false;
-
-        for (int i = 1; i < argc; ++i)
-        {
-            std::string arg(argv[i]);
-            // The previous argument was an option.
-            if (nextoptionarg)
-            {
-                if (arg[0] == '-')
-                {
-                    LOG_ERROR() << '[' << arg << "] is not an argument for " << prarg << "!\n";
-                    throw std::runtime_error("Incorrect argument!");
-                }
-
-                d_options[prarg] = arg;
-                nextoptionarg = false;
-                LOG_DEBUG() << '[' << arg << "] is the argument of " << prarg << ".\n";
-                continue;
-            }
-
-            // Argument is the only remaining option.
-            if (arg[0] != '-')
-            {
-                LOG_DEBUG() << '[' << arg << "] is an argument.\n";
-                this->argv.push_back(arg);
-                continue;
-            }
-
-            // if current argument starts with -(-) it is an option or a flag.
-            // Convert to lower case and remove prefix dashes.
-            arg = removeprefixdash(arg);
-            arg = strtolower(arg);
-
-            // Check if it is an equality option.
-            if (std::find(arg.begin(), arg.end(), '=') != arg.end())
-            {
-                // Get option name and value (without the =) and add them to the option map.
-                std::string optionName = arg.substr(0, arg.find('='));
-                std::string valueName = arg.substr(arg.find('=') + 1);
-                optionName = strtolower(optionName);
-
-                LOG_DEBUG() << '[' << arg
-                            << "] is an equality option, name: "
-                            << optionName
-                            << " value: "
-                            << valueName
-                            << ".\n";
-                d_options[optionName] = valueName;
-            }
-            else if (d_options.find(arg) != d_options.end())
-            {
-                // Check if arg matches one of our options.
-                nextoptionarg = true;
-                prarg = arg;
-                continue; // See first if loop.
-            }
-            else if (d_flags.find(arg) != d_flags.end())
-            {
-                // Check if it matches one of our flags.
-                LOG_DEBUG() << '[' << arg << "] is a flag.\n";
-                d_flags[arg] = true; // We found a flag.
-            }
-            else
-            {
-                // Nothing mathches, hence it must be an argument.
-                LOG_ERROR() << '[' << arg << "] is not a flag, argument or option!\n";
-                throw std::runtime_error("Processed not a flag, argument nor option!");
-            }
-        }
-    }
-};
-*/
 #endif

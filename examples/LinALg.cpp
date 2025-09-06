@@ -1,5 +1,4 @@
-#include "Nilib/Math/LinAlg.hpp"
-#include "Nilib/Math/LinAlgFunctions.hpp"
+#include "Nilib/Math/LinALg.hpp"
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Profiler.hpp"
 
