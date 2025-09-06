@@ -25,3 +25,5 @@ namespace Nilib
     };
 
 } // namespace Nilib
+
+#endif

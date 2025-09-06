@@ -15,24 +15,25 @@ namespace Nilib
     // See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
     class RunningStats
     {
-        float d_M1, d_M2, d_M3, d_M4, d_sum, d_max, d_min, d_lag;
+        using type = double;
+        type d_M1, d_M2, d_M3, d_M4, d_sum, d_max, d_min, d_lag;
         size_t d_n;
 
     public:
         RunningStats();
-        void push(float const obs);
+        void push(type const obs);
         void reset();
 
         inline size_t n() const { return d_n; }
-        inline float mean() const { return d_M1; }
-        inline float variance() const { return (d_n > 1) ? d_M2 / (d_n - 1.0) : 0.0; }
-        inline float stddev() const { return std::sqrt(variance()); }
-        inline float sum() const { return d_sum; }
-        inline float min() const { return d_min; }
-        inline float max() const { return d_max; }
-        inline float lag() const { return d_lag; }
-        inline float kurtosis() const { return static_cast<float>(d_n) * d_M4 / (d_M2 * d_M2) - 3.0; }
-        inline float skewness() const { return std::sqrt(static_cast<float>(d_n)) * d_M3 / std::pow(d_M2, 1.5); }
+        inline type mean() const { return d_M1; }
+        inline type variance() const { return (d_n > 1) ? d_M2 / (d_n - 1.0) : 0.0; }
+        inline type stddev() const { return std::sqrt(variance()); }
+        inline type sum() const { return d_sum; }
+        inline type min() const { return d_min; }
+        inline type max() const { return d_max; }
+        inline type lag() const { return d_lag; }
+        inline type kurtosis() const { return static_cast<type>(d_n) * d_M4 / (d_M2 * d_M2) - 3.0; }
+        inline type skewness() const { return std::sqrt(static_cast<type>(d_n)) * d_M3 / std::pow(d_M2, 1.5); }
 
         RunningStats &operator+=(RunningStats const &other);
         friend RunningStats operator+(RunningStats lhs, RunningStats const &rhs);

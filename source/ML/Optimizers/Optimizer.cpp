@@ -8,7 +8,7 @@ Nilib::Optimizer::Optimizer(std::vector<Weight *> weights)
 
 void Nilib::Optimizer::updateGrad() const
 {
-    // To be overridden. 
+    // To be overridden.
 }
 
 void Nilib::Optimizer::zeroGrad() const

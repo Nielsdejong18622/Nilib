@@ -11,14 +11,14 @@ RunningStats::RunningStats()
 void RunningStats::reset()
 {
     d_M1 = d_M2 = d_M3 = d_M4 = d_sum = d_lag = 0;
-    d_max = std::numeric_limits<float>::min();
-    d_min = std::numeric_limits<float>::max();
+    d_max = std::numeric_limits<type>::min();
+    d_min = std::numeric_limits<type>::max();
     d_n = 0;
 }
 
-void RunningStats::push(float const obs)
+void RunningStats::push(type const obs)
 {
-    float delta, delta_n, delta_n2, term1;
+    type delta, delta_n, delta_n2, term1;
     d_lag = obs;
     size_t n1 = d_n;
 
@@ -49,26 +49,26 @@ RunningStats &RunningStats::operator+=(RunningStats const &other)
     size_t const n1 = d_n;
     size_t const n2 = other.d_n;
     size_t const n = n1 + n2;
-    float const delta = other.d_M1 - d_M1;
-    float const delta2 = delta * delta;
-    float const delta3 = delta2 * delta;
-    float const delta4 = delta3 * delta;
-    float const n1n2 = static_cast<float>(n1 * n2);
-    float const n1f = static_cast<float>(n1);
-    float const n2f = static_cast<float>(n2);
-    float const nf = static_cast<float>(n);
+    type const delta = other.d_M1 - d_M1;
+    type const delta2 = delta * delta;
+    type const delta3 = delta2 * delta;
+    type const delta4 = delta3 * delta;
+    type const n1n2 = static_cast<type>(n1 * n2);
+    type const n1f = static_cast<type>(n1);
+    type const n2f = static_cast<type>(n2);
+    type const nf = static_cast<type>(n);
 
     d_sum += other.d_sum;
     d_max = std::max(d_max, other.d_max);
     d_min = std::min(d_min, other.d_min);
     d_lag = other.d_lag;
 
-    float newM1 = d_M1 + delta * n2f / nf;
+    type newM1 = d_M1 + delta * n2f / nf;
 
-    float m2 = d_M2 + other.d_M2 + delta2 * n1n2 / nf;
-    float m3 = d_M3 + other.d_M3 + delta3 * n1n2 * (n1f - n2f) / (nf * nf) + 3.0f * delta * (n1f * other.d_M2 - n2f * d_M2) / nf;
+    type m2 = d_M2 + other.d_M2 + delta2 * n1n2 / nf;
+    type m3 = d_M3 + other.d_M3 + delta3 * n1n2 * (n1f - n2f) / (nf * nf) + 3.0f * delta * (n1f * other.d_M2 - n2f * d_M2) / nf;
 
-    float m4 = d_M4 + other.d_M4 + delta4 * n1n2 * (n1f * n1f - n1f * n2f + n2f * n2f) / (nf * nf * nf) + 6.0f * delta2 * (n1f * n1f * other.d_M2 + n2f * n2f * d_M2) / (nf * nf) + 4.0f * delta * (n1f * other.d_M3 - n2f * d_M3) / nf;
+    type m4 = d_M4 + other.d_M4 + delta4 * n1n2 * (n1f * n1f - n1f * n2f + n2f * n2f) / (nf * nf * nf) + 6.0f * delta2 * (n1f * n1f * other.d_M2 + n2f * n2f * d_M2) / (nf * nf) + 4.0f * delta * (n1f * other.d_M3 - n2f * d_M3) / nf;
 
     d_M1 = newM1;
     d_M2 = m2;

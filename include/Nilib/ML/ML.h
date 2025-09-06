@@ -1,3 +1,6 @@
+#ifndef _ML_HPP
+#define _ML_HPP
+
 #include "Nilib/ML/CNodes/Weight.h"
 #include "Nilib/ML/CNodes/Input.h"
 
@@ -17,3 +20,10 @@
 #include "Nilib/ML/Models/Model.h"
 #include "Nilib/ML/Models/Perceptron.hpp"
 #include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
+
+
+#include "Nilib/ML/Optimizers/Adam.hpp"
+#include "Nilib/ML/Optimizers/Optimizer.hpp"
+#include "Nilib/ML/Optimizers/Random.hpp"
+
+#endif

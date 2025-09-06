@@ -1,6 +1,5 @@
 #include "Nilib/Core/Profiler.hpp"
 
-#ifdef ENABLE_PROFILE
 using namespace Nilib;
 
 Profiler::Profiler()
@@ -47,5 +46,3 @@ size_t Profiler::getMilliseconds() const
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_timepoint - d_start_timepoint);
     return static_cast<size_t>(duration.count());
 }
-
-#endif

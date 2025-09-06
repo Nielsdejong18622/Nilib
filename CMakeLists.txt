@@ -30,13 +30,13 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 # Definitons of Preprocessor directives.
 target_compile_options(Nilib PRIVATE
   ${CMAKE_CXX_FLAGS}
-  -Wall
-  -Werror
-  -pedantic
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DENABLE_PROFILE=0>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-LOG_LEVEL=5> # Display only progress and errors. 
   $<$<CONFIG:Debug>:-LOG_LEVEL=1>
+  $<$<CONFIG:Debug>:-Wall>
+  $<$<CONFIG:Debug>:-Werror>
+  $<$<CONFIG:Debug>:-pedantic>
 )
 
 if(NILIB_STANDALONE)

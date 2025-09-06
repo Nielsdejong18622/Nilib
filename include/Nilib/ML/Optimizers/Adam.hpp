@@ -8,12 +8,12 @@ namespace Nilib
 
     class Adam : public Optimizer
     {
-        // Make a copy of the weights for the momentum and variance of each parameter.
-        std::vector<Weight> momentum;
-        std::vector<Weight> variance;
-
     public:
         void updateGrad() const override;
+
+    protected:
+        // Make a copy of the weights for the momentum and variance of each parameter.
+        std::vector<Weight> grad; // Store momentum in momentum.value
     };
 } // namespace Nilib
 

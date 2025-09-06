@@ -2,7 +2,10 @@
 #ifndef _CNODE_GRAPHLAYER_H
 #define _CNODE_GRAPHLAYER_H
 
-#include "Nilib/ML/ML.h"
+#include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
+
+#include "Nilib/ML/Models/Perceptron.hpp"
+#include "Nilib/ML/CNodes/Activation/Tanh.h"
 
 namespace Nilib
 {

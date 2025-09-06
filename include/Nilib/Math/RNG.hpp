@@ -34,11 +34,10 @@ namespace Nilib
         template <typename scalar = float>
         static inline float prob()
         {
-            double const _wynorm = 1.0 / (1ull << 52);
-            return static_cast<scalar>((wyhash(&state) >> 12) * _wynorm);
-
-            // return static_cast<scalar>(static_cast<float>(wyhash(&state)) /
-            //                            static_cast<float>(std::numeric_limits<uint64_t>::max()));
+            // double const _wynorm = 1.0 / (1ull << 52);
+            // return static_cast<scalar>((wyhash(&state) >> 12) * _wynorm);
+            return static_cast<scalar>(static_cast<float>(wyhash(&state)) /
+                                       static_cast<float>(std::numeric_limits<uint64_t>::max()));
         }
 
         static inline float rounded_uniform(float const min, float const max, int const digits = 2)
@@ -48,13 +47,8 @@ namespace Nilib
         }
 
         // Uniform random variable between [min, max]
-        static inline float uniform(float const min, float const max)
-        {
-            ASSERT(max >= min, "Degenerate uniform!");
-            return min + RNG::prob() * (max - min);
-        }
-
-        static inline double uniform(double const min, double const max)
+        template <typename scalar = float>
+        static inline float uniform(scalar const min, scalar const max)
         {
             ASSERT(max >= min, "Degenerate uniform!");
             return min + RNG::prob() * (max - min);
