@@ -32,6 +32,8 @@ public:
         close();
     }
 
+    bool opened() const { return file.is_open() && !file.bad(); }
+    
     explicit Serializer(std::string const &filename)
         : file(filename, std::ios::binary | std::ios ::out)
     {

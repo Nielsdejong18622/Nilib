@@ -29,8 +29,9 @@ void Nilib::Optimizer::save(std::string const &filename) const
 void Nilib::Optimizer::load(std::string const &filename) const
 {
     Deserializer loader(filename);
-    for (Weight *w : weights)
-        loader.readMatrix(w->value);
+    if (loader.opened())
+        for (Weight *w : weights)
+            loader.readMatrix(w->value);
 }
 
 bool Nilib::Optimizer::checkgradients() const

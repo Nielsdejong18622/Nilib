@@ -82,17 +82,37 @@ namespace Nilib
 
         inline value_type avg() const
         {
-            // More numerically stable.
             value_type mean = 0.0;
             size_t count = 0;
-            for (count = 0; count < d_data.size(); ++count)
+            for (size_t i = 0; i < d_data.size(); ++i)
             {
                 ++count;
-                mean += (d_data(count - 1) - mean) / count;
+                mean += (d_data(i) - mean) / count;
             }
             return mean;
         }
 
+        inline value_type stddev() const
+        {
+            if (d_data.size() < 2)
+                return 0.0; // Standard deviation is undefined for size < 2
+
+            value_type mean = 0.0;
+            value_type M2 = 0.0;
+            size_t count = 0;
+
+            for (size_t i = 0; i < d_data.size(); ++i)
+            {
+                ++count;
+                value_type x = d_data(i);
+                value_type delta = x - mean;
+                mean += delta / count;
+                value_type delta2 = x - mean;
+                M2 += delta * delta2;
+            }
+
+            return std::sqrt(M2 / (count - 1)); // Sample standard deviation
+        }
         template <typename Callable>
         void apply(Callable &&fun) { d_data.apply(std::forward<Callable>(fun)); }
 

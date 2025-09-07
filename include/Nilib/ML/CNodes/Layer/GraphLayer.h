@@ -38,7 +38,7 @@ namespace Nilib
 
         void derive(Nilib::Matrixf const &seed)
         {
-            // std::cerr << "Deriving GCN!" << std::endl;
+            // std::cerr << "Deriving GCN!" << seed.avg() << std::endl;
             CORE_ASSERT(A);
             CORE_ASSERT(X)
             CORE_ASSERT(seed.rows() == A->value.rows());

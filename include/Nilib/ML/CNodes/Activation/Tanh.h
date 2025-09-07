@@ -13,6 +13,21 @@ namespace Nilib
         static float derivative(float const t);
     };
 
+    template <float multiplier = 1.0f>
+    struct Tanh_fun_scaled
+    {
+        static float evaluate(float const t)
+        {
+            return multiplier * std::tanh(t / multiplier);
+        }
+
+        static float derivative(float const t)
+        {
+            float tmp = std::cosh(t / multiplier);
+            return 1.0f / (tmp * tmp);
+        }
+    };
+
     using Tanh = Activation<Tanh_fun>;
 }
 #endif

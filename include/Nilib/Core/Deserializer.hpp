@@ -37,6 +37,8 @@ public:
         }
     }
 
+    bool opened() const { return file.is_open() && !file.bad(); }
+
     ~Deserializer()
     {
         close();

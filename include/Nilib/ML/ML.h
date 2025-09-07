@@ -21,8 +21,9 @@
 #include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
 
 
-#include "Nilib/ML/Optimizers/Adam.hpp"
 #include "Nilib/ML/Optimizers/Optimizer.hpp"
+#include "Nilib/ML/Optimizers/Adam.hpp"
+#include "Nilib/ML/Optimizers/Momentum.hpp"
 #include "Nilib/ML/Optimizers/Random.hpp"
 
 #endif

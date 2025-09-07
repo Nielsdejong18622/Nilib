@@ -29,6 +29,8 @@ namespace Nilib
             CORE_ASSERT(seed.rows() == input->value.rows());
             CORE_ASSERT(seed.cols() == input->value.cols());
 
+            CORE_ASSERT(std::isfinite(seed.sum()));
+
             input->value.apply(ActFun::derivative);
             input->derive(Nilib::hadamar(seed, input->value));
         }

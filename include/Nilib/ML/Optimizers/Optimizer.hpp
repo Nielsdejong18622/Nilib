@@ -15,6 +15,8 @@ namespace Nilib
         using Weightptrs = std::vector<Weight *>;
 
         Optimizer(Weightptrs const &weights);
+        
+        static Optimizer fromDisk(std::string const &weight_file);
 
         virtual void updateGrad(float const multiplier);
         void zeroGrad() const;
