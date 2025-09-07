@@ -277,7 +277,7 @@ namespace Nilib
     }
 
     template <typename value_type, typename type>
-    Matrix<value_type, type> rownormalize(Matrix<value_type, type> &A)
+    void rownormalize(Matrix<value_type, type> &A)
     {
         for (size_t rdx = 0; rdx < A.rows(); ++rdx)
         {
@@ -293,7 +293,23 @@ namespace Nilib
                 A(rdx, cdx) /= rowsum;
             }
         }
-        return A;
+    }
+
+    template <typename value_type, typename type>
+    void colnormalize(Matrix<value_type, type> &A)
+    {
+        for (size_t cdx = 0; cdx < A.cols(); ++cdx)
+        {
+            value_type colsum = 0.0f;
+            for (size_t rdx = 0; rdx < A.rows(); ++rdx)
+            {
+                colsum += A(rdx, cdx);
+            }
+            if (colsum == 0.0f)
+                continue;
+            for (size_t rdx = 0; rdx < A.rows(); ++rdx)
+                A(rdx, cdx) /= colsum;
+        }
     }
 
 }

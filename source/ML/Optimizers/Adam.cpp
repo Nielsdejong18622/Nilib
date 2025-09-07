@@ -26,6 +26,9 @@ void Nilib::Adam::updateGrad(float const multi)
     {
         Nilib::Matrixf &grad = weights[w_idx]->partial;
 
+        // Apply L2 weight decay directly. 
+        grad += d_weight_decay * weights[w_idx]->value;
+
         // Update momentum (1st moment)
         d_momentum[w_idx] = beta * d_momentum[w_idx] + (1.0f - beta) * grad;
 
