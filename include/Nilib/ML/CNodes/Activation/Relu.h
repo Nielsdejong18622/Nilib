@@ -23,7 +23,7 @@ namespace Nilib
         static float derivative(float const t) { return (t < 0) ? 1 : Leaky; }
     };
 
-    using NegRelu = Activation<NegLeakyRelu_fun<0.0001f>>;
+    using NegRelu = Activation<NegLeakyRelu_fun<0.0f>>;
 
 }
 #endif
