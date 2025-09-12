@@ -14,6 +14,7 @@ namespace Nilib
     };
 
     using Relu = Activation<LeakyRelu_fun<0.0f>>;
+    using LeakyRelu = Activation<LeakyRelu_fun<0.001f>>;
 
     template <float Leaky = 0.0f>
     struct NegLeakyRelu_fun

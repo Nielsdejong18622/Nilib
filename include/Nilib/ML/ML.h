@@ -14,6 +14,7 @@
 #include "Nilib/ML/CNodes/Activation/Sigmoid.h"
 #include "Nilib/ML/CNodes/Activation/RBF.h"
 #include "Nilib/ML/CNodes/Activation/Relu.h"
+#include "Nilib/ML/CNodes/Activation/Selu.h"
 #include "Nilib/ML/CNodes/Activation/Tanh.h"
 
 #include "Nilib/ML/Models/Model.h"

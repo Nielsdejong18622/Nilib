@@ -5,6 +5,9 @@ Nilib::MultilayerPerceptron::MultilayerPerceptron(CNode *x, size_t const x_col, 
       W(x_col, neurons),
       b(1, neurons)
 {
+    CORE_ASSERT(W.value.rows() == x_col);
+    CORE_ASSERT(W.value.cols() == neurons);
+    LOG_DEBUG("MLP ctor!", W.value, b.value);
 }
 
 void Nilib::MultilayerPerceptron::evaluate()
@@ -13,7 +16,7 @@ void Nilib::MultilayerPerceptron::evaluate()
     x->evaluate();
     W.evaluate();
     b.evaluate();
-    ASSERT(x->value.cols() == W.value.rows(), "xW undefined", x->value.cols(), "!=", W.value.rows());
+    ASSERT(x->value.cols() == W.value.rows(), "xW undefined", x->value, "!=", W.value);
     ASSERT(x->value.rows() == b.value.rows(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", x->value.cols(), "!=", b.value.rows());
     ASSERT(W.value.cols() == b.value.cols(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", W.value.cols(), "!=", b.value.cols());
     this->value = x->value * W.value + b.value;

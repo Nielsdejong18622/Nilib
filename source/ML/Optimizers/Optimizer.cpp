@@ -31,7 +31,14 @@ void Nilib::Optimizer::load(std::string const &filename) const
     Deserializer loader(filename);
     if (loader.opened())
         for (Weight *w : weights)
+        {
+            size_t row = w->value.rows(), col = w->value.cols();
             loader.readMatrix(w->value);
+            if (row != w->value.rows() || col == w->value.cols())
+            {
+                throw std::runtime_error("Weight matrix from disk incompatible with existing weight matrix!");
+            }
+        }
 }
 
 bool Nilib::Optimizer::checkgradients() const
