@@ -7,7 +7,7 @@ namespace Nilib
 {
     struct Perceptron : public MultilayerPerceptron
     {
-        Perceptron(CNode *x, size_t x_col);
+        Perceptron(CNode &x, size_t const x_col);
     };
 } // namespace Nilib
 

@@ -16,9 +16,9 @@ int main(int argc, char **argv)
     bool verbose = false;
     Strategy strat = Strategy::DEFAULT;
 
-    parser.argument_interal(inputfile, 'i', "inputfile", "Inputfile for the program.");
-    parser.argument_interal<int>(integer, 'd', "dim", "Dimension.");
-    parser.option(verbose, 'v', "verbose", "Enables verbose printing of messages.");
+    parser.argument(inputfile, "inputfile", "Inputfile for the program.");
+    parser.argument<int>(integer, "dim", "Dimension.");
+    parser.option(verbose, "verbose", "Enables verbose printing of messages.", 'v');
 
     // TODO: integrate such that Strategy can also be parsed instead of explcitily converting from string to strategy.
     parser.argument<Strategy>(strat, "strategy", Strategy::description());

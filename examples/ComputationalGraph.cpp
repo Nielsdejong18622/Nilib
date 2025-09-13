@@ -1,5 +1,4 @@
-#include "Nilib/ML/ML.h"
-#include "Nilib/ML/MLData.h"
+#include "Nilib/ML/ML.hpp"
 
 int main()
 {
@@ -27,7 +26,7 @@ int main()
     //     auto [x, y] = std::tie(data.X[sample], data.Y[sample]);
     //     auto pred = model.predict(x);
     //     auto pred_s = model_start.predict(x);
-    //     LOG_INFO("Model2 Input:", x(0, 0), x(0, 1), "Pred:", pred(0, 0), "Pred_start", pred_s(0, 0), "target", y(0, 0));
+    //     LOG_INFO("Model2 GNode:", x(0, 0), x(0, 1), "Pred:", pred(0, 0), "Pred_start", pred_s(0, 0), "target", y(0, 0));
     // }
 
     return 0;

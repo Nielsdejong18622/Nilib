@@ -14,6 +14,7 @@ namespace Nilib
         /// @param learning_rate Learning rate.
         /// @param weight_decay Squared norm.
         Adam(Weightptrs const &weights, float learning_rate = 0.001f, float weight_decay = 0.0f);
+        Adam(Module *weights, float learning_rate = 0.001f, float weight_decay = 0.0f);
         void updateGrad(float const multi = 1.0f) override;
 
     protected:

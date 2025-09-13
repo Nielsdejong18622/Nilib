@@ -1,23 +1,25 @@
 #ifndef _ML_MLP_H
 #define _ML_MLP_H
 
-#include "Nilib/Math/LinALg.hpp"
-
-#include "Nilib/ML/CNodes/Weight.h"
+#include "Nilib/ML/Models/Model.hpp"
 
 namespace Nilib
 {
     /// @brief Takes a row vector x [1 * col] and multiplies by W [col * neurons], adds b [1, neurons].
-    struct MultilayerPerceptron : public Input
+    class MultilayerPerceptron : public Module
     {
-        CNode *x = nullptr;
+    public:
+        MultilayerPerceptron(CNode &x, size_t const x_col, size_t const neurons);
+
+        void evaluate() override;
+        void derive(Nilib::Matrixf const &seed) override;
+
+        void learnables(Weights &add) override;
+
+    protected:
+        CNode &x;
         Weight W;
         Weight b;
-
-        MultilayerPerceptron(CNode *x, size_t x_col, size_t neurons);
-        void evaluate() override;
-
-        void derive(Nilib::Matrixf const &seed) override;
     };
 
 } // namespace Nilib

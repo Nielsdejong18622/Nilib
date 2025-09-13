@@ -1,25 +1,20 @@
-#include "Nilib/ML/CNodes/Input.h"
+#include "Nilib/ML/CNodes/Input.hpp"
 
-void Nilib::Input::set(Nilib::Matrixf const &value)
+using namespace Nilib;
+
+Input::Input()
+    : GNode(0, 0)
+{
+}
+
+Input::Input(Nilib::Matrixf const &value)
+    : GNode(value)
+{
+}
+
+void Input::set(Nilib::Matrixf const &value)
 {
     this->value = value;
-    // if (this->partial.rows() != value.rows() || this->partial.cols() != value.cols())
-    this->partial = Nilib::Matrixf::zeros(value.rows(), value.cols());
-}
-
-Nilib::Input::Input(Nilib::Matrixf const &value)
-{
-    set(value);
-}
-
-void Nilib::Input::evaluate()
-{
-}
-
-void Nilib::Input::derive(Nilib::Matrixf const &seed)
-{
-    CORE_ASSERT(partial.rows() == seed.rows());
-    CORE_ASSERT(partial.cols() == seed.cols());
-    // if (partial.rows() == seed.rows() && partial.cols() == seed.cols())
-    partial += seed;
+    this->partial = value;
+    this->partial.zero();
 }

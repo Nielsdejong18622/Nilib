@@ -1,4 +1,4 @@
-#include "Nilib/ML/CNodes/Activation/Sigmoid.h"
+#include "Nilib/ML/CNodes/Activation/Sigmoid.hpp"
 
 using namespace Nilib;
 

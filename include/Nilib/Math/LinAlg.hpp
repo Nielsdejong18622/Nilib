@@ -127,13 +127,13 @@ namespace Nilib
 
     // Hadamar (element wise)
     // Specialization.
-    template <typename data>
-    Matrix<data> hadamar(Matrix<data> const &A, Matrix<data> const &B)
+    template <typename value_type, typename storage>
+    Matrix<value_type, storage> hadamar(Matrix<value_type, storage> const &A, Matrix<value_type, storage> const &B)
     {
         ASSERT(A.rows() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
         ASSERT(A.cols() == B.cols(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
 
-        Matrix<data> res(A.rows(), B.cols());
+        Matrix<value_type, storage> res(A.rows(), B.cols());
 
         for (size_t ridx = 0; ridx < A.rows(); ++ridx)
             for (size_t cidx = 0; cidx < A.cols(); ++cidx)

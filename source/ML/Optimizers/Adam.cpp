@@ -1,9 +1,13 @@
 #include "Nilib/ML/Optimizers/Adam.hpp"
-#include "Nilib/ML/CNodes/Weight.h"
 
 #include "Nilib/Math/LinALg.hpp"
 
 using namespace Nilib;
+
+Nilib::Adam::Adam(Module *module, float learning_rate, float weight_decay)
+    : Optimizer(module), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
+{
+}
 
 Nilib::Adam::Adam(Weightptrs const &weights, float learning_rate, float weight_decay)
     : Optimizer(weights), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)

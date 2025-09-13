@@ -9,7 +9,7 @@
 
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Math/Matrix.hpp"
-#include "Nilib/ML/CNodes/CNode.h"
+#include "Nilib/ML/CNodes/CNode.hpp"
 
 class Serializer
 {

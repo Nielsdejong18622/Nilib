@@ -1,4 +1,4 @@
-#include "Nilib/ML/CNodes/Activation/RBF.h"
+#include "Nilib/ML/CNodes/Activation/RBF.hpp"
 
 using namespace Nilib;
 

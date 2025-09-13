@@ -1,4 +1,4 @@
-#include "Nilib/ML/CNodes/CNode.h"
+#include "Nilib/ML/CNodes/CNode.hpp"
 
 namespace Nilib {
 

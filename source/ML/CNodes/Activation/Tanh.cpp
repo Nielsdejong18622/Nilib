@@ -1,4 +1,4 @@
-#include "Nilib/ML/CNodes/Activation/Tanh.h"
+#include "Nilib/ML/CNodes/Activation/Tanh.hpp"
 
 using namespace Nilib;
 

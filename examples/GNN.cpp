@@ -1,4 +1,4 @@
-#include "Nilib/ML/ML.h"
+#include "Nilib/ML/ML.hpp"
 
 #include "Nilib/Core/Signal.hpp"
 #include "Nilib/Logger/CSV.hpp"
@@ -10,6 +10,8 @@ int main()
     using namespace Nilib;
 
     static size_t f2 = 8; // Hidden dimension size.
+
+
 
     // struct GraphObs
     // {
@@ -102,11 +104,11 @@ int main()
     //         training.emplace_back(2 + RNG::index(13));
 
     //     // Create the computational graph.
-    //     Input A, X, Y;
+    //     GNode A, X, Y;
 
     //     Weight W(training.front().fX, f2);
 
-    //     // GCN H1(&A, &X, &W);
+    //     // GraphConv H1(&A, &X, &W);
     //     // Relu H2(&H1);
 
     //     Weight Wt(training.front().fX, 1);
@@ -129,7 +131,7 @@ int main()
     //         {
     //             Matrixf seed = Matrixf::ones(obs.n, obs.n);
 
-    //             // Input the Matrices in the Compu graph.
+    //             // GNode the Matrices in the Compu graph.
     //             A.set(obs.Adj), X.set(obs.Xnodes), Y.set(obs.Ynodes);
 
     //             L.evaluate();
@@ -175,15 +177,15 @@ int main()
     //         training.emplace_back(2 + Nilib::RNG::index(5));
 
     //     // Create the computational graph.
-    //     Input A, X, Y;
+    //     GNode A, X, Y;
 
     //     Weight W(training.front().fX, f2);
     //     Weight W2(f2, training.front().fY);
 
-    //     GCN H1(&A, &X, &W);
+    //     GraphConv H1(&A, &X, &W);
     //     Relu H2(&H1, 0.001f);
 
-    //     GCN H3(&A, &H2, &W2);
+    //     GraphConv H3(&A, &H2, &W2);
     //     Relu H4(&H3, 0.001f);
 
     //     MSELoss L(&H4, &Y);
@@ -200,7 +202,7 @@ int main()
     //         {
     //             Matrixf seed = Matrixf::ones(obs.n, training.front().fX);
 
-    //             // Input the Matrices in the Compu graph.
+    //             // GNode the Matrices in the Compu graph.
     //             A.set(obs.Adj), X.set(obs.Xnodes), Y.set(obs.Ynodes);
 
     //             L.evaluate();
