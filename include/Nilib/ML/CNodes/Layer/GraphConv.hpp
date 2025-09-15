@@ -2,12 +2,12 @@
 #ifndef _CNODE_GRAPHCONV_HPP
 #define _CNODE_GRAPHCONV_HPP
 
-#include "Nilib/ML/CNodes/GNode.hpp"
+#include "Nilib/ML/Models/Model.hpp"
 
 namespace Nilib
 {
     // GraphConv.
-    class GraphConv : public CNode
+    class GraphConv : public Module
     {
     public:
         GraphConv(CNode &A, CNode &X, size_t colX, size_t outdim);
@@ -15,6 +15,7 @@ namespace Nilib
         void evaluate() override;
         void derive(Nilib::Matrixf const &seed) override;
 
+        void learnables(Module::Weights &add) override;
     private:
         CNode &A;
         CNode &X;

@@ -15,8 +15,7 @@ void GraphPoolAverage::evaluate()
     CORE_ASSERT(X.value.rows() > 0);
     CORE_ASSERT(X.value.cols() > 0);
     d_cached_rows = X.value.rows();
-
-    this->value = Nilib::colMeans(this->value);
+    this->value = Nilib::colMeans(X.value);
 }
 
 void GraphPoolAverage::derive(Nilib::Matrixf const &seed)

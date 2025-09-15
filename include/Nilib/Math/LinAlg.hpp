@@ -315,6 +315,7 @@ namespace Nilib
     template <typename value_type, typename type>
     Matrix<value_type, type> colMeans(Matrix<value_type, type> const &A)
     {
+        CORE_ASSERT(A.rows() > 0);
         Matrix<value_type, type> res = Matrix<value_type, type>::zeros(1, A.cols());
 
         for (size_t col_idx = 0; col_idx < A.cols(); col_idx++)

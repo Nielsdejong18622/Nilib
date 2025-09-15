@@ -26,9 +26,8 @@ namespace Nilib
         // Add a value to the stack.
         void push_back(Element const &value)
         {
-            head ++;
-            head %= N;
             data[head] = value;
+            head = (head + 1) % N;
         }
         // Remove a value to the stack.
         // On the next push_back this value is gonna be erased!
@@ -57,7 +56,7 @@ namespace Nilib
         auto crend() const noexcept { return data.crend(); }
 
         // Optional: size, operator[], etc.
-        constexpr size_t size() const noexcept { return N; }
+        constexpr size_t capacity() const noexcept { return N; }
 
         Element &operator[](size_t const i) noexcept { return data[i]; }
         Element const &operator[](size_t const i) const noexcept { return data[i]; }
@@ -99,8 +98,6 @@ namespace Nilib
     {
         std::vector<Type> d_data;
     };
-
-
 
     // Graph.
 }

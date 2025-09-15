@@ -14,6 +14,8 @@ void Cbind::evaluate()
     lhs.evaluate();
     rhs.evaluate();
     CORE_ASSERT(lhs.value.cols() == rhs.value.cols());
+    CORE_ASSERT(lhs.value.rows() > 0);
+    CORE_ASSERT(rhs.value.rows() > 0);
     this->value = Nilib::cbind(lhs.value, rhs.value);
 }
 
@@ -50,6 +52,8 @@ void Rbind::evaluate()
 {
     lhs.evaluate();
     rhs.evaluate();
+    CORE_ASSERT(lhs.value.cols() > 0);
+    CORE_ASSERT(rhs.value.cols() > 0);
     CORE_ASSERT(lhs.value.rows() == rhs.value.rows());
     this->value = Nilib::rbind(lhs.value, rhs.value);
 }
@@ -58,7 +62,6 @@ void Rbind::derive(Nilib::Matrixf const &seed)
 {
     Matrixf seedlhs(lhs.value.rows(), lhs.value.cols());
     Matrixf seedrhs(rhs.value.rows(), rhs.value.cols());
-
     for (size_t i = 0; i < lhs.value.rows(); i++)
     {
         for (size_t j = 0; j < lhs.value.cols() + rhs.value.cols(); j++)

@@ -22,6 +22,11 @@ void GraphConv::evaluate()
     this->value = A.value * X.value * W.value;
 }
 
+void GraphConv::learnables(Module::Weights &add)
+{
+    add.push_back(&W);
+}
+
 void GraphConv::derive(Nilib::Matrixf const &seed)
 {
     CORE_ASSERT(seed.rows() == A.value.rows());

@@ -20,7 +20,7 @@ void Nilib::MultilayerPerceptron::evaluate()
     x.evaluate();
     W.evaluate();
     b.evaluate();
-    ASSERT(x.value.cols() == W.value.rows(), "xW undefined", x.value, "!=", W.value);
+    ASSERT(x.value.cols() == W.value.rows(), "xW undefined", x.value, "!=", W.value, "Weight:", &W);
     ASSERT(x.value.rows() == b.value.rows(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", x.value, "!=", b.value);
     ASSERT(W.value.cols() == b.value.cols(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", W.value, "!=", b.value);
     this->value = x.value * W.value + b.value;

@@ -29,10 +29,10 @@ namespace Nilib
         void save(std::string const &filename) const;
         void load(std::string const &filename) const;
 
+        Weightptrs weights;
     protected:
         bool checkgradients() const;
 
-        Weightptrs weights;
     };
 
 } // namespace Nilib
