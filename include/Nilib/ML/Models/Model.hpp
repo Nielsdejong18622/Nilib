@@ -8,7 +8,35 @@ namespace Nilib
 
     struct Module : public CNode
     {
-        typedef std::vector<GNode *> Weights;
+        // typedef std::vector<GNode *> Weights;
+
+        class Weights
+        {
+        public:
+            using iterator = std::vector<GNode *>::iterator;
+            using const_iterator = std::vector<GNode *>::const_iterator;
+
+            // Range-based for loop support
+            iterator begin() { return weights.begin(); }
+            iterator end() { return weights.end(); }
+            const_iterator begin() const { return weights.begin(); }
+            const_iterator end() const { return weights.end(); }
+            const_iterator cbegin() const { return weights.cbegin(); }
+            const_iterator cend() const { return weights.cend(); }
+
+            size_t size() const { return weights.size(); }
+
+            void push_back(GNode *add) { weights.push_back(add); }
+            GNode *operator[](size_t idx) { return weights[idx]; }
+            GNode *const operator[](size_t idx) const { return weights[idx]; }
+
+            Weights(Module &module) { module.learnables(*this); }
+            Weights() = default;
+
+        private:
+            std::vector<GNode *> weights;
+        };
+
         virtual void learnables(Weights &add) = 0;
     };
 
