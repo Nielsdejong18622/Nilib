@@ -53,6 +53,7 @@ namespace Nilib
             if (contains(d_commandline, hstr) | contains(d_commandline, helpstr))
             {
                 help();
+                std::exit(EXIT_SUCCESS);
                 return;
             }
 
@@ -240,8 +241,8 @@ namespace Nilib
 
         void fail()
         {
-            std::exit(EXIT_FAILURE);
             throw std::runtime_error{std::string("Failure while parsing") + programName()};
+            std::exit(EXIT_FAILURE);
         }
 
         template <typename Type>

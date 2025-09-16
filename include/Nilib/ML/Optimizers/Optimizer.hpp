@@ -18,7 +18,7 @@ namespace Nilib
         Optimizer(Module *model);
         Optimizer(Weightptrs const &weights);
 
-        static Optimizer fromDisk(std::string const &weight_file);
+        static Optimizer fromDisk(std::filesystem::path const &weight_file);
 
         virtual void updateGrad(float const multiplier = 1.0f);
         void zeroGrad() const;
@@ -26,13 +26,13 @@ namespace Nilib
         void initWeights() const;
         void printWeights() const;
 
-        void save(std::string const &filename) const;
-        void load(std::string const &filename) const;
+        void save(std::filesystem::path const &filename) const;
+        void load(std::filesystem::path const &filename) const;
 
         Weightptrs weights;
+
     protected:
         bool checkgradients() const;
-
     };
 
 } // namespace Nilib

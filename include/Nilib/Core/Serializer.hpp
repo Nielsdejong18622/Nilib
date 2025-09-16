@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <filesystem>
 #include <type_traits>
 #include <vector>
 
@@ -33,8 +33,8 @@ public:
     }
 
     bool opened() const { return file.is_open() && !file.bad(); }
-    
-    explicit Serializer(std::string const &filename)
+
+    explicit Serializer(std::filesystem::path const &filename)
         : file(filename, std::ios::binary | std::ios ::out)
     {
         if (!file)
@@ -58,7 +58,7 @@ public:
 
     // Write custom object to a binary stream.
     template <typename T>
-    bool writeObject(T &data)
+    bool writeObject(T const &data)
     {
         if constexpr (std::is_trivially_copyable<T>::value)
         {
@@ -140,39 +140,6 @@ public:
         }
         return !file;
     }
-    // Static methods (for one shot encoding)
-    /*
-    // Write raw data to a binary file
-    template <typename T>
-    static bool write(T const &data, std::string const &filename) {
-        static_assert(std::is_trivially_copyable<T>::value, "Data type must be trivially copyable!");
-
-        std::ofstream file(filename, std::ios::binary | std::ios::out);
-        if (!file) {
-            std::cerr << "Error: Could not open file for writing." << std::endl;
-            return false;
-        }
-
-        file.write(reinterpret_cast<char const *>(&data), sizeof(T));
-        file.close();
-        return true;
-    }
-
-    // Specialization for std::string
-    static bool write(std::string const &data, std::string const &filename) {
-        std::ofstream file(filename, std::ios::binary | std::ios::out);
-        if (!file) {
-            std::cerr << "Error: Could not open file for writing." << std::endl;
-            return false;
-        }
-
-        size_t length = data.size();
-        file.write(reinterpret_cast<char const *>(&length), sizeof(length));
-        file.write(data.c_str(), length);
-        file.close();
-        return true;
-    }
-    */
 };
 
 #endif
