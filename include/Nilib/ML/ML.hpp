@@ -10,6 +10,7 @@
 #include "Nilib/ML/CNodes/Loss/MSE.hpp"
 
 #include "Nilib/ML/CNodes/Layer/GraphConv.hpp"
+#include "Nilib/ML/CNodes/Layer/GraphConvHighWay.hpp"
 #include "Nilib/ML/CNodes/Layer/GraphOuterDecoder.hpp"
 #include "Nilib/ML/CNodes/Layer/GraphPool.hpp"
 

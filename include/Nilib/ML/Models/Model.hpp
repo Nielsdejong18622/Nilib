@@ -3,6 +3,8 @@
 
 #include "Nilib/ML/CNodes/GNode.hpp"
 
+#include "Nilib/Math/Stats.hpp"
+
 namespace Nilib
 {
 
@@ -25,6 +27,22 @@ namespace Nilib
             const_iterator cend() const { return weights.cend(); }
 
             size_t size() const { return weights.size(); }
+
+            RunningStats weight_values() const
+            {
+                RunningStats weight_val;
+                for (auto &&w : weights)
+                {
+                    for (size_t i = 0; i < w->value.size(); ++i)
+                    {
+                        weight_val.push(w->value(i));
+                    }
+                }
+                return weight_val;
+            }
+
+            [[nodiscard]] bool empty() const { return weights.empty(); }
+            void empty() { weights.clear(); }
 
             void push_back(GNode *add) { weights.push_back(add); }
             GNode *operator[](size_t idx) { return weights[idx]; }

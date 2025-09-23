@@ -1,25 +1,28 @@
 
-#ifndef _CNODE_GRAPHCONV_HPP
-#define _CNODE_GRAPHCONV_HPP
+#ifndef _CNODE_GRAPHCONVHIGH_HPP
+#define _CNODE_GRAPHCONVHIGH_HPP
 
 #include "Nilib/ML/Models/Model.hpp"
 
 namespace Nilib
 {
     // GraphConv.
-    class GraphConv : public Module
+    class GraphConvHigh : public Module
     {
     public:
-        GraphConv(CNode &A, CNode &X, size_t colX, size_t outdim);
+        GraphConvHigh(CNode &A, CNode &X, size_t colX, size_t outdim);
 
         void evaluate() override;
         void derive(Nilib::Matrixf const &seed) override;
 
         void learnables(Module::Weights &add) override;
-    public:
+
+    private:
         CNode &A;
         CNode &X;
-        Weight W;
+        Weight W1;
+        Weight W2;
+        float alpha = 0.5;
     };
 
 }
