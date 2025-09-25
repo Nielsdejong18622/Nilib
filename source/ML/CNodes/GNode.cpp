@@ -8,10 +8,9 @@ Nilib::GNode::GNode(Nilib::Matrixf const &value)
 
 Nilib::GNode::GNode(size_t const rows, size_t const cols)
 {
-    this->value = Nilib::Matrixf::randn(rows, cols, 0.0f, 0.1f);
+    this->value = Nilib::Matrixf::randn(rows, cols, 0.0f, 1.0f);
     this->partial = Nilib::Matrixf::zeros(rows, cols);
 }
-
 
 void Nilib::GNode::evaluate()
 {

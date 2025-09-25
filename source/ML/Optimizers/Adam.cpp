@@ -77,14 +77,3 @@ void Nilib::Adam::init()
         d_velocity.push_back(Nilib::Matrixf::zeros(weight->value.rows(), weight->value.cols()));
     }
 }
-//         void updateGradSGD(float const multi, float const learning_rate)
-//         {
-
-//             // Store the momentum in the grad_values values and the velocity in the partials.
-//             float const alpha = multi * learning_rate;
-//             for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
-//             {
-//                 // Step.
-//                 weights[w_idx].value += alpha * weights[w_idx].partial;
-//             }
-//         }
