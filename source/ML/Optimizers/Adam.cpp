@@ -16,6 +16,7 @@ Nilib::Adam::Adam(Weightptrs const &weights, float learning_rate, float weight_d
 
 void Nilib::Adam::updateGrad(float const multi)
 {
+    // CORE_ASSERT(!(d_lr == 0.0 && d_weight_decay > 0))
     float const beta = 0.9f;    // Momentum
     float const beta2 = 0.999f; // Velocity
     float const epsilon = 1e-8f;
@@ -29,9 +30,6 @@ void Nilib::Adam::updateGrad(float const multi)
     for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
     {
         Nilib::Matrixf &grad = weights[w_idx]->partial;
-
-        // Apply L2 weight decay directly.
-        grad += d_weight_decay * weights[w_idx]->value;
 
         // Update momentum (1st moment)
         d_momentum[w_idx] = beta * d_momentum[w_idx] + (1.0f - beta) * grad;
@@ -51,6 +49,9 @@ void Nilib::Adam::updateGrad(float const multi)
             float denom = std::sqrt(v_hat(i)) + epsilon;
             weights[w_idx]->value(i) -= d_lr * multi * m_hat(i) / denom;
         }
+
+        // Apply L2 weight decay directly.
+        weights[w_idx]->value -= d_weight_decay * weights[w_idx]->value;
     }
 
     // size_t w_idx = 3;

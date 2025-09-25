@@ -127,6 +127,7 @@ namespace Nilib
         template <typename scalar = float>
         static inline scalar normal(scalar const mean, scalar const var)
         {
+            CORE_ASSERT(var > static_cast<scalar>(0.0))
             // Box-Muller
             scalar U = prob();
             scalar V = prob();
