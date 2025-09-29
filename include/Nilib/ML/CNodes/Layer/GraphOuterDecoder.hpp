@@ -1,7 +1,7 @@
 #ifndef _GRAPH_OUTERPRODUCTDECODER_HPP
 #define _GRAPH_OUTERPRODUCTDECODER_HPP
 
-#include "Nilib/ML/CNodes/CNode.hpp"
+#include "Nilib/ML/Models/Model.hpp"
 
 namespace Nilib
 {
@@ -12,6 +12,7 @@ namespace Nilib
 
         void evaluate() override;
         void derive(Nilib::Matrixf const &seed) override;
+
     private:
         CNode &X;
     };

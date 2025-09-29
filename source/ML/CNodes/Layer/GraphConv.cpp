@@ -31,7 +31,17 @@ void GraphConv::derive(Nilib::Matrixf const &seed)
 {
     CORE_ASSERT(seed.rows() == A.value.rows());
     CORE_ASSERT(seed.cols() == W.value.cols());
+
+    CORE_ASSERT(A.value.rows() == seed.rows());
+    CORE_ASSERT(A.value.cols() == X.value.rows());
+
     A.derive(seed * transpose(X.value * W.value));
+
+    CORE_ASSERT(X.value.rows() == A.value.cols());
+    CORE_ASSERT(X.value.cols() == W.value.rows());
     X.derive(transpose(A.value) * seed * transpose(W.value));
+
+    CORE_ASSERT(W.value.rows() == X.value.cols());
+    CORE_ASSERT(W.value.cols() == seed.cols());
     W.derive(transpose(A.value * X.value) * seed);
 }

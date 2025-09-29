@@ -151,6 +151,7 @@ namespace Nilib
                 res(nridx, ncidx) = (nridx < A.rows()) ? A(nridx, ncidx) : B(nridx - A.rows(), ncidx);
         return res;
     }
+    // Cbind [A, \n, B]
     template <typename type>
     Matrix<type, DynamicMatrixData<type>> cbind(Matrix<type, DynamicMatrixData<type>> const &A, Matrix<type, DynamicMatrixData<type>> const &B)
     {

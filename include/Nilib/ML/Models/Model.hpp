@@ -48,7 +48,10 @@ namespace Nilib
             GNode *operator[](size_t idx) { return weights[idx]; }
             GNode *const operator[](size_t idx) const { return weights[idx]; }
 
-            Weights(Module &module) { module.learnables(*this); }
+            Weights(Module &module)
+            {
+                module.learnables(*this);
+            }
             Weights() = default;
 
         private:

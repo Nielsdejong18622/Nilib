@@ -23,5 +23,9 @@ void GraphPoolAverage::derive(Nilib::Matrixf const &seed)
     CORE_ASSERT(d_cached_rows > 0.0);
     CORE_ASSERT(seed.rows() == 1);
     Matrixf iota = Matrixf::ones(d_cached_rows, 1); // Already transposed.
-    X.derive(iota * seed / d_cached_rows);
+    Matrixf tmp = iota * seed / d_cached_rows;
+
+    CORE_ASSERT(tmp.rows() == X.value.rows());
+    CORE_ASSERT(tmp.cols() == X.value.cols());
+    X.derive(tmp);
 }

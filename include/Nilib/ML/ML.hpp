@@ -12,9 +12,11 @@
 #include "Nilib/ML/CNodes/Layer/GraphConv.hpp"
 #include "Nilib/ML/CNodes/Layer/GraphConvHighWay.hpp"
 #include "Nilib/ML/CNodes/Layer/GraphOuterDecoder.hpp"
+#include "Nilib/ML/CNodes/Layer/GraphOuterDecoderWeight.hpp"
 #include "Nilib/ML/CNodes/Layer/GraphPool.hpp"
 
 #include "Nilib/ML/CNodes/Activation/Activation.hpp"
+#include "Nilib/ML/CNodes/Activation/Linear.hpp"
 #include "Nilib/ML/CNodes/Activation/Sigmoid.hpp"
 #include "Nilib/ML/CNodes/Activation/RBF.hpp"
 #include "Nilib/ML/CNodes/Activation/Relu.hpp"
