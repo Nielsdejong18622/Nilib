@@ -60,7 +60,7 @@ namespace Nilib
             for (size_t ridx = 0; ridx < d_data.rows(); ++ridx)
             {
                 std::stringstream ss;
-                ss << "(" << std::fixed << std::setprecision(3);
+                ss << "(" << std::fixed;
                 for (size_t cidx = 0; cidx < d_data.cols(); ++cidx)
                 {
                     if (d_data(ridx, cidx) == std::numeric_limits<value_type>::max())
