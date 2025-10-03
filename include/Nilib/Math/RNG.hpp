@@ -150,15 +150,45 @@ namespace Nilib
         template <typename scalar = float>
         static inline scalar lognormal(scalar const mean, scalar const var)
         {
-            // TODO: Check lognormal!
-            return std::log(normal(mean, var));
+            return std::exp(normal(mean, var));
         }
 
         template <typename scalar = float>
         static inline scalar weibull(scalar const scale, scalar const shape)
         {
-            // TODO: Check !
             return scale * std::pow(-1 * std::log(1 - RAN<stream>::prob()), 1.0f / shape);
+        }
+        
+        // Inputs shape and scale and uses rejection sampling. 
+        // Note rate = 1 / scale. 
+        template <typename scalar = float>
+        static inline scalar gamma(scalar shape, scalar scale = 1.0)
+        {
+            if (shape < 1.0f)
+            {
+                // Use boosting method
+                scalar u = prob(); // uniform(0,1)
+                return gamma<scalar>(shape + 1.0f, scale) * std::pow(u, 1.0f / shape);
+            }
+
+            scalar d = shape - 1.0f / 3.0f;
+            scalar c = 1.0f / std::sqrt(9.0f * d);
+
+            while (true)
+            {
+                scalar z = normal(); // standard normal
+                scalar u = prob();
+
+                scalar v = std::pow(1.0f + c * z, 3);
+                if (v <= 0.0f)
+                    continue;
+
+                scalar lhs = std::log(u);
+                scalar rhs = 0.5f * z * z + d - d * v + d * std::log(v);
+
+                if (lhs < rhs)
+                    return d * v * scale;
+            }
         }
 
         // Shuffles container between [low, high), inplace.
