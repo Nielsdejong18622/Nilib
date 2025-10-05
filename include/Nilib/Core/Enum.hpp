@@ -77,7 +77,7 @@ namespace Nilib
                 if (num == i)                                                        \
                     return EnumName(num);                                            \
             }                                                                        \
-            throw std::invalid_argument("Invalid enum value: " + i);                 \
+            throw std::invalid_argument("Invalid enum value: " + std::to_string(i)); \
         }                                                                            \
                                                                                      \
         bool operator==(EnumName const &other) const { return val == other.val; }    \
@@ -111,7 +111,7 @@ namespace Nilib
                     if (eq != std::string::npos) {                                   \
                         enumVal = std::stoi(token.substr(eq + 1));                   \
                     }                                                                \
-                    while(m.contains(static_cast<value>(enumVal))) ++enumVal;        \
+                    while(m.find(static_cast<value>(enumVal)) != m.end()) ++enumVal; \
                     m[static_cast<value>(enumVal)] = name;                           \
                     ++enumVal;                                                       \
                     if (comma == std::string::npos) break;                           \

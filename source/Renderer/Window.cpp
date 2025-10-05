@@ -68,6 +68,10 @@ Window::Window(size_t width,
     // Render parameters.
     glfwMakeContextCurrent(d_window);
 
+    // GL enables
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     Window::s_windowsactive++;
     LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
 }
