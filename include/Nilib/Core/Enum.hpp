@@ -1,6 +1,8 @@
 #ifndef _ENUM_HPP
 #define _ENUM_HPP
 
+#include <iostream>
+
 namespace Nilib
 {
 #define ENUM(EnumName, ...)                                                          \
@@ -64,15 +66,7 @@ namespace Nilib
         {                                                                            \
             std::string token;                                                       \
             os >> token;                                                             \
-            try                                                                      \
-            {                                                                        \
-                int val = std::stoi(token);                                          \
-                self = fromInt(val);                                                 \
-            }                                                                        \
-            catch (const std::invalid_argument &)                                    \
-            {                                                                        \
-                self = fromName(token);                                              \
-            }                                                                        \
+            self = fromString(token);                                                \
             return os;                                                               \
         }                                                                            \
                                                                                      \
@@ -83,8 +77,7 @@ namespace Nilib
                 if (num == i)                                                        \
                     return EnumName(num);                                            \
             }                                                                        \
-            throw std::invalid_argument("Invalid enum value: " + i)                 \
-            ;                                                                        \
+            throw std::invalid_argument("Invalid enum value: " + i);                 \
         }                                                                            \
                                                                                      \
         bool operator==(EnumName const &other) const { return val == other.val; }    \
