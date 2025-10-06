@@ -130,6 +130,8 @@ namespace Nilib
         static inline scalar normal(scalar const mean, scalar const var)
         {
             CORE_ASSERT(var > static_cast<scalar>(0.0))
+            return wy2gau(wyhash(&state)) * sqrt(var) + mean;
+
             // Box-Muller
             scalar U = prob();
             scalar V = prob();
@@ -158,9 +160,9 @@ namespace Nilib
         {
             return scale * std::pow(-1 * std::log(1 - RAN<stream>::prob()), 1.0f / shape);
         }
-        
-        // Inputs shape and scale and uses rejection sampling. 
-        // Note rate = 1 / scale. 
+
+        // Inputs shape and scale and uses rejection sampling.
+        // Note rate = 1 / scale.
         template <typename scalar = float>
         static inline scalar gamma(scalar shape, scalar scale = 1.0)
         {
