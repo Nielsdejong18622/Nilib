@@ -2,6 +2,7 @@
 
 Nilib::Optimizer::Optimizer(Module *modul)
 {
+    CORE_ASSERT(modul != nullptr);
     modul->learnables(weights);
     initWeights();
     zeroGrad();
