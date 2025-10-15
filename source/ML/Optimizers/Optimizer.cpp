@@ -30,11 +30,14 @@ void Nilib::Optimizer::zeroGrad() const
 /// @brief Generate weights using N(0.0f, 1 / n_l-1), where n_l-1 is the col dim of the previous layer.
 void Nilib::Optimizer::initWeights() const
 {
+    // CORE_ASSERT(weights.size() > 0);
+    // CORE_ASSERT(weights[0] != nullptr);
+    // float prev_layer = weights[0]->value.cols();
+    float prev_layer = 0.0f;
     for (Weight *w : weights)
     {
-        size_t prev_layer = weights[0]->value.cols();
         w->partial.setrandn(0.0f, 1.0f / (1.0f + prev_layer));
-        prev_layer = w->value.cols();
+        // prev_layer = w->value.cols();
     }
 }
 
