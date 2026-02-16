@@ -141,7 +141,7 @@ namespace Nilib
         void drawCross(Vec2f const &centre, float const size = 1.0f) const;
         void drawTriangleDown(Vec2f const &centre, float const size = 1.0f) const;
         void drawPole(Vec2f const &centre, float const size) const;
-        void color(Color const &color);
+        void color(Color const &color) const;
 
     private:
         void transform2D(float &x, float &y) const;

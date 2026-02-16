@@ -6,11 +6,11 @@ using namespace Nilib::VRP;
 
 bool Solution::feasible() const
 {
-    // Routes should be circular. 
+    // Routes should be circular.
 
-    // Every customer should be visited. 
+    // Every customer should be visited.
 
-    // Capacity should be respected. 
+    // Capacity should be respected.
     return true;
 }
 
@@ -54,7 +54,7 @@ void Solution::random()
 {
     adjacencyMatrix = Matrixf::rand(adjacencyMatrix.rows(), adjacencyMatrix.cols());
     adjacencyMatrix.apply([](float const t)
-              { return (t > 0.8); });
+                          { return (t > 0.8); });
 }
 
 Solution Solution::feasibleSolution(Instance const &inst)
@@ -246,19 +246,22 @@ Solution Solution::optimalSolution(Instance const &inst)
 
 void Solution::draw(Window const &window) const
 {
-    //ASSERT(false, "Reimplement Solution::draw, please.");
-    
     size_t const numnodes = instance.numlocations();
-    //window.drawColor(Colors::Black);
-    // Traverse through the solution matrix d_X.
+    bool const hide_depot_arcs = numnodes > 20;
+
+    //  Traverse through the solution matrix d_X.
     for (size_t from = 0; from < numnodes; ++from)
     {
         for (size_t to = 0; to < numnodes; ++to)
         {
-            if (adjacencyMatrix(from, to) < 0.5) continue;
-            Nilib::Vec2f from_pos( {instance.X(from, 0), instance.X(from,1)});
-            Nilib::Vec2f to_pos( {instance.X(to,0), instance.X(to,1)});
-            window.drawArc(from_pos, to_pos, 2.0f);
+            if (adjacencyMatrix(from, to) < 0.5)
+                continue;
+
+            window.color(Nilib::Color::RGBAf(0.87, 0.87, 0.87, 1.0));
+            Nilib::Vec2f from_pos({instance.X(from, 0), instance.X(from, 1)});
+            Nilib::Vec2f to_pos({instance.X(to, 0), instance.X(to, 1)});
+
+            window.drawArc(from_pos, to_pos, 2.0f + (1 - hide_depot_arcs) * 1.0);
         }
     }
 }

@@ -41,16 +41,16 @@ void Instance::draw(Window &window) const
     for (size_t idx = 0; idx < X.rows(); ++idx)
     {
         // LOG_DEBUG() << "Drawing node " << idx << ' ' << X(idx, 0) << ',' << X(idx, 1) << " D:" << X(idx, 2) << '\n';
-        //ASSERT(false, "Drawing of instance not yet implemented!");
+        // ASSERT(false, "Drawing of instance not yet implemented!");
         if (X(idx, 2) > 0.5)
         {
             window.color(Colors::Grey);
-            window.drawSquare({X(idx,0), X(idx, 1)}, 4);
+            window.drawSquare({X(idx, 0), X(idx, 1)}, 4);
         }
         else
         {
             window.color(Colors::Blue);
-            window.drawCircle({X(idx, 0), X(idx, 1)}, 4, 1.0f, 36);
+            window.drawFilledCircle({X(idx, 0), X(idx, 1)}, 4, 1.0f, 36);
         }
     }
 }

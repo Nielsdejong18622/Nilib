@@ -26,7 +26,7 @@ namespace Nilib
         struct ALNSparams
         {
             size_t max_iterations = 1000;
-            size_t max_seconds = 5;
+            float max_seconds = 0.5;
             float starting_temperature = 100.0f;
 
             // Allow the ALNS solver to traverse infeasible solution space.
@@ -41,7 +41,7 @@ namespace Nilib
         {
         public:
             using Operator = void (*)(Solution &);
-            using Callback = std::function<void(Solution&)>;
+            using Callback = std::function<void(Solution &)>;
 
             Solution bestfound;
             Solution incumbent;
@@ -58,6 +58,7 @@ namespace Nilib
                   d_callback_iteration(nullptr)
             {
                 ASSERT(operators.size() > 0, "ALNS::Solver requires atleast one operator!");
+                LOG_PROGRESS("ALNS::Solver Version 0.10 build [Win32]");
             }
 
             // Sets initial solution.
@@ -67,6 +68,7 @@ namespace Nilib
                 incumbent = initial;
             }
 
+            // Solve using ALNS.
             void solve()
             {
                 incumbent = bestfound;
@@ -76,26 +78,26 @@ namespace Nilib
                 float temperature = 1.0f;
 
                 // Print starting information.
-                LOG_PROGRESS("ALNS::Solver Version 0.10 build [Win32]");
                 LOG_PROGRESS("User supplied", d_operators.size(), "operators");
                 LOG_PROGRESS("Optimizing a solution of size ", sizeof(Solution), "bytes");
                 LOG_PROGRESS("Initial solution objective:", best_obj);
                 if (params.history_filename != "")
                 {
                     d_logger.reset();
+                    d_logger << "iteration,best_obj,current_obj,delta,current_feasible,next_obj,next_feasible,temperature,selected_operator_idx\n";
                     LOG_PROGRESS("Writing history to file", params.history_filename);
                 }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
                 float const coolingrate = std::pow(0.01f, 1.0f / params.max_iterations);
-                Nilib::Timer timer;
 
+                Nilib::Timer timer;
                 bool next_feasible = incumbent.feasible();
                 size_t iteration = 0;
                 for (; iteration < params.max_iterations; ++iteration)
                 {
 
-                    if (timer.getSeconds() > params.max_seconds - 1)
+                    if (timer.getMilliseconds() > static_cast<size_t>(params.max_seconds * 1000) - 1)
                         break;
 
                     // Call user defined callback if it exists!
@@ -115,17 +117,17 @@ namespace Nilib
                     // Objective of the new solution
                     float next_obj = incumbent.objective();
                     next_feasible = incumbent.feasible();
+                    float delta = (next_obj - current_obj) / current_obj;
 
                     // If we can not traverse infeasible solution space and the next solution is infeasible.
                     if (!params.allow_infeasible && next_feasible == false)
                     {
                         incumbent = previous;
                     }
-                    // If the next solution is okay to go. 
+                    // If the next solution is okay to go.
                     else
                     {
                         // Delta cost (new - current)
-                        float delta = (next_obj - current_obj) / current_obj;
 
                         bool accept = false;
                         bool accept_with_anneal = false;
@@ -164,9 +166,11 @@ namespace Nilib
 
                     if (params.history_filename != "")
                     {
-                        // TODO: CSV does not work when called multiple times as we have static. 
+                        // TODO: CSV does not work when called multiple times as we have static.
                         // Thus we require LOG_PROGRESS_TO(history_filename, ... ) with header inserted earlier.
-                        CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, current_feasible, next_obj, next_feasible, temperature, selected_operator_idx);
+                        // CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, delta, current_feasible, next_obj, next_feasible, temperature, selected_operator_idx);
+                        char const sep = ',';
+                        d_logger << iteration << sep << best_obj << sep << current_obj << sep << delta << sep << current_feasible << sep << next_obj << sep << next_feasible << sep << temperature << sep << selected_operator_idx << '\n';
                     }
 
                     // Cool down

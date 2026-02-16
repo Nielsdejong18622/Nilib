@@ -527,7 +527,7 @@ void Window::drawTriangleDown(Vec2f const &centre, float const size) const
 }
 
 // For immediate mode drawing.
-void Window::color(Color const &color)
+void Window::color(Color const &color) const
 {
     float r, g, b, a;
     color.RGBAf(&r, &g, &b, &a);
