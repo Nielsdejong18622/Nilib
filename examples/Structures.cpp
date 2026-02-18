@@ -23,7 +23,7 @@ int main()
     {
         CircularStack<int, 5> buffer(0);
 
-        LOG_DEBUG("Printing buffer", &buffer, "size:", buffer.size(), ':', buffer);
+        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
         CORE_ASSERT(buffer.head == 0);
         buffer.push_back(1);
         CORE_ASSERT(buffer.head == 1);
@@ -43,7 +43,7 @@ int main()
         auto node7 = buffer.pop_back();
         CORE_ASSERT(node7 == 7);
 
-        LOG_DEBUG("Printing buffer", &buffer, "size:", buffer.size(), ':', buffer);
+        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
     }
 
     {
@@ -56,7 +56,7 @@ int main()
         buffer.pop_back();
         buffer.push_back('e');
 
-        LOG_DEBUG("Printing buffer", &buffer, "size:", buffer.size(), ':', buffer);
+        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
     }
 
     // Stackvector.
