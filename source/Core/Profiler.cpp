@@ -3,12 +3,20 @@
 using namespace Nilib;
 
 Profiler::Profiler()
-    : d_function_name(""), d_file(""), d_line(0), d_start_timepoint(std::chrono::high_resolution_clock::now()), d_printondestruct(false)
+    : d_function_name(""),
+      d_file(""),
+      d_line(0),
+      d_start_timepoint(std::chrono::high_resolution_clock::now()),
+      d_printondestruct(false)
 {
 }
 
-Profiler::Profiler(const char *func_name, const char *file_name, int line_num)
-    : d_function_name(func_name), d_file(file_name), d_line(line_num), d_start_timepoint(std::chrono::high_resolution_clock::now()), d_printondestruct(true)
+Profiler::Profiler(std::string_view const func_name, std::string_view const file_name, size_t const line_num)
+    : d_function_name(func_name),
+      d_file(file_name),
+      d_line(line_num),
+      d_start_timepoint(std::chrono::high_resolution_clock::now()),
+      d_printondestruct(true)
 {
 }
 
@@ -33,16 +41,20 @@ void Profiler::reset()
     d_start_timepoint = std::chrono::high_resolution_clock::now();
 }
 
-size_t Profiler::getSeconds() const
+std::chrono::seconds Profiler::getSeconds() const
 {
     auto end_timepoint = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_timepoint - d_start_timepoint);
-    return static_cast<size_t>(duration.count());
+    return std::chrono::duration_cast<std::chrono::seconds>(end_timepoint - d_start_timepoint);
 }
 
-size_t Profiler::getMilliseconds() const
+std::chrono::milliseconds Profiler::getMilliseconds() const
 {
     auto end_timepoint = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_timepoint - d_start_timepoint);
-    return static_cast<size_t>(duration.count());
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end_timepoint - d_start_timepoint);
+}
+
+std::chrono::nanoseconds Profiler::getNanoseconds() const
+{
+    auto end_timepoint = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end_timepoint - d_start_timepoint);
 }

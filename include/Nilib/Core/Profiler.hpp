@@ -3,6 +3,7 @@
 
 #include "Nilib/Logger/Log.hpp"
 #include <chrono>
+#include <string_view>
 
 namespace Nilib
 {
@@ -11,21 +12,24 @@ namespace Nilib
     {
         void printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const;
 
-        const char *d_function_name;
-        const char *d_file;
-        int d_line;
+        std::string_view const d_function_name;
+        std::string_view const d_file;
+        size_t d_line;
         std::chrono::time_point<std::chrono::high_resolution_clock> d_start_timepoint;
         bool d_printondestruct;
 
     public:
         Profiler();
-        Profiler(const char *func_name, const char *file_name, int line_num);
+        Profiler(std::string_view const func_name, std::string_view const file_name, size_t const line_num);
+        Profiler(Profiler const &) = delete;
+        Profiler &operator=(Profiler const &) = delete;
         ~Profiler();
 
         void reset();
 
-        size_t getSeconds() const;
-        size_t getMilliseconds() const;
+        std::chrono::seconds getSeconds() const;
+        std::chrono::milliseconds getMilliseconds() const;
+        std::chrono::nanoseconds getNanoseconds() const;
     };
 
     using Timer = Profiler;

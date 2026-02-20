@@ -4,6 +4,7 @@
 #include "Nilib/Logger/Logger.hpp"
 #include <chrono>
 #include <fstream>
+#include <filesystem>
 
 #ifdef _WIN32
 #include "windows.h"
@@ -16,10 +17,10 @@ namespace Nilib
     class BasicFileLogger : public Logger
     {
         std::ofstream d_fstream;
-        std::string d_filename;
+        std::filesystem::path d_filename;
 
     public:
-        BasicFileLogger(std::string const &filename)
+        BasicFileLogger(std::filesystem::path const &filename)
             : Logger(d_fstream), d_fstream(filename, std::ios::out), d_filename(filename)
         {
         }

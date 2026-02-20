@@ -10,8 +10,8 @@
 namespace Nilib
 {
     namespace VRP
-    {     
-        // Pretty basic MATRIX VRP solution. 
+    {
+        // Pretty basic MATRIX VRP solution.
         struct Solution
         {
             // A solution object is meaningless without an instance.
@@ -44,9 +44,9 @@ namespace Nilib
 
             bool operator==(Solution const &other) const;
         };
-    
-        // Pretty basic list<Route> VRP solution. 
-        template<typename VRPinstance, typename Route>
+
+        // Pretty basic list<Route> VRP solution.
+        template <typename VRPinstance, typename Route>
         struct RouteSolution : public ALNS::Solution
         {
             VRPinstance instance;
@@ -55,8 +55,8 @@ namespace Nilib
 
             // static RouteSolution random(size_t const nnodes, size_t const veh);
             virtual void draw(Nilib::Window &window) const = 0;
-            
-            // Inherited from ALNS::Solution. 
+
+            // Inherited from ALNS::Solution.
             virtual float objective() const = 0;
             virtual bool feasible() const = 0;
         };

@@ -10,6 +10,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <filesystem>
 
 namespace Nilib
 {
@@ -23,16 +24,18 @@ namespace Nilib
             virtual bool feasible() const = 0;
         };
 
-        struct ALNSparams
+        struct Params
         {
-            size_t max_iterations = 1000;
-            float max_seconds = 0.5;
-            float starting_temperature = 100.0f;
+            // Termination conditions.
+            size_t max_iterations = 10'000;
+            size_t max_iterations_without_improvement = 2'000;
+            std::chrono::nanoseconds max_duration;
 
             // Allow the ALNS solver to traverse infeasible solution space.
             bool allow_infeasible = false;
 
-            std::string history_filename = "";
+            // If enabled we log to this file.
+            std::filesystem::path history_filename;
         };
 
         // Standard ALNS framework procedure.
@@ -45,10 +48,10 @@ namespace Nilib
 
             Solution bestfound;
             Solution incumbent;
-            ALNSparams params;
+            Params params;
 
             Solver() = delete;
-            Solver(ALNSparams const &params, std::vector<Operator> const &operators, Solution const &initial)
+            Solver(Params const &params, std::vector<Operator> const &operators, Solution const &initial)
                 : bestfound(initial),
                   incumbent(initial),
                   params(params),
@@ -85,7 +88,7 @@ namespace Nilib
                 {
                     d_logger.reset();
                     d_logger << "iteration,best_obj,current_obj,delta,current_feasible,next_obj,next_feasible,temperature,selected_operator_idx\n";
-                    LOG_PROGRESS("Writing history to file", params.history_filename);
+                    LOG_PROGRESS("Writing history to file", params.history_filename.string());
                 }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
@@ -94,10 +97,13 @@ namespace Nilib
                 Nilib::Timer timer;
                 bool next_feasible = incumbent.feasible();
                 size_t iteration = 0;
+                size_t iteration_without_improv = 0;
                 for (; iteration < params.max_iterations; ++iteration)
                 {
 
-                    if (timer.getMilliseconds() > static_cast<size_t>(params.max_seconds * 1000) - 1)
+                    if (timer.getNanoseconds() > params.max_duration)
+                        break;
+                    if (iteration_without_improv >= params.max_iterations_without_improvement)
                         break;
 
                     // Call user defined callback if it exists!
@@ -154,6 +160,7 @@ namespace Nilib
                                     d_callback_global_improvement(incumbent);
                                 best_obj = next_obj;
                                 bestfound = incumbent;
+                                iteration_without_improv = 0;
                                 // LOG_PROGRESS("Found global improvement, objective:", best_obj);
                             }
                         }
@@ -163,6 +170,7 @@ namespace Nilib
                             incumbent = bestfound;
                         }
                     }
+                    iteration_without_improv++;
 
                     if (params.history_filename != "")
                     {
@@ -177,7 +185,7 @@ namespace Nilib
                     temperature *= coolingrate;
                 }
 
-                LOG_PROGRESS("ALNS solver performed", iteration, "iterations in", timer.getMilliseconds(), "ms.");
+                LOG_PROGRESS("ALNS solver performed", iteration, "iterations in", timer.getMilliseconds());
                 d_logger.close();
             }
 
@@ -200,9 +208,7 @@ namespace Nilib
             Callback d_callback_global_improvement;
             Callback d_callback_iteration;
 
-            void nullCallback(Solution &solution) {
-                // Do nothing.
-            };
+            constexpr void nullCallback(Solution &solution) {};
         };
 
     } // namespace ALNS

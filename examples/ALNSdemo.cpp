@@ -57,13 +57,13 @@ int main(int argc, char **argv)
     Nilib::Argparser parser(argc, argv);
     Nilib::RNG::seed();
 
-    Nilib::ALNS::ALNSparams params;
+    Nilib::ALNS::Params params;
 
     DemoSolution demo(40.0f, 10.0f);
 
     std::vector<Nilib::ALNS::Solver<DemoSolution>::Operator> operators = {op1, op2};
 
-    parser.argument<std::string>(params.history_filename, "outputfile", "ALNS history filename (.csv)");
+    parser.argument<std::filesystem::path>(params.history_filename, "outputfile", "ALNS history filename (.csv)");
     parser.argument<size_t>(params.max_iterations, "iterations", "ALNS maximum number of iterations");
     parser.check();
 
