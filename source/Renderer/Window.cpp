@@ -331,6 +331,7 @@ void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
     int scancode = glfwGetKeyScancode(key);
     LOG_DEBUG("[WEVENT] Binding key", key, "scancode", scancode, "mods", mods);
     KeyEvent keyevent = {key, scancode, action, mods};
+    ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
     d_data.keybindings[keyevent] = bindfun;
 }
 
