@@ -62,6 +62,8 @@ namespace Nilib
             bool serialize(Serializer &serializer);
             bool deserialize(Deserializer &deserializer);
 
+            inline size_t vehicle_capacity() const {return fleet.empty() ? 5 : fleet.begin().capacity;} 
+
             static DataInstance empty()
             {
                 return DataInstance();

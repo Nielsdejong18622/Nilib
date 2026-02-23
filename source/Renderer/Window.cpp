@@ -126,13 +126,13 @@ void Window::setCallbacks() const
 
 void Window::framebuffer_size_callback(GLFWwindow *, int width, int height)
 {
-    LOG_DEBUG("[WEVENT] Resizing framebuffer ", width, 'x', height);
+    // LOG_DEBUG("[WEVENT] Resizing framebuffer ", width, 'x', height);
     glViewport(0, 0, width, height);
 };
 
 void Window::drop_callback(GLFWwindow *window, int path_count, const char *paths[])
 {
-    LOG_INFO("[WEVENT] Window", window, "dropping", path_count, "files");
+    // LOG_DEBUG("[WEVENT] Window", window, "dropping", path_count, "files");
     for (int path = 0; path < path_count; ++path)
         LOG_DEBUG(paths[path]);
 };
@@ -142,52 +142,52 @@ void Window::error_callback(int code, char const *description)
 }
 void Window::windowClose_callback(GLFWwindow *window)
 {
-    LOG_DEBUG("[WEVENT] Closing window", windowFromPtr(window).title());
+    // LOG_DEBUG("[WEVENT] Closing window", windowFromPtr(window).title());
     windowFromPtr(window).close();
 }
 
 void Window::windowPos_callback(GLFWwindow *window, int xpos, int ypos)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "position:", xpos, ypos);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "position:", xpos, ypos);
 }
 
 void Window::windowSize_callback(GLFWwindow *window, int width, int height)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "(re)size:", width, height);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "(re)size:", width, height);
 }
 
 void Window::mouseButton_callback(GLFWwindow *window, int button, int action, int mods)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "mouse button:", button, "action:", action, "mods:", mods);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "mouse button:", button, "action:", action, "mods:", mods);
 }
 
 void Window::windowFocus_callback(GLFWwindow *window, int focused)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "focus:", focused);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "focus:", focused);
 }
 
 void Window::windowIconify_callback(GLFWwindow *window, int iconified)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "iconified:", iconified);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "iconified:", iconified);
 }
 
 void Window::windowMaximize_callback(GLFWwindow *window, int maximized)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "maximized:", maximized);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "maximized:", maximized);
 }
 
 void Window::windowContentScale_callback(GLFWwindow *window, float xscale, float yscale)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "content scale:", xscale, yscale);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "content scale:", xscale, yscale);
 }
 void Window::cursorEnter_callback(GLFWwindow *window, int entered)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursor enter", entered);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursor enter", entered);
 }
 
 void Window::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "scroll:", xoffset, yoffset);
+    // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "scroll:", xoffset, yoffset);
 }
 
 void Window::cursorPos_callback(GLFWwindow *window, double xpos, double ypos)
@@ -315,12 +315,12 @@ bool Window::opened() const
 };
 
 // Default bindkey for Key::Press / No modifications.
-void Window::bindkey(Callback const &bindfun, int key)
+void Window::bindkey(Callback const &bindfun, KeyCode key)
 {
     bindkey(bindfun, key, Key::Press, 0);
 }
 
-void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
+void Window::bindkey(Callback const &bindfun, KeyCode const key, KeyAction const action, int mods)
 {
     if (!glfwInit())
     {
@@ -329,10 +329,29 @@ void Window::bindkey(Callback const &bindfun, int key, int action, int mods)
     }
     // Convert scancode to non-platform specific.
     int scancode = glfwGetKeyScancode(key);
-    LOG_DEBUG("[WEVENT] Binding key", key, "scancode", scancode, "mods", mods);
+
+    // LOG_DEBUG("[WEVENT] Binding key", key, "action", action, "mods", mods);
+    // if (action >> 1)
+    // {
+    //     KeyEvent keyevent = {key, scancode, 0b001 , mods}; // Press
+    //     d_data.keybindings[keyevent] = bindfun;
+    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+    // }
+    // if (action >> 2)
+    // {
+    //     KeyEvent keyevent = {key, scancode, 0b010, mods};
+    //     d_data.keybindings[keyevent] = bindfun;
+    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+    // }
+    // if (action >> 3)
+    // {
+    //     KeyEvent keyevent = {key, scancode, 0b100, mods};
+    //     d_data.keybindings[keyevent] = bindfun;
+    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+    // }
     KeyEvent keyevent = {key, scancode, action, mods};
-    ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
     d_data.keybindings[keyevent] = bindfun;
+    ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
 }
 
 // Required function by the glfw render library. Handles user key input.

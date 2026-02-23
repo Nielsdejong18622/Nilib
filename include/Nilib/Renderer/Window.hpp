@@ -76,8 +76,8 @@ namespace Nilib
         void requestAttention() const;
 
         // Bind Key Callbacks.
-        void bindkey(Callback const &fun, int key, int action, int mods = 0);
-        void bindkey(Callback const &bindfun, int key);
+        void bindkey(Callback const &fun, KeyCode const key, KeyAction const action, int mods = 0);
+        void bindkey(Callback const &bindfun, KeyCode const key);
 
         inline float getXlim_min() const { return d_data.xmin; };
         inline float getXlim_max() const { return d_data.xmax; };
