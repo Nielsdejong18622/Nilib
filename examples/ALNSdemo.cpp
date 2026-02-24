@@ -59,6 +59,8 @@ int main(int argc, char **argv)
 
     Nilib::ALNS::Params params;
 
+    params.num_threads = 10;
+
     DemoSolution demo(40.0f, 10.0f);
 
     std::vector<Nilib::ALNS::Solver<DemoSolution>::Operator> operators = {op1, op2};
