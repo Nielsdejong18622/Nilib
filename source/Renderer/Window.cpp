@@ -330,28 +330,9 @@ void Window::bindkey(Callback const &bindfun, KeyCode const key, KeyAction const
     // Convert scancode to non-platform specific.
     int scancode = glfwGetKeyScancode(key);
 
-    // LOG_DEBUG("[WEVENT] Binding key", key, "action", action, "mods", mods);
-    // if (action >> 1)
-    // {
-    //     KeyEvent keyevent = {key, scancode, 0b001 , mods}; // Press
-    //     d_data.keybindings[keyevent] = bindfun;
-    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
-    // }
-    // if (action >> 2)
-    // {
-    //     KeyEvent keyevent = {key, scancode, 0b010, mods};
-    //     d_data.keybindings[keyevent] = bindfun;
-    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
-    // }
-    // if (action >> 3)
-    // {
-    //     KeyEvent keyevent = {key, scancode, 0b100, mods};
-    //     d_data.keybindings[keyevent] = bindfun;
-    //     ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
-    // }
     KeyEvent keyevent = {key, scancode, action, mods};
     d_data.keybindings[keyevent] = bindfun;
-    ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+    // ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
 }
 
 // Required function by the glfw render library. Handles user key input.

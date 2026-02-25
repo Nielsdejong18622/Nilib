@@ -1,16 +1,11 @@
 #ifndef _GRAPH_FUNCTIONS_H
 #define _GRAPH_FUNCTIONS_H
 
-#include "Nilib/Structures/Graph.hpp"
-// #include "Nilib/Structures/GraphRepresentation.hpp"
-// #include "Nilib/Core/Profiler.hpp"
-
-// #include <stack>
-// #include <queue>
+#include "Nilib/Structures/DenseGraph.hpp"
+#include "Nilib/Structures/SparseGraph.hpp"
 
 namespace Nilib
 {
-    //     class Window;
 
     // All pairs shortest paths.
     template <typename Graph>
@@ -18,24 +13,28 @@ namespace Nilib
     {
         using weight_t = Graph::weight_t;
         using node_t = Graph::node_t;
+
         BellManFord(Graph const &graph, Graph::node_t const source)
             : costs(graph.numNodes(), std::numeric_limits<weight_t>::max()),
               predecessor(graph.numNodes(), graph.numNodes())
         {
-            LOG_INFO("Starting BellmanFord on Graph", &graph, "source:", source);
             size_t const k = graph.numNodes();
-
+            LOG_INFO("Starting BellmanFord on Graph", &graph, "with", k, "nodes,", graph.numEdges(), "edges, source:", source);
             costs[source] = 0;
             predecessor[source] = source;
 
             for (size_t iter = 0; iter < k - 1; ++iter)
             {
+                LOG_DEBUG("Iteration:", iter);
                 bool change = false;
                 for (auto &&[idx, jdx, edge_idx] : graph.arcs())
                 {
                     weight_t const weight = graph.weights[edge_idx];
+                    // LOG_DEBUG("Considering edge from", idx, "->", jdx, "id", edge_idx, "weight:", weight);
+                    CORE_ASSERT(idx < costs.size() and jdx < costs.size());
                     if (costs[idx] + weight < costs[jdx])
                     {
+                        // LOG_INFO("Found better cost to get to", jdx, "via", idx, "for", costs[idx] + weight);
                         costs[jdx] = costs[idx] + weight;
                         predecessor[jdx] = idx;
                         change = true;
@@ -45,8 +44,8 @@ namespace Nilib
                     break;
             }
             LOG_INFO("Completed BellmanFord on Graph", &graph);
-            LOG_INFO("Costs:", costs);
-            LOG_INFO("predecessor:", predecessor);
+            // LOG_INFO("Costs:", costs);
+            // LOG_INFO("predecessor:", predecessor);
         }
 
         std::vector<weight_t> costs;

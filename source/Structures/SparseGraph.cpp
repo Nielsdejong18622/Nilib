@@ -1,4 +1,6 @@
-#include "Nilib/Structures/Graph.hpp"
+#include "Nilib/Structures/SparseGraph.hpp"
+#include "Nilib/Core/Assert.hpp"
+#include "Nilib/Math/RNG.hpp"
 
 void Nilib::SparseGraph::reserve(size_t const numNodes, size_t const numEdges)
 {
@@ -164,28 +166,4 @@ Nilib::SparseGraph Nilib::SparseGraph::empty()
 bool Nilib::SparseGraph::operator==(Nilib::SparseGraph const &other) const
 {
     return head == other.head && edges == other.edges;
-}
-
-// Weighted (Sparse) Graph.
-Nilib::WeightedSparseGraph Nilib::WeightedSparseGraph::empty()
-{
-    return WeightedSparseGraph();
-}
-
-Nilib::WeightedSparseGraph Nilib::WeightedSparseGraph::random(size_t const numNodes, size_t const numEdges)
-{
-    WeightedSparseGraph res(SparseGraph::random(numNodes, numEdges));
-    res.weights.resize(numEdges);
-    for (uint32_t idx = 0; idx < numEdges; ++idx)
-    {
-        res.weights[idx] = Nilib::RNG::rounded_uniform(0, numNodes, 2);
-    }
-    return res;
-}
-void Nilib::WeightedSparseGraph::print()
-{
-    LOG_DEBUG("Weighted SparseGraph", this);
-    LOG_DEBUG("Head:", head);
-    LOG_DEBUG("Edges:", edges);
-    LOG_DEBUG("Weights:", weights);
 }

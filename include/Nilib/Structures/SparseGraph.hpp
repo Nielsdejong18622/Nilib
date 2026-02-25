@@ -1,7 +1,8 @@
-#ifndef _GRAPH2_H
-#define _GRAPH2_H
+#ifndef _SPARSE_GRAPH_H
+#define _SPARSE_GRAPH_H
 
-#include "Nilib/Math/Matrix.hpp"
+#include "Nilib/Logger/Log.hpp"
+
 #include <vector>
 #include <cstdint>
 
@@ -57,25 +58,42 @@ namespace Nilib
             {
                 std::vector<node_t> const &head;
                 std::vector<edge_t> const &edges;
-                node_t from;
-                node_t edge_idx;
+                node_t head_idx = 0; // Points to the current from node..
+                node_t deg_left = 0; // Counts the out_degree of from node, if reached: increment head_idx, to_idx.
+                node_t edge_idx = 0;
 
-                iterator(std::vector<node_t> const &head, std::vector<node_t> const &edges, node_t from, node_t idx)
+                iterator(std::vector<node_t> const &head, std::vector<node_t> const &edges, node_t head_idx, edge_t edge_idx)
                     : head(head),
                       edges(edges),
-                      from(from),
-                      edge_idx(idx) {}
+                      head_idx(head_idx),
+                      edge_idx(edge_idx)
+                {
+
+                    // Skip disconnected nodes.
+                    while (head_idx + 1 < head.size() and head[head_idx + 1] - head[head_idx])
+                    {
+                        head_idx++;
+                        deg_left = head[head_idx + 1] - head[head_idx];
+                    }
+                    // LOG_DEBUG("Constructor Arc iterator.", head_idx, edge_idx, deg_left);
+                }
 
                 std::tuple<node_t, node_t, edge_t> operator*() const
                 {
-                    return {from, edges[edge_idx], edge_idx};
+                    return {head_idx, edges[edge_idx], edge_idx};
                 }
 
                 iterator &operator++()
                 {
+                    // We traverse to the next edge.
                     ++edge_idx;
-                    while (from + 1 < head.size() && edge_idx >= head[from + 1])
-                        ++from;
+                    // We consume one outgoing degree.
+                    --deg_left;
+                    while (deg_left == 0)
+                    {
+                        head_idx++;
+                        deg_left = head[head_idx + 1] - head[head_idx];
+                    }
                     return *this;
                 }
 
@@ -86,7 +104,7 @@ namespace Nilib
             };
 
             iterator begin() const { return {head, edges, 0, 0}; }
-            iterator end() const { return {head, edges, static_cast<node_t>(head.size() - 1), static_cast<edge_t>(edges.size())}; }
+            iterator end() const { return {head, edges, static_cast<node_t>(head.size()), static_cast<edge_t>(edges.size())}; }
         };
 
         // struct NodeView
@@ -133,45 +151,6 @@ namespace Nilib
     public:
         EdgeView arcs() const { return EdgeView{head, edges}; }
         // NodeView nodes() const { return NodeView{head, edges}; }
-    };
-
-    // Mostly static graph.
-    struct DenseGraph
-    {
-        Nilib::Matrix<bool, DynamicMatrixData<bool>> adj;
-    };
-
-    class WeightedSparseGraph : public SparseGraph
-    {
-    public:
-        using weight_t = float;
-        std::vector<weight_t> weights; // m
-
-        static WeightedSparseGraph empty();
-        static WeightedSparseGraph random(size_t const numNodes, size_t const numEdges);
-
-        void print();
-
-    private:
-        using SparseGraph::addEdge;
-        using SparseGraph::empty;
-        using SparseGraph::random;
-    };
-
-    // Dynamic graph.
-    struct ForwardStarGraph
-    {
-        struct Edge
-        {
-            uint32_t head;
-            uint32_t nextEdge;
-        };
-        std::vector<Edge> edges;
-    };
-
-    struct DirectedTree
-    {
-        uint32_t numNodes; // n
     };
 
 }; // namespace Nilib

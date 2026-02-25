@@ -184,6 +184,13 @@ namespace Nilib
                     d_data[idx++] = val;
         }
 
+        bool operator==(DynamicMatrixData const &other) const
+        {
+            return d_rows == other.d_rows and
+                   d_cols == other.d_cols and
+                   d_data == other.d_data;
+        }
+
         inline type &operator()(size_t const idx)
         {
             ASSERT(idx < d_data.size(), idx, '<', d_data.size());

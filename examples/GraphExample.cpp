@@ -1,14 +1,15 @@
 #include "Nilib/Renderer/Window.hpp"
-#include "Nilib/Structures/Graph.hpp"
+#include "Nilib/Structures/SparseGraph.hpp"
+#include "Nilib/Structures/DenseGraph.hpp"
+#include "Nilib/Structures/WeightedGraph.hpp"
 #include "Nilib/Structures/GraphFunctions.hpp"
 
-int main()
+template <typename Graph>
+void test()
 {
     using namespace Nilib;
 
-    Nilib::RNG::seed();
-
-    SparseGraph graph1;
+    Graph graph1;
     graph1.addNode();
     graph1.addNode();
     graph1.addNode();
@@ -24,7 +25,7 @@ int main()
     graph1.addEdge(2, 3);
     graph1.addEdge(2, 3);
     graph1.print();
-    SparseGraph graph2(graph1);
+    Graph graph2(graph1);
     // graph2.remEdge(1, 1);
     graph2.disconnectNode(1);
 
@@ -44,16 +45,25 @@ int main()
         LOG_ERROR("Test [graph/construct/destroy] failed!");
     }
 
-    SparseGraph graph3(graph2);
+    Graph graph3(graph2);
     graph3.removeNode(1);
 
-    SparseGraph rgraph = SparseGraph::random(10, 40);
-    WeightedSparseGraph wrgraph = WeightedSparseGraph::random(10, 80);
+    Graph rgraph = Graph::random(10, 40);
 
-    wrgraph.print();
+    Weighted<Graph> wrgraph = Weighted<Graph>::random(5'000, 1'000'000);
+
+    // wrgraph.print();
 
     BellManFord shortestpaths = BellManFord(wrgraph, 0);
+}
 
+int main()
+{
+    using namespace Nilib;
+
+    RNG::seed(127);
+    test<SparseGraph>();
+    // test<DenseGraph>();
     //     // Step 1. Make a simple graph that stores relations.
     //     {
     //         Graph graph2;

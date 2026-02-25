@@ -36,10 +36,17 @@ namespace Nilib
         value_type &operator()(size_t const row, size_t const col) { return d_data(row * d_data.cols() + col); }
         value_type &operator()(size_t const idx) { return d_data(idx); }
         value_type operator()(size_t const idx) const { return d_data(idx); }
+        value_type &operator[](size_t const idx) { return d_data(idx); }
+        value_type operator[](size_t const idx) const { return d_data(idx); }
 
         inline size_t rows() const { return d_data.rows(); }
         inline size_t cols() const { return d_data.cols(); }
         inline size_t size() const { return d_data.rows() * d_data.cols(); }
+
+        bool operator==(Matrix const &other)
+        {
+            return d_data == other.d_data;
+        }
 
         friend std::ostream &operator<<(std::ostream &os, Matrix const &mat)
         {
