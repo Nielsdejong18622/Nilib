@@ -34,6 +34,10 @@ namespace Nilib
 
             // Allow the ALNS solver to traverse infeasible solution space.
             bool allow_infeasible = false;
+            bool use_annealing = true;
+
+            // Chance we revert to the global best if we do not accept (included simulated_annealing) a solution.
+            float reset_prob = 0.05;
 
             // If enabled we log to this file.
             std::filesystem::path history_filename;
@@ -196,7 +200,7 @@ namespace Nilib
                         {
                             // Worse solution, accept with probability (simulated annealing).
                             float prob = std::exp(-5.0f * delta / temperature);
-                            accept_with_anneal = (Nilib::RNG::prob() < prob);
+                            accept_with_anneal = params.use_annealing and (Nilib::RNG::prob() < prob);
                         }
 
                         if (accept || accept_with_anneal)
@@ -213,10 +217,14 @@ namespace Nilib
                                 // LOG_PROGRESS("Found global improvement, objective:", best_obj);
                             }
                         }
+                        else if (Nilib::RNG::prob() < params.reset_prob)
+                        {
+                            incumbent = bestfound;
+                        }
                         else
                         {
                             // Revert the change
-                            incumbent = bestfound;
+                            incumbent = previous;
                         }
                     }
                     iteration_without_improv++;
@@ -283,8 +291,8 @@ namespace Nilib
 
                 // IMPORTANT: ensure RNG is thread-local
                 // Ideally Nilib::RNG internally uses thread_local
-
-                for (size_t iteration = 0; iteration < iterations; ++iteration)
+                size_t iteration = 0;
+                for (; iteration < iterations; ++iteration)
                 {
                     if (timer.getNanoseconds() > params.max_duration)
                         break;
@@ -326,8 +334,7 @@ namespace Nilib
                             float prob =
                                 std::exp(-5.0f * delta / temperature);
 
-                            if (Nilib::RNG::prob() < prob)
-                                accept = true;
+                            accept = params.use_annealing and (Nilib::RNG::prob() < prob);
                         }
 
                         if (accept)
@@ -341,9 +348,14 @@ namespace Nilib
                                 iteration_without_improv = 0;
                             }
                         }
+                        else if (Nilib::RNG::prob() < params.reset_prob)
+                        {
+                            std::lock_guard<std::mutex> lock(global_mutex);
+                            incumbent_local = global_best;
+                        }
                         else
                         {
-                            incumbent_local = previous; // correct revert
+                            incumbent_local = previous;
                         }
                     }
 
@@ -361,7 +373,7 @@ namespace Nilib
                         global_best = best_local;
                     }
 
-                    LOG_PROGRESS("ALNS solver thread", thread_id, "performed", iterations, "iterations in", timer.getMilliseconds(), "Best objective:", best_obj);
+                    LOG_PROGRESS("ALNS solver thread", thread_id, "performed", iteration, "iterations in", timer.getMilliseconds(), "Best objective:", best_obj);
                 }
             }
         };
