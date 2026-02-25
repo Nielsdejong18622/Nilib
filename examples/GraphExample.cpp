@@ -8,274 +8,320 @@ int main()
 
     Nilib::RNG::seed();
 
-    // Step 1. Make a simple graph that stores relations.
+    SparseGraph graph1;
+    graph1.addNode();
+    graph1.addNode();
+    graph1.addNode();
+    graph1.addNode();
+    // graph1.addNode();
+
+    graph1.addEdge(0, 2);
+    graph1.addEdge(1, 0);
+    graph1.addEdge(1, 1);
+    graph1.addEdge(3, 1);
+    graph1.addEdge(3, 2);
+    graph1.addEdge(2, 1);
+    graph1.addEdge(2, 3);
+    graph1.addEdge(2, 3);
+    graph1.print();
+    SparseGraph graph2(graph1);
+    // graph2.remEdge(1, 1);
+    graph2.disconnectNode(1);
+
+    graph2.addEdge(1, 1);
+    graph2.addEdge(1, 0);
+    graph2.addEdge(2, 1);
+    graph2.addEdge(3, 1);
+    LOG_DEBUG("Constructed Graph2!");
+    graph2.print();
+
+    if (graph1 == graph2)
     {
-        Graph graph2;
-
-        // Add two nodes
-        LOG_DEBUG("Graph2 empty?:", graph2.empty());
-        nodeID nodeA = graph2.addNode();
-        CORE_ASSERT(nodeA == 0);
-        nodeID nodeB = graph2.addNode();
-        nodeID nodeC = graph2.addNode();
-        nodeID nodeD = graph2.addNode();
-        nodeID nodeE = graph2.addNode();
-
-        graph2.addArc(nodeA, nodeB);
-        graph2.addArc(nodeA, nodeB);
-        graph2.addArc(nodeB, nodeC);
-        graph2.addArc(nodeC, nodeD);
-        graph2.addArc(nodeA, nodeE);
-        graph2.addArc(nodeE, nodeA);
-
-        graph2.print();
-
-        graph2.remove(nodeD);
-        char const name[6] = "ABCDE";
-
-        graph2.print();
-
-        Graph graph = graph2;
-        LOG_DEBUG("Constructed graph with", graph.numnodes(), "nodes and", graph.numedges(), "edges!");
-
-        // LOG_DEBUG("First downstream node of nodeA", nodeA, ':', *graph.down_stream(nodeA).begin(), *graph.down_stream(nodeA).end());
-        // LOG_DEBUG("First downstream node of nodeB", nodeB, ':', *graph.up_stream(nodeB).begin());
-        auto res = Dijkstra(graph2, nodeA, nodeE);
-
-        LOG_INFO("Dijkstra Result:", res.path(), res.cost);
-
-        // Nilib::Window window(1024, 800, "GraphDrawing");
-
-        // drawGraph(window, graph);
-
-        for (auto node : graph.nodes())
-        {
-            LOG_SUCCESS(name[node]);
-        }
-
-        LOG_PROGRESS("Iterating over down_stream neighbors of", name[0]);
-        for (auto node_it : graph.down_stream(0))
-        {
-            LOG_PROGRESS(name[node_it]);
-        }
-
-        LOG_PROGRESS("Iterating over up_stream neighbors of", name[0]);
-        for (auto node_it : graph.up_stream(0))
-        {
-            LOG_PROGRESS(name[node_it]);
-        }
-
-        // LOG_PROGRESS("Random walk over the graph starting at", name[0]);
-        // for (auto node_it : graph.random_walk(0))
-        // {
-        //     LOG_PROGRESS(name[node_it]);
-        // }
-
-        LOG_PROGRESS("Iterating over arcs!");
-        for (auto arc : graph.arcs())
-        {
-            LOG_PROGRESS(name[arc.from], name[arc.to]);
-        }
+        LOG_SUCCESS("Test [graph/construct/destroy] Passed!");
+    }
+    else
+    {
+        LOG_ERROR("Test [graph/construct/destroy] failed!");
     }
 
-    struct NodeData
-    {
-        nodeID letter;
-    };
+    SparseGraph graph3(graph2);
+    graph3.removeNode(1);
 
-    struct ArcData
-    {
-        int capacity;
-        int flow;
-        float cost;
-    };
+    SparseGraph rgraph = SparseGraph::random(10, 40);
+    WeightedSparseGraph wrgraph = WeightedSparseGraph::random(10, 80);
 
-    // This stores NodeData per nodeid.
-    {
-        Graph<NodeData> graph;
-        // erdos_renyi(graph, 100u, 0.05f);
-        ring_world(graph, 100, 4);
-        graph.print();
+    wrgraph.print();
 
-        auto dijk = Dijkstra(graph, 0, 40);
+    BellManFord shortestpaths = BellManFord(wrgraph, 0);
 
-        // if (res.status)
-        {
-            LOG_DEBUG("Found shortest path!");
-            LOG_DEBUG(dijk.path());
-            LOG_DEBUG(dijk.arcs());
-            // LOG_DEBUG(res.predecessor);
-        }
-    }
+    //     // Step 1. Make a simple graph that stores relations.
+    //     {
+    //         Graph graph2;
 
-    // This stores data per arc.
-    {
-        PROFILE_SCOPE("Creating MinCostFlow!");
-        LOG_DEBUG("MinCostFlow example!");
-        struct ArcData
-        {
-            int capacity;
-            int flow;
-            float cost;
-        };
+    //         // Add two nodes
+    //         LOG_DEBUG("Graph2 empty?:", graph2.empty());
+    //         nodeID nodeA = graph2.addNode();
+    //         CORE_ASSERT(nodeA == 0);
+    //         nodeID nodeB = graph2.addNode();
+    //         nodeID nodeC = graph2.addNode();
+    //         nodeID nodeD = graph2.addNode();
+    //         nodeID nodeE = graph2.addNode();
 
-        struct NodeData
-        {
-            float potential = 0.0;
-        };
+    //         graph2.addArc(nodeA, nodeB);
+    //         graph2.addArc(nodeA, nodeB);
+    //         graph2.addArc(nodeB, nodeC);
+    //         graph2.addArc(nodeC, nodeD);
+    //         graph2.addArc(nodeA, nodeE);
+    //         graph2.addArc(nodeE, nodeA);
 
-        Graph<NodeData, ArcData> graph;
+    //         graph2.print();
 
-        auto source = graph.addNode(NodeData{.potential = 0.0});
-        auto terminal = graph.addNode(NodeData{.potential = 0.0});
-        auto dummy_courier = graph.addNode(NodeData{.potential = 0.0});
+    //         graph2.remove(nodeD);
+    //         char const name[6] = "ABCDE";
 
-        int n_orders = 2;   // Excluding dummy order.
-        int n_couriers = 2; // Excluding dummy courier.
-        int n_nodes = n_orders + n_couriers;
+    //         graph2.print();
 
-        for (int node_i = 0; node_i < n_nodes; node_i++)
-        {
-            auto node = graph.addNode(NodeData{.potential = 0.0});
-            // The first nodes are the orders.
-            if (node_i < n_orders)
-            {
-                // source -> orders
-                graph.addArc(source, node, ArcData{.capacity = 1, .flow = 0, .cost = 0});
-                // graph.addArc(node, source, ArcData{.capacity = 1, .flow = 1, .cost = -0});
-            }
-            // The remainder are couriers.
-            else
-            {
-                // courier -> terminal
-                int kc = 1; // Courier capacity.
-                graph.addArc(node, terminal, ArcData{.capacity = kc, .flow = 0, .cost = 0});
-                // graph.addArc(terminal, node, ArcData{.capacity = kc, .flow = kc, .cost = -0});
-            }
-        }
+    //         Graph graph = graph2;
+    //         LOG_DEBUG("Constructed graph with", graph.numnodes(), "nodes and", graph.numedges(), "edges!");
 
-        for (int oid = 3; oid < n_orders + 3; oid++)
-            for (int cid = n_orders + 3; cid < n_nodes + 3; cid++)
-            {
-                //
-                float cij = -10;
-                graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
-                // graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
-            }
+    //         // LOG_DEBUG("First downstream node of nodeA", nodeA, ':', *graph.down_stream(nodeA).begin(), *graph.down_stream(nodeA).end());
+    //         // LOG_DEBUG("First downstream node of nodeB", nodeB, ':', *graph.up_stream(nodeB).begin());
+    //         auto res = Dijkstra(graph2, nodeA, nodeE);
 
-        graph.arcData[{3, 5}].cost = 2;
-        // graph.arcData[{5, 3}].cost = -2;
+    //         LOG_INFO("Dijkstra Result:", res.path(), res.cost);
 
-        graph.arcData[{4, 6}].cost = 20;
-        // graph.arcData[{6, 4}].cost = -20;
+    //         // Nilib::Window window(1024, 800, "GraphDrawing");
 
-        // Order -> Dummy courier arcs.
-        for (int oid = 3; oid < n_orders + 3; oid++)
-        {
-            graph.addArc(oid, dummy_courier, ArcData{.capacity = 1, .flow = 0, .cost = 100});
-            // graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
-        }
-        // Dummy -> terminal arcs.
-        graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = 0});
-        // graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
+    //         // drawGraph(window, graph);
 
-        // for (auto &&arc : graph.arcs())
-        // {
-        //     // LOG_DEBUG(arc, "flow:", graph.arcData[arc].flow, "capacity:", graph.arcData[arc].capacity, "cost:", graph.arcData[arc].cost);
-        // }
-        LOG_DEBUG("Graph constructed!");
-        graph.print();
-        // auto res = Dijkstra(graph, 0, 1, [&graph](nodeID a, nodeID b)
-        //                     { return graph.arcs[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
-        //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
-        int flow = 0;
-        int req_flow = n_orders;
+    //         for (auto node : graph.nodes())
+    //         {
+    //             LOG_SUCCESS(name[node]);
+    //         }
 
-        auto cost_fun = [&graph](nodeID a, nodeID b)
-        { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
-        auto use_edge_fun = [](nodeID a, nodeID b)
-        { return true; };
+    //         LOG_PROGRESS("Iterating over down_stream neighbors of", name[0]);
+    //         for (auto node_it : graph.down_stream(0))
+    //         {
+    //             LOG_PROGRESS(name[node_it]);
+    //         }
 
-        // Init the potentials using BELLMAN FORD.
-        auto bellman = BellManFord(graph, source, cost_fun, use_edge_fun);
-        LOG_DEBUG(bellman.costs);
-        for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
-        {
-            graph.nodeData[nod].potential -= bellman.costs[nod];
-        }
+    //         LOG_PROGRESS("Iterating over up_stream neighbors of", name[0]);
+    //         for (auto node_it : graph.up_stream(0))
+    //         {
+    //             LOG_PROGRESS(name[node_it]);
+    //         }
 
-        while (flow < req_flow)
-        {
-            // Find shortest path source->terminal. Over admissable arcs.
-            // { return graph.arcData[{a, b}].flow < graph.arcData[{a, b}].capacity; };
+    //         // LOG_PROGRESS("Random walk over the graph starting at", name[0]);
+    //         // for (auto node_it : graph.random_walk(0))
+    //         // {
+    //         //     LOG_PROGRESS(name[node_it]);
+    //         // }
 
-            auto bellman = Dijkstra(graph, source, terminal, cost_fun, use_edge_fun);
+    //         LOG_PROGRESS("Iterating over arcs!");
+    //         for (auto arc : graph.arcs())
+    //         {
+    //             LOG_PROGRESS(name[arc.from], name[arc.to]);
+    //         }
+    //     }
 
-            // Push as much flow as possible over that path.
-            int min_flow = 1;
-            flow += min_flow;
+    //     struct NodeData
+    //     {
+    //         nodeID letter;
+    //     };
 
-            LOG_DEBUG(bellman.costs);
-            for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
-            {
-                graph.nodeData[nod].potential -= bellman.costs[nod];
-            }
+    //     struct ArcData
+    //     {
+    //         int capacity;
+    //         int flow;
+    //         float cost;
+    //     };
 
-            // Alter flows,
-            nodeID current = terminal;
-            // std::vector<nodeID> st_path;
-            while (current != source)
-            {
-                // st_path.push_back(current);
-                nodeID previous = bellman.predecessor[current];
-                ArcData &arcdata = graph.arcData[{previous, current}];
-                arcdata.flow += 1;
-                if (arcdata.flow == arcdata.capacity)
-                {
-                    LOG_DEBUG("Adding Reverse arc!", current, previous);
-                    graph.addArc(current, previous, ArcData{.capacity = arcdata.capacity, .flow = arcdata.capacity, .cost = -arcdata.cost});
-                    graph.remove(previous, current);
-                }
+    //     // This stores NodeData per nodeid.
+    //     {
+    //         Graph<NodeData> graph;
+    //         // erdos_renyi(graph, 100u, 0.05f);
+    //         ring_world(graph, 100, 4);
+    //         graph.print();
 
-                current = previous;
-            }
+    //         auto dijk = Dijkstra(graph, 0, 40);
 
-            for (auto &&[head, tail] : graph.arcs())
-            {
-                LOG_DEBUG(head, tail, graph.arcData[{head, tail}].cost - graph.nodeData[head].potential + graph.nodeData[tail].potential);
-            }
-            // st_path.push_back(source);
-            // std::reverse(st_path.begin(), st_path.end());
-        }
-        // Print solution.
-        for (auto &&arc : graph.arcs())
-        {
-            if (graph.arcData[arc].flow > 0 && !(arc.from < 3 || arc.to < 3) && arc.from < arc.to)
-            {
-                LOG_INFO("Active arcs:", arc);
-            }
-        }
-    }
-    // This stores data per node and arc.
-    {
-        Graph<NodeData, ArcData> graph;
-        auto node1 = graph.addNode(NodeData{5});
-        auto node2 = graph.addNode(NodeData{7});
-        auto node3 = graph.addNode(NodeData{7});
+    //         // if (res.status)
+    //         {
+    //             LOG_DEBUG("Found shortest path!");
+    //             LOG_DEBUG(dijk.path());
+    //             LOG_DEBUG(dijk.arcs());
+    //             // LOG_DEBUG(res.predecessor);
+    //         }
+    //     }
 
-        graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10, .cost = 10.0f});
-        graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 10, .cost = 10.0f});
-        auto res = Dijkstra(graph, node1, node3);
+    //     // This stores data per arc.
+    //     {
+    //         PROFILE_SCOPE("Creating MinCostFlow!");
+    //         LOG_DEBUG("MinCostFlow example!");
+    //         struct ArcData
+    //         {
+    //             int capacity;
+    //             int flow;
+    //             float cost;
+    //         };
 
-        // if (res.status)
-        {
-            LOG_DEBUG("Found shortest path!");
-            LOG_DEBUG(res.costs);
-            LOG_DEBUG(res.predecessor);
-        }
-        res.cost;
-    }
+    //         struct NodeData
+    //         {
+    //             float potential = 0.0;
+    //         };
 
-    LOG_SUCCESS("Completed Graph Example!");
-    return EXIT_SUCCESS;
+    //         Graph<NodeData, ArcData> graph;
+
+    //         auto source = graph.addNode(NodeData{.potential = 0.0});
+    //         auto terminal = graph.addNode(NodeData{.potential = 0.0});
+    //         auto dummy_courier = graph.addNode(NodeData{.potential = 0.0});
+
+    //         int n_orders = 2;   // Excluding dummy order.
+    //         int n_couriers = 2; // Excluding dummy courier.
+    //         int n_nodes = n_orders + n_couriers;
+
+    //         for (int node_i = 0; node_i < n_nodes; node_i++)
+    //         {
+    //             auto node = graph.addNode(NodeData{.potential = 0.0});
+    //             // The first nodes are the orders.
+    //             if (node_i < n_orders)
+    //             {
+    //                 // source -> orders
+    //                 graph.addArc(source, node, ArcData{.capacity = 1, .flow = 0, .cost = 0});
+    //                 // graph.addArc(node, source, ArcData{.capacity = 1, .flow = 1, .cost = -0});
+    //             }
+    //             // The remainder are couriers.
+    //             else
+    //             {
+    //                 // courier -> terminal
+    //                 int kc = 1; // Courier capacity.
+    //                 graph.addArc(node, terminal, ArcData{.capacity = kc, .flow = 0, .cost = 0});
+    //                 // graph.addArc(terminal, node, ArcData{.capacity = kc, .flow = kc, .cost = -0});
+    //             }
+    //         }
+
+    //         for (int oid = 3; oid < n_orders + 3; oid++)
+    //             for (int cid = n_orders + 3; cid < n_nodes + 3; cid++)
+    //             {
+    //                 //
+    //                 float cij = -10;
+    //                 graph.addArc(oid, cid, ArcData{.capacity = 1, .flow = 0, .cost = cij});
+    //                 // graph.addArc(cid, oid, ArcData{.capacity = 1, .flow = 1, .cost = -cij});
+    //             }
+
+    //         graph.arcData[{3, 5}].cost = 2;
+    //         // graph.arcData[{5, 3}].cost = -2;
+
+    //         graph.arcData[{4, 6}].cost = 20;
+    //         // graph.arcData[{6, 4}].cost = -20;
+
+    //         // Order -> Dummy courier arcs.
+    //         for (int oid = 3; oid < n_orders + 3; oid++)
+    //         {
+    //             graph.addArc(oid, dummy_courier, ArcData{.capacity = 1, .flow = 0, .cost = 100});
+    //             // graph.addArc(dummy_courier, oid, ArcData{.capacity = 1, .flow = 1, .cost = -100});
+    //         }
+    //         // Dummy -> terminal arcs.
+    //         graph.addArc(dummy_courier, terminal, ArcData{.capacity = n_orders, .flow = 0, .cost = 0});
+    //         // graph.addArc(terminal, dummy_courier, ArcData{.capacity = n_orders, .flow = n_orders, .cost = 0});
+
+    //         // for (auto &&arc : graph.arcs())
+    //         // {
+    //         //     // LOG_DEBUG(arc, "flow:", graph.arcData[arc].flow, "capacity:", graph.arcData[arc].capacity, "cost:", graph.arcData[arc].cost);
+    //         // }
+    //         LOG_DEBUG("Graph constructed!");
+    //         graph.print();
+    //         // auto res = Dijkstra(graph, 0, 1, [&graph](nodeID a, nodeID b)
+    //         //                     { return graph.arcs[{a, b}].cost; }, [&graph](nodeID a, nodeID b)
+    //         //                     { return graph.arcs[{a, b}].flow < graph.arcs[{a, b}].capacity; });
+    //         int flow = 0;
+    //         int req_flow = n_orders;
+
+    //         auto cost_fun = [&graph](nodeID a, nodeID b)
+    //         { return graph.arcData[{a, b}].cost - graph.nodeData[a].potential + graph.nodeData[b].potential; };
+    //         auto use_edge_fun = [](nodeID a, nodeID b)
+    //         { return true; };
+
+    //         // Init the potentials using BELLMAN FORD.
+    //         auto bellman = BellManFord(graph, source, cost_fun, use_edge_fun);
+    //         LOG_DEBUG(bellman.costs);
+    //         for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
+    //         {
+    //             graph.nodeData[nod].potential -= bellman.costs[nod];
+    //         }
+
+    //         while (flow < req_flow)
+    //         {
+    //             // Find shortest path source->terminal. Over admissable arcs.
+    //             // { return graph.arcData[{a, b}].flow < graph.arcData[{a, b}].capacity; };
+
+    //             auto bellman = Dijkstra(graph, source, terminal, cost_fun, use_edge_fun);
+
+    //             // Push as much flow as possible over that path.
+    //             int min_flow = 1;
+    //             flow += min_flow;
+
+    //             LOG_DEBUG(bellman.costs);
+    //             for (nodeID nod = 0; nod < graph.numnodes(); ++nod)
+    //             {
+    //                 graph.nodeData[nod].potential -= bellman.costs[nod];
+    //             }
+
+    //             // Alter flows,
+    //             nodeID current = terminal;
+    //             // std::vector<nodeID> st_path;
+    //             while (current != source)
+    //             {
+    //                 // st_path.push_back(current);
+    //                 nodeID previous = bellman.predecessor[current];
+    //                 ArcData &arcdata = graph.arcData[{previous, current}];
+    //                 arcdata.flow += 1;
+    //                 if (arcdata.flow == arcdata.capacity)
+    //                 {
+    //                     LOG_DEBUG("Adding Reverse arc!", current, previous);
+    //                     graph.addArc(current, previous, ArcData{.capacity = arcdata.capacity, .flow = arcdata.capacity, .cost = -arcdata.cost});
+    //                     graph.remove(previous, current);
+    //                 }
+
+    //                 current = previous;
+    //             }
+
+    //             for (auto &&[head, tail] : graph.arcs())
+    //             {
+    //                 LOG_DEBUG(head, tail, graph.arcData[{head, tail}].cost - graph.nodeData[head].potential + graph.nodeData[tail].potential);
+    //             }
+    //             // st_path.push_back(source);
+    //             // std::reverse(st_path.begin(), st_path.end());
+    //         }
+    //         // Print solution.
+    //         for (auto &&arc : graph.arcs())
+    //         {
+    //             if (graph.arcData[arc].flow > 0 && !(arc.from < 3 || arc.to < 3) && arc.from < arc.to)
+    //             {
+    //                 LOG_INFO("Active arcs:", arc);
+    //             }
+    //         }
+    //     }
+    //     // This stores data per node and arc.
+    //     {
+    //         Graph<NodeData, ArcData> graph;
+    //         auto node1 = graph.addNode(NodeData{5});
+    //         auto node2 = graph.addNode(NodeData{7});
+    //         auto node3 = graph.addNode(NodeData{7});
+
+    //         graph.addArc(node1, node2, ArcData{.capacity = 5, .flow = 10, .cost = 10.0f});
+    //         graph.addArc(node2, node3, ArcData{.capacity = 4, .flow = 10, .cost = 10.0f});
+    //         auto res = Dijkstra(graph, node1, node3);
+
+    //         // if (res.status)
+    //         {
+    //             LOG_DEBUG("Found shortest path!");
+    //             LOG_DEBUG(res.costs);
+    //             LOG_DEBUG(res.predecessor);
+    //         }
+    //         res.cost;
+    //     }
+
+    //     LOG_SUCCESS("Completed Graph Example!");
+    //     return EXIT_SUCCESS;
 }
