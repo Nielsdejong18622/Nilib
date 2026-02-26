@@ -87,7 +87,7 @@ namespace Nilib
                 }
             };
             iterator begin() const { return {adj, 0}; }
-            iterator end() const { return {adj, static_cast<edge_t>(adj.size() - 1)}; }
+            iterator end() const { return {adj, (adj.size() > 0) ? static_cast<edge_t>(adj.size() - 1) : 0}; }
         };
 
     public:
