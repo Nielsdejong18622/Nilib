@@ -9,5 +9,5 @@ float RBF_fun::evaluate(float const t)
 
 float RBF_fun::derivative(float const t)
 {
-    return -1.0 * t * std::exp(-1.0 * t * t);
+    return -1.0f * t * std::exp(-1.0f * t * t);
 }

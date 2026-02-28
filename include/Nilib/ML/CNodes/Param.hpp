@@ -5,11 +5,11 @@
 
 namespace Nilib
 {
-    // Single float GNode node.
-    struct Param : public GNode
-    {
-        Param(float const value);
-    };
-}
+// Single float GNode node.
+struct Param : public GNode
+{
+    Param(float val);
+};
+} // namespace Nilib
 
 #endif

@@ -1,7 +1,7 @@
 #include "Nilib/Math/RNG.hpp"
-#include "Nilib/Math/Stats.hpp"
-#include "Nilib/Core/Profiler.hpp"
 #include "Nilib/Core/Assert.hpp"
+#include "Nilib/Core/Profiler.hpp"
+#include "Nilib/Math/Stats.hpp"
 
 using namespace Nilib;
 
@@ -46,7 +46,6 @@ int main()
         LOG_INFO("Observed RNG::normal(0.0, 1.0):", probstat);
     }
 
-    
     for (size_t test = 0; test < 1; ++test)
     {
         PROFILE_SCOPE("Testing RNG::rand()");

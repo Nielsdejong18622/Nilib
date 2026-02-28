@@ -1,6 +1,6 @@
 #include "Nilib/ML/Optimizers/Momentum.hpp"
 
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 using namespace Nilib;
 
@@ -10,13 +10,13 @@ Nilib::Momentum::Momentum(Module *module, float learning_rate, float weight_deca
     ASSERT(weight_decay != 0.0f, "Not implemented yet!");
 }
 
-Nilib::Momentum::Momentum(Weightptrs const &weights, float learning_rate, float weight_decay)
-    : Optimizer(weights), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
+Nilib::Momentum::Momentum(Weightptrs const &weightptr, float learning_rate, float weight_decay)
+    : Optimizer(weightptr), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
 {
     ASSERT(weight_decay != 0.0f, "Not implemented yet!");
 }
 
-void Nilib::Momentum::updateGrad(float const multi)
+void Nilib::Momentum::updateGrad(float multi)
 {
     float const beta = 0.9f; // Momentum
 
@@ -24,7 +24,7 @@ void Nilib::Momentum::updateGrad(float const multi)
         init();
 
     ++d_step;
-    float const bias_correct_m = 1.0f - std::pow(beta, d_step);
+    float const bias_correct_m = 1.0f - std::pow(beta, static_cast<float>(d_step));
 
     for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
     {

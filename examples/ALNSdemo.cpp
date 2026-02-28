@@ -1,19 +1,20 @@
 #include "Nilib/Math/ALNS.hpp"
 
-#include "Nilib/Logger/Log.hpp"
 #include "Nilib/Logger/CSV.hpp"
+#include "Nilib/Logger/Log.hpp"
 
-#include "Nilib/Math/RNG.hpp"
 #include "Nilib/Core/ArgParser.hpp"
+#include "Nilib/Math/RNG.hpp"
 
 struct DemoSolution : public Nilib::ALNS::Solution
 {
     float x, y;
 
-    DemoSolution(float x, float y)
-        : x(x), y(y) {}
+    DemoSolution(float x, float y) : x(x), y(y)
+    {
+    }
 
-    float objective() const
+    float objective() const override
     {
         // Simple convex problem.
         return (x - 5.0f) * (x - 5.0f) + (y - 15.0f) * (y - 15.0f);
@@ -27,7 +28,7 @@ struct DemoSolution : public Nilib::ALNS::Solution
         // return 100 * (0.5 + (sin(sqrt(parabola)) * sin(sqrt(parabola)) - 0.5) / (denom * denom));
     }
 
-    bool feasible() const
+    bool feasible() const override
     {
         // Always feasible.
         return true;

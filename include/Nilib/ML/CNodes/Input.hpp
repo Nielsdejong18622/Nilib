@@ -6,15 +6,15 @@
 namespace Nilib
 {
 
-    // CNode that holds a gradient (of size rows * cols), i.e. a Weight node.
-    struct Input : public GNode
-    {
-        Input();
-        Input(Matrixf const &value);
-        void set(Nilib::Matrixf const &value);
-    };
+// CNode that holds a gradient (of size rows * cols), i.e. a Weight node.
+struct Input : public GNode
+{
+    Input();
+    Input(Matrixf const &value);
+    void set(Nilib::Matrixf const &value);
+};
 
-    using Target = Input;
-}
+using Target = Input;
+} // namespace Nilib
 
 #endif

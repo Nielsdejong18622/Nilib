@@ -1,23 +1,22 @@
 #ifndef _DESERIALIZER_H
 #define _DESERIALIZER_H
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <type_traits>
 #include <vector>
 
 #include "Nilib/Logger/Log.hpp"
-#include "Nilib/Math/Matrix.hpp"
 #include "Nilib/ML/CNodes/CNode.hpp"
+#include "Nilib/Math/Matrix.hpp"
 
 class Deserializer
 {
     std::ifstream file;
 
-public:
-    explicit Deserializer(std::string const &filename)
-        : file(filename, std::ios::binary)
+  public:
+    explicit Deserializer(std::string const &filename) : file(filename, std::ios::binary)
     {
         if (!file.is_open())
         {
@@ -37,15 +36,17 @@ public:
         }
     }
 
-    bool opened() const { return file.is_open() && !file.bad(); }
+    bool opened() const
+    {
+        return file.is_open() && !file.bad();
+    }
 
     ~Deserializer()
     {
         close();
     }
 
-    template <typename T>
-    bool readRaw(T &data)
+    template <typename T> bool readRaw(T &data)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.read(reinterpret_cast<char *>(&data), sizeof(T));
@@ -56,8 +57,7 @@ public:
         return !file;
     }
 
-    template <typename T>
-    bool readObject(T &data)
+    template <typename T> bool readObject(T &data)
     {
         if constexpr (std::is_trivially_copyable<T>::value)
         {
@@ -80,7 +80,7 @@ public:
         size_t length = 0;
         file.read(reinterpret_cast<char *>(&length), sizeof(length));
         data.resize(length);
-        file.read(&data[0], length);
+        file.read(&data[0], static_cast<long long int>(length));
         if (!file)
         {
             LOG_ERROR("Error: Failed to read String data from file.");
@@ -89,8 +89,7 @@ public:
     }
 
     // Specialization for Matrix.
-    template <typename T>
-    bool readMatrix(Nilib::Matrix<T> &data)
+    template <typename T> bool readMatrix(Nilib::Matrix<T> &data)
     {
         size_t n, m;
         readRaw(n);
@@ -113,8 +112,7 @@ public:
     }
 
     // Specialization for std::vector<T>
-    template <typename T>
-    bool readVector(std::vector<T> &vec)
+    template <typename T> bool readVector(std::vector<T> &vec)
     {
         // Read the size of the vector
         size_t size;

@@ -8,33 +8,33 @@
 namespace Nilib
 {
 
-    class Profiler
-    {
-        void printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const;
+class Profiler
+{
+    void printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const;
 
-        std::string_view const d_function_name;
-        std::string_view const d_file;
-        size_t d_line;
-        std::chrono::time_point<std::chrono::high_resolution_clock> d_start_timepoint;
-        bool d_printondestruct;
+    std::string_view const d_function_name;
+    std::string_view const d_file;
+    size_t d_line;
+    std::chrono::time_point<std::chrono::high_resolution_clock> d_start_timepoint;
+    bool d_printondestruct;
 
-    public:
-        Profiler();
-        Profiler(std::string_view const func_name, std::string_view const file_name, size_t const line_num);
-        Profiler(Profiler const &) = delete;
-        Profiler &operator=(Profiler const &) = delete;
-        ~Profiler();
+  public:
+    Profiler();
+    Profiler(std::string_view const func_name, std::string_view const file_name, size_t const line_num);
+    Profiler(Profiler const &) = delete;
+    Profiler &operator=(Profiler const &) = delete;
+    ~Profiler();
 
-        void reset();
+    void reset();
 
-        std::chrono::seconds getSeconds() const;
-        std::chrono::milliseconds getMilliseconds() const;
-        std::chrono::nanoseconds getNanoseconds() const;
-    };
+    std::chrono::seconds getSeconds() const;
+    std::chrono::milliseconds getMilliseconds() const;
+    std::chrono::nanoseconds getNanoseconds() const;
+};
 
-    using Timer = Profiler;
+using Timer = Profiler;
 
-}; // Namespace.
+}; // namespace Nilib
 
 #ifndef ENABLE_PROFILE
 #define PROFILE_FUNCTION() (void)(0)

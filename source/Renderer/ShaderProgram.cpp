@@ -4,7 +4,7 @@
 
 #include <math.h>
 
-#include "Glad/glad.h"
+#include "GLAD/glad.h"
 #include <GLFW/glfw3.h>
 
 using namespace Nilib;
@@ -105,7 +105,7 @@ ShaderProgram ShaderProgram::createFromStrings(const char *vertexSource, const c
         char infoLog[512];
         glGetProgramInfoLog(programid, 512, nullptr, infoLog);
         LOG_ERROR("Shader Program LINKING_FAILED", infoLog);
-        return 0;
+        return ShaderProgram(0);
     }
 
     // Clean up shaders as they're no longer needed after linking

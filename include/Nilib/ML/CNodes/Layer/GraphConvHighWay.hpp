@@ -6,25 +6,25 @@
 
 namespace Nilib
 {
-    // GraphConv.
-    class GraphConvHigh : public Module
-    {
-    public:
-        GraphConvHigh(CNode &A, CNode &X, size_t colX, size_t outdim);
+// GraphConv.
+class GraphConvHigh : public Module
+{
+  public:
+    GraphConvHigh(CNode &A, CNode &X, size_t colX, size_t outdim);
 
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-        void learnables(Module::Weights &add) override;
+    void learnables(Module::Weights &add) override;
 
-    private:
-        CNode &A;
-        CNode &X;
-        Weight W1;
-        Weight W2;
-        float alpha = 0.5;
-    };
+  private:
+    CNode &d_A;
+    CNode &d_X;
+    Weight d_W1;
+    Weight d_W2;
+    float d_alpha = 0.5;
+};
 
-}
+} // namespace Nilib
 
 #endif

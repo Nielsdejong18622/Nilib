@@ -5,22 +5,22 @@
 
 namespace Nilib
 {
-    /// @brief Takes a row vector x [1 * col] and multiplies by W [col * neurons], adds b [1, neurons].
-    class MultilayerPerceptron : public Module
-    {
-    public:
-        MultilayerPerceptron(CNode &x, size_t const x_col, size_t const neurons);
+/// @brief Takes a row vector x [1 * col] and multiplies by W [col * neurons], adds b [1, neurons].
+class MultilayerPerceptron : public Module
+{
+  public:
+    MultilayerPerceptron(CNode &x, size_t const x_col, size_t const neurons);
 
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-        void learnables(Weights &add) override;
+    void learnables(Weights &add) override;
 
-    protected:
-        CNode &x;
-        Weight W;
-        Weight b;
-    };
+  protected:
+    CNode &d_x;
+    Weight d_W;
+    Weight d_b;
+};
 
 } // namespace Nilib
 

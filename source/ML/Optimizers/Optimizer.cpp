@@ -8,17 +8,10 @@ Nilib::Optimizer::Optimizer(Module *modul)
     zeroGrad();
 }
 
-Nilib::Optimizer::Optimizer(Weightptrs const &weights)
-    : weights(weights)
+Nilib::Optimizer::Optimizer(Weightptrs const &weightpts) : weights(weightpts)
 {
     initWeights();
     zeroGrad();
-}
-
-void Nilib::Optimizer::updateGrad(float const multiplier)
-{
-    // To be overridden.
-    CORE_ASSERT(false);
 }
 
 void Nilib::Optimizer::zeroGrad() const
@@ -45,10 +38,9 @@ void Nilib::Optimizer::printWeights() const
 {
     CORE_ASSERT(checkgradients());
     for (Weight const *w : weights)
-        LOG_DEBUG()
-            << "Weight " << w << ' ' << w->value << std::setprecision(4)
-            << " value " << w->value.avg() << '(' << w->value.stddev() << ')'
-            << " partial " << w->partial.avg() << '(' << w->partial.stddev() << ')' << '\n';
+        LOG_DEBUG() << "Weight " << w << ' ' << w->value << std::setprecision(4) << " value " << w->value.avg() << '('
+                    << w->value.stddev() << ')' << " partial " << w->partial.avg() << '(' << w->partial.stddev() << ')'
+                    << '\n';
 }
 
 void Nilib::Optimizer::save(std::filesystem::path const &file) const

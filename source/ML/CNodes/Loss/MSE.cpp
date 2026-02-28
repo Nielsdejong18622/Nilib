@@ -5,23 +5,20 @@
 using namespace Nilib;
 
 MSELoss::MSELoss(CNode &prediction, CNode &target)
-    : prediction(prediction),
-      target(target),
-      mingate(prediction, target),
-      square(mingate),
-      meanpool(square)
+    : d_prediction(prediction), d_target(target), d_mingate(prediction, target), d_square(d_mingate),
+      d_meanpool(d_square)
 {
 }
 
 void MSELoss::evaluate()
 {
-    meanpool.evaluate();
-    this->value = meanpool.value;
+    d_meanpool.evaluate();
+    this->value = d_meanpool.value;
 }
 
 void MSELoss::derive(Nilib::Matrixf const &seed)
 {
     CORE_ASSERT(seed.rows() == 1);
     CORE_ASSERT(seed.cols() == 1);
-    meanpool.derive(seed);
+    d_meanpool.derive(seed);
 }

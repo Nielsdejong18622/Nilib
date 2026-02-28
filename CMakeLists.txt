@@ -27,16 +27,37 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 # define LOG_LEVEL_ERROR 5
 # define LOG_LEVEL_PROGRESS 6
 
-# Definitons of Preprocessor directives.
 target_compile_options(Nilib PRIVATE
-  ${CMAKE_CXX_FLAGS}
+
+  # Release defines
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DENABLE_PROFILE=0>
-  # $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-LOG_LEVEL=5> # Display only progress and errors.
-  $<$<CONFIG:Debug>:-LOG_LEVEL=1>
-  $<$<CONFIG:Debug>:-Wall>
-  $<$<CONFIG:Debug>:-Werror>
-  $<$<CONFIG:Debug>:-pedantic>
+
+  # Debug logging level
+  $<$<CONFIG:Debug>:-DLOG_LEVEL=1>
+
+  # Debug warnings (GCC / MinGW)
+  $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wshadow
+    -Wconversion
+    -Wsign-conversion
+    -Wnull-dereference
+    -Wdouble-promotion
+    -Wformat=2
+    -Wimplicit-fallthrough
+    -Wunused
+    -Woverloaded-virtual
+    -Wnon-virtual-dtor
+    -Wold-style-cast
+    -Wduplicated-cond
+    -Wduplicated-branches
+    -Wlogical-op
+    -Wuseless-cast
+    -Werror
+  >
 )
 message(STATUS "Nilib Build type: ${CMAKE_BUILD_TYPE}")
 

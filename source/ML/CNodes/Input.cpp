@@ -7,14 +7,14 @@ Input::Input()
 {
 }
 
-Input::Input(Nilib::Matrixf const &value)
-    : GNode(value)
+Input::Input(Nilib::Matrixf const &val)
+    : GNode(val)
 {
 }
 
-void Input::set(Nilib::Matrixf const &value)
+void Input::set(Nilib::Matrixf const &val)
 {
-    this->value = value;
-    this->partial = value;
+    this->value = val;
+    this->partial = val;
     this->partial.zero();
 }

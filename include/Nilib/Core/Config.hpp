@@ -1,24 +1,23 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#include "Nilib/Logger/Log.hpp"
-#include <unordered_map>
 #include "Nilib/Core/Assert.hpp"
+#include "Nilib/Logger/Log.hpp"
 #include <optional>
-
-#include <fmt/core.h>
+#include <unordered_map>
 
 class Config
 {
-public:
+  public:
     using key_t = std::string;
     using value_t = std::variant<int, float, bool, unsigned int, size_t, std::string>;
 
     class Proxy
     {
-    public:
-        Proxy(Config *config, key_t section)
-            : config(config), section(std::move(section)) {}
+      public:
+        Proxy(Config *config, key_t section) : config(config), section(std::move(section))
+        {
+        }
 
         Proxy operator[](key_t key)
         {
@@ -26,8 +25,7 @@ public:
             return *this;
         }
 
-        template <typename T>
-        operator T() const
+        template <typename T> operator T() const
         {
             ASSERT(config->d_map.contains(section), fmt::format("Section {} does not exist in Configfile!", section))
             ASSERT(config->d_map[section].contains(key), fmt::format("Key {} does not exist in Configfile!", key))
@@ -35,23 +33,21 @@ public:
             return std::get<T>(value);
         }
 
-        template <typename T>
-        Proxy &operator=(T &&value)
+        template <typename T> Proxy &operator=(T &&value)
         {
             config->d_map[section][key] = std::forward<T>(value);
             return *this;
         }
 
         // Overload the << operator
-        friend std::ostream &operator<<(std::ostream &os, const Proxy &proxy)
+        friend std::ostream &operator<<(std::ostream &os, Proxy const &proxy)
         {
             const auto &value = proxy.config->d_map.at(proxy.section).at(proxy.key);
-            std::visit([&os](auto &&arg)
-                       { os << arg; }, value);
+            std::visit([&os](auto &&arg) { os << arg; }, value);
             return os;
         }
 
-    private:
+      private:
         Config *config;
         key_t section;
         key_t key;
@@ -73,20 +69,24 @@ public:
             LOG_INFO() << "----- " << sec << " -----:\n";
             for (auto &[key, value] : v)
             {
-                std::visit([&key, &sec, this](auto &&arg)
-                           { LOG_INFO() << "\t" << sec << '.' << key << "=" << arg << '\n'; ; }, value);
+                std::visit(
+                    [&key, &sec, this](auto &&arg) {
+                        LOG_INFO() << "\t" << sec << '.' << key << "=" << arg << '\n';
+                        ;
+                    },
+                    value);
             }
         }
     }
 
-private:
+  private:
     std::unordered_map<key_t, std::unordered_map<key_t, value_t>> d_map;
 };
 
 class ConfigFileParser
 {
 
-public:
+  public:
     static Config parse_from_ini(std::string const &filename)
     {
         LOG_INFO() << "Parsing ini file " << filename << " for config.\n";
@@ -157,7 +157,7 @@ public:
         return config;
     }
 
-private:
+  private:
     static std::string trim(std::string const &str)
     {
         size_t first = str.find_first_not_of(" \t");

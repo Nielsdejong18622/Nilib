@@ -1,21 +1,21 @@
 #ifndef _SERIALIZER_H
 #define _SERIALIZER_H
 
-#include <iostream>
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <type_traits>
 #include <vector>
 
 #include "Nilib/Logger/Log.hpp"
-#include "Nilib/Math/Matrix.hpp"
 #include "Nilib/ML/CNodes/CNode.hpp"
+#include "Nilib/Math/Matrix.hpp"
 
 class Serializer
 {
     std::ofstream file;
 
-public:
+  public:
     // Close the file to serialize to, freeing resources.
     void close()
     {
@@ -32,10 +32,12 @@ public:
         close();
     }
 
-    bool opened() const { return file.is_open() && !file.bad(); }
+    bool opened() const
+    {
+        return file.is_open() && !file.bad();
+    }
 
-    explicit Serializer(std::filesystem::path const &filename)
-        : file(filename, std::ios::binary | std::ios ::out)
+    explicit Serializer(std::filesystem::path const &filename) : file(filename, std::ios::binary | std::ios ::out)
     {
         if (!file)
         {
@@ -44,8 +46,7 @@ public:
     }
 
     // Write raw data to a binary file
-    template <typename T>
-    bool writeRaw(T const &data)
+    template <typename T> bool writeRaw(T const &data)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.write(reinterpret_cast<char const *>(&data), sizeof(T));
@@ -57,8 +58,7 @@ public:
     }
 
     // Write custom object to a binary stream.
-    template <typename T>
-    bool writeObject(T const &data)
+    template <typename T> bool writeObject(T const &data)
     {
         if constexpr (std::is_trivially_copyable<T>::value)
         {
@@ -77,8 +77,7 @@ public:
     }
 
     // Specialization for matrix.
-    template <typename T>
-    bool writeMatrix(Nilib::Matrix<T> const &data)
+    template <typename T> bool writeMatrix(Nilib::Matrix<T> const &data)
     {
         size_t n = data.rows();
         size_t m = data.cols();
@@ -104,7 +103,7 @@ public:
     {
         size_t length = data.size();
         file.write(reinterpret_cast<char const *>(&length), sizeof(length));
-        file.write(data.c_str(), length);
+        file.write(data.c_str(), static_cast<long long int>(length));
         file.close();
         if (!file)
         {
@@ -114,8 +113,7 @@ public:
     }
 
     // Specialization for std::vector<T>
-    template <typename T>
-    bool writeVector(std::vector<T> const &vec)
+    template <typename T> bool writeVector(std::vector<T> const &vec)
     {
         // Write the size of the vector first
         size_t size = vec.size();

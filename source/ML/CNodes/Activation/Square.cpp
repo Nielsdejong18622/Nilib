@@ -4,7 +4,7 @@ using namespace Nilib;
 
 float Square_fun::evaluate(float const t)
 {
-    return 0.5 * t * t;
+    return 0.5f * t * t;
 }
 
 float Square_fun::derivative(float const t)

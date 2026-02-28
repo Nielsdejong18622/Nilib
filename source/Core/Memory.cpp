@@ -4,7 +4,6 @@ using namespace Nilib;
 
 void MemoryTracker::add(size_t size) noexcept
 {
-    ;
     allocations.push(size);
 }
 
@@ -18,7 +17,8 @@ void MemoryTracker::report() const noexcept
     LOG_DEBUG("==== Memory Tracker Report ====");
     LOG_DEBUG("Total Allocated:", allocations.n(), formatBytes(allocations.sum()));
     LOG_DEBUG("Total Freed:    ", deallocations.n(), formatBytes(deallocations.sum()));
-    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()), "in", allocations.n() - deallocations.n(), "chunks");
+    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()), "in",
+              allocations.n() - deallocations.n(), "chunks");
     LOG_DEBUG("=======================");
 }
 
@@ -74,7 +74,6 @@ void deallocateWithHeader(void *userPtr, size_t size) noexcept
     std::free(userPtr);
     gMemoryTracker.remove(size);
 }
-
 
 #ifdef TRACK_MEMORY
 

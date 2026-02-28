@@ -4,7 +4,6 @@ using namespace Nilib;
 
 int main()
 {
-
     PersistentIndexVector<char> pvec(10);
 
     LOG_DEBUG(pvec.size());
@@ -18,12 +17,10 @@ int main()
 
     CORE_ASSERT(pvec[e] == 'e');
 
-    
     LOG_DEBUG(pvec);
     std::fill(pvec.begin(), pvec.end(), '1');
     pvec.shrink_to_fit();
     LOG_DEBUG(pvec);
-
 
     LOG_SUCCESS("Completed Persistent Example!");
 }

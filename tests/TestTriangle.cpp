@@ -1,6 +1,6 @@
-#include <iostream>
-#include <glad/glad.h>
+#include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 // ShaderProgram source code as string literals
 const char *vertexShaderSource = R"(
@@ -33,8 +33,7 @@ GLuint compileShader(GLenum shaderType, const char *shaderSource)
     {
         char infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n"
-                  << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
         return 0;
     }
     return shader;
@@ -59,8 +58,7 @@ GLuint createShaderProgram(const char *vertexSource, const char *fragmentSource)
     {
         char infoLog[512];
         glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cerr << "ERROR::PROGRAM::LINKING_FAILED\n"
-                  << infoLog << std::endl;
+        std::cerr << "ERROR::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
         return 0;
     }
 
@@ -107,10 +105,7 @@ int main()
     }
 
     // Set up a simple triangle
-    float vertices[] = {
-        0.0f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f};
+    float vertices[] = {0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f};
 
     GLuint VBO, VAO;
     glGenVertexArrays(1, &VAO);

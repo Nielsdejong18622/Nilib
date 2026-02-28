@@ -3,38 +3,38 @@
 #define _CNODE_ACTVIVATION_HPP
 
 #include "Nilib/ML/CNodes/CNode.hpp"
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 namespace Nilib
 {
-    template <typename ActFun>
-    class Activation : public Nilib::CNode
+template <typename ActFun> class Activation : public Nilib::CNode
+{
+  public:
+    Activation(CNode &in) : input(in)
     {
-    public:
-        Activation(CNode &input)
-            : input(input) {}
+    }
 
-        void evaluate() override
-        {
-            input.evaluate();
-            this->value = input.value;
-            this->value.apply(ActFun::evaluate);
-        }
+    void evaluate() override
+    {
+        input.evaluate();
+        this->value = input.value;
+        this->value.apply(ActFun::evaluate);
+    }
 
-        void derive(Nilib::Matrixf const &seed) override
-        {
-            CORE_ASSERT(seed.rows() == input.value.rows());
-            CORE_ASSERT(seed.cols() == input.value.cols());
+    void derive(Nilib::Matrixf const &seed) override
+    {
+        CORE_ASSERT(seed.rows() == input.value.rows());
+        CORE_ASSERT(seed.cols() == input.value.cols());
 
-            CORE_ASSERT(std::isfinite(seed.sum()));
+        CORE_ASSERT(std::isfinite(seed.sum()));
 
-            input.value.apply(ActFun::derivative);
-            input.derive(Nilib::hadamar(seed, input.value));
-        }
+        input.value.apply(ActFun::derivative);
+        input.derive(Nilib::hadamar(seed, input.value));
+    }
 
-    private:
-        CNode &input;
-    };
+  private:
+    CNode &input;
+};
 
-}
+} // namespace Nilib
 #endif

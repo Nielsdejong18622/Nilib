@@ -4,16 +4,16 @@
 namespace Nilib
 {
 
-    // Empty dummy Logger class for when logging is not defined for that level.
-    // This class should be optimized away by the compiler.
-    struct BaseLogger
+// Empty dummy Logger class for when logging is not defined for that level.
+// This class should be optimized away by the compiler.
+struct BaseLogger
+{
+    template <typename T> constexpr BaseLogger &operator<<(T const &)
     {
-        template <typename T>
-        constexpr BaseLogger &operator<<(T const &message)
-        {
-            return *this;
-        }
-    };
-
+        return *this;
+    }
+    virtual ~BaseLogger() = default;
 };
+
+}; // namespace Nilib
 #endif

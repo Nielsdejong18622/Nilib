@@ -10,7 +10,7 @@ namespace Nilib
     struct GNode : public CNode
     {
         Matrixf partial;
-        GNode(Matrixf const &value);
+        GNode(Matrixf const &val);
         GNode(size_t const rows, size_t const cols);
 
         void evaluate() override;

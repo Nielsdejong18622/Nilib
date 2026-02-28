@@ -7,13 +7,13 @@
 namespace Nilib
 {
 
-    struct RBF_fun
-    {
-        static float evaluate(float const t);
-        static float derivative(float const t);
-    };
+struct RBF_fun
+{
+    static float evaluate(float const t);
+    static float derivative(float const t);
+};
 
-    using RBF = Activation<RBF_fun>;
+using RBF = Activation<RBF_fun>;
 
-}
+} // namespace Nilib
 #endif

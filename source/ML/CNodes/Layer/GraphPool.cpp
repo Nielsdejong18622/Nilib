@@ -4,28 +4,27 @@
 
 using namespace Nilib;
 
-GraphPoolAverage::GraphPoolAverage(CNode &X)
-    : X(X)
+GraphPoolAverage::GraphPoolAverage(CNode &X) : d_X(X)
 {
 }
 
 void GraphPoolAverage::evaluate()
 {
-    X.evaluate();
-    CORE_ASSERT(X.value.rows() > 0);
-    CORE_ASSERT(X.value.cols() > 0);
-    d_cached_rows = X.value.rows();
-    this->value = Nilib::colMeans(X.value);
+    d_X.evaluate();
+    CORE_ASSERT(d_X.value.rows() > 0);
+    CORE_ASSERT(d_X.value.cols() > 0);
+    d_cached_rows = d_X.value.rows();
+    this->value = Nilib::colMeans(d_X.value);
 }
 
 void GraphPoolAverage::derive(Nilib::Matrixf const &seed)
 {
-    CORE_ASSERT(d_cached_rows > 0.0);
+    CORE_ASSERT(d_cached_rows > 0);
     CORE_ASSERT(seed.rows() == 1);
     Matrixf iota = Matrixf::ones(d_cached_rows, 1); // Already transposed.
-    Matrixf tmp = iota * seed / d_cached_rows;
+    Matrixf tmp = iota * seed / static_cast<float>(d_cached_rows);
 
-    CORE_ASSERT(tmp.rows() == X.value.rows());
-    CORE_ASSERT(tmp.cols() == X.value.cols());
-    X.derive(tmp);
+    CORE_ASSERT(tmp.rows() == d_X.value.rows());
+    CORE_ASSERT(tmp.cols() == d_X.value.cols());
+    d_X.derive(tmp);
 }

@@ -5,18 +5,18 @@
 
 namespace Nilib
 {
-    // Flattens nxn dimensions into 1x1
-    class MeanPool : public CNode
-    {
-    public:
-        MeanPool(CNode &X);
+// Flattens nxn dimensions into 1x1
+class MeanPool : public CNode
+{
+  public:
+    MeanPool(CNode &X);
 
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-    private:
-        CNode &X;
-        size_t d_row, d_col;
-    };
+  private:
+    CNode &d_X;
+    size_t d_row, d_col;
+};
 } // namespace Nilib
 #endif

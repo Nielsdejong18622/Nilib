@@ -18,5 +18,5 @@ int main()
         CSV("Iteration.csv",iteration, iteration2);
     }
     
-
+    LOG_SUCCESS("CSV example complete! Wrote to", "test.csv");
 }

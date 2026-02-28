@@ -8,93 +8,128 @@
 namespace Nilib
 {
 
-    struct Module : public CNode
+struct Module : public CNode
+{
+
+    class Weights
     {
-        // typedef std::vector<GNode *> Weights;
+      public:
+        using iterator = std::vector<GNode *>::iterator;
+        using const_iterator = std::vector<GNode *>::const_iterator;
 
-        class Weights
+        // Range-based for loop support
+        iterator begin()
         {
-        public:
-            using iterator = std::vector<GNode *>::iterator;
-            using const_iterator = std::vector<GNode *>::const_iterator;
+            return weights.begin();
+        }
+        iterator end()
+        {
+            return weights.end();
+        }
+        const_iterator begin() const
+        {
+            return weights.begin();
+        }
+        const_iterator end() const
+        {
+            return weights.end();
+        }
+        const_iterator cbegin() const
+        {
+            return weights.cbegin();
+        }
+        const_iterator cend() const
+        {
+            return weights.cend();
+        }
 
-            // Range-based for loop support
-            iterator begin() { return weights.begin(); }
-            iterator end() { return weights.end(); }
-            const_iterator begin() const { return weights.begin(); }
-            const_iterator end() const { return weights.end(); }
-            const_iterator cbegin() const { return weights.cbegin(); }
-            const_iterator cend() const { return weights.cend(); }
+        size_t size() const
+        {
+            return weights.size();
+        }
 
-            size_t size() const { return weights.size(); }
-
-            RunningStats weight_values() const
+        RunningStats<float> weight_values() const
+        {
+            RunningStats<float> weight_val;
+            for (auto &&w : weights)
             {
-                RunningStats weight_val;
-                for (auto &&w : weights)
+                for (size_t i = 0; i < w->value.size(); ++i)
                 {
-                    for (size_t i = 0; i < w->value.size(); ++i)
-                    {
-                        weight_val.push(w->value(i));
-                    }
+                    weight_val.push(w->value(i));
                 }
-                return weight_val;
             }
+            return weight_val;
+        }
 
-            [[nodiscard]] bool empty() const { return weights.empty(); }
-            void empty() { weights.clear(); }
+        [[nodiscard]] bool empty() const
+        {
+            return weights.empty();
+        }
+        void empty()
+        {
+            weights.clear();
+        }
 
-            void push_back(GNode *add) { weights.push_back(add); }
-            GNode *operator[](size_t idx) { return weights[idx]; }
-            GNode *const operator[](size_t idx) const { return weights[idx]; }
+        void push_back(GNode *add)
+        {
+            weights.push_back(add);
+        }
+        GNode *operator[](size_t idx)
+        {
+            return weights[idx];
+        }
+        GNode const *operator[](size_t idx) const
+        {
+            return weights[idx];
+        }
 
-            Weights(Module &module)
-            {
-                module.learnables(*this);
-            }
-            Weights() = default;
+        Weights(Module &module)
+        {
+            module.learnables(*this);
+        }
+        Weights() = default;
 
-        private:
-            std::vector<GNode *> weights;
-        };
-
-        virtual void learnables(Weights &add) = 0;
+      private:
+        std::vector<GNode *> weights;
     };
 
-    // // An owning abstraction over a computational graph.
-    // class Module
-    // {
-    // protected:
-    //     typedef std::vector<GNode *> Inputs;
+    virtual void learnables(Weights &add) = 0;
+};
 
-    //     // These parameters must be set.
-    //     Inputs inputs;
+// // An owning abstraction over a computational graph.
+// class Module
+// {
+// protected:
+//     typedef std::vector<GNode *> Inputs;
 
-    //     // This is our approximation and target.
-    //     CNode *prediction;
-    //     Target *target;
+//     // These parameters must be set.
+//     Inputs inputs;
 
-    //     // How good our model performs.
-    //     CNode *loss;
+//     // This is our approximation and target.
+//     CNode *prediction;
+//     Target *target;
 
-    // public:
-    //     Module(Inputs const &inputs, Weights const &weights, CNode *prediction, Target *target, CNode *loss);
-    //     // These can be changed to optimize the model.
-    //     Weights weights;
+//     // How good our model performs.
+//     CNode *loss;
 
-    //     // Do a prediction.
-    //     Matrixf &predict(MLData const &data, size_t const idx);
-    //     Matrixf &predict(Matrixf const &x);
+// public:
+//     Module(Inputs const &inputs, Weights const &weights, CNode *prediction, Target *target, CNode *loss);
+//     // These can be changed to optimize the model.
+//     Weights weights;
 
-    //     // Zero all gradients.
-    //     void zeroGrad();
+//     // Do a prediction.
+//     Matrixf &predict(MLData const &data, size_t const idx);
+//     Matrixf &predict(Matrixf const &x);
 
-    //     void updateGrad();
+//     // Zero all gradients.
+//     void zeroGrad();
 
-    //     // Fit the model.
-    //     // void train(MLData const &data, size_t numepochs, size_t batch_size);
-    //     // void train(MLEnv);
-    // };
-}
+//     void updateGrad();
+
+//     // Fit the model.
+//     // void train(MLData const &data, size_t numepochs, size_t batch_size);
+//     // void train(MLEnv);
+// };
+} // namespace Nilib
 
 #endif

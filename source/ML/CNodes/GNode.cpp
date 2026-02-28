@@ -1,9 +1,9 @@
 #include "Nilib/ML/CNodes/GNode.hpp"
 
-Nilib::GNode::GNode(Nilib::Matrixf const &value)
+Nilib::GNode::GNode(Nilib::Matrixf const &val)
 {
-    this->value = value;
-    this->partial = Nilib::Matrixf::zeros(value.rows(), value.cols());
+    this->value = val;
+    this->partial = Nilib::Matrixf::zeros(val.rows(), val.cols());
 }
 
 Nilib::GNode::GNode(size_t const rows, size_t const cols)

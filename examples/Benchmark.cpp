@@ -1,6 +1,6 @@
 #include "Nilib/Core/Benchmark.hpp"
 #include "Nilib/Math/LinAlg.hpp"
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 double square(double x)
 {

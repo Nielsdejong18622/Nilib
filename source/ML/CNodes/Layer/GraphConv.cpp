@@ -5,8 +5,7 @@
 
 using namespace Nilib;
 
-GraphConv::GraphConv(CNode &A, CNode &X, size_t const colX, size_t const outdim)
-    : A(A), X(X), W(colX, outdim)
+GraphConv::GraphConv(CNode &A, CNode &X, size_t const colX, size_t const outdim) : d_A(A), d_X(X), d_W(colX, outdim)
 {
     CORE_ASSERT(outdim > 0);
     CORE_ASSERT(colX > 0);
@@ -14,34 +13,34 @@ GraphConv::GraphConv(CNode &A, CNode &X, size_t const colX, size_t const outdim)
 
 void GraphConv::evaluate()
 {
-    A.evaluate();
-    X.evaluate();
-    W.evaluate();
-    ASSERT(A.value.cols() == X.value.rows(), "AX undefined:", A.value, 'x', X.value);
-    ASSERT(X.value.cols() == W.value.rows(), "XW undefined:", X.value, 'x', W.value);
-    this->value = A.value * X.value * W.value;
+    d_A.evaluate();
+    d_X.evaluate();
+    d_W.evaluate();
+    ASSERT(d_A.value.cols() == d_X.value.rows(), "AX undefined:", d_A.value, 'x', d_X.value);
+    ASSERT(d_X.value.cols() == d_W.value.rows(), "XW undefined:", d_X.value, 'x', d_W.value);
+    this->value = d_A.value * d_X.value * d_W.value;
 }
 
 void GraphConv::learnables(Module::Weights &add)
 {
-    add.push_back(&W);
+    add.push_back(&d_W);
 }
 
 void GraphConv::derive(Nilib::Matrixf const &seed)
 {
-    CORE_ASSERT(seed.rows() == A.value.rows());
-    CORE_ASSERT(seed.cols() == W.value.cols());
+    CORE_ASSERT(seed.rows() == d_A.value.rows());
+    CORE_ASSERT(seed.cols() == d_W.value.cols());
 
-    CORE_ASSERT(A.value.rows() == seed.rows());
-    CORE_ASSERT(A.value.cols() == X.value.rows());
+    CORE_ASSERT(d_A.value.rows() == seed.rows());
+    CORE_ASSERT(d_A.value.cols() == d_X.value.rows());
 
-    A.derive(seed * transpose(X.value * W.value));
+    d_A.derive(seed * transpose(d_X.value * d_W.value));
 
-    CORE_ASSERT(X.value.rows() == A.value.cols());
-    CORE_ASSERT(X.value.cols() == W.value.rows());
-    X.derive(transpose(A.value) * seed * transpose(W.value));
+    CORE_ASSERT(d_X.value.rows() == d_A.value.cols());
+    CORE_ASSERT(d_X.value.cols() == d_W.value.rows());
+    d_X.derive(transpose(d_A.value) * seed * transpose(d_W.value));
 
-    CORE_ASSERT(W.value.rows() == X.value.cols());
-    CORE_ASSERT(W.value.cols() == seed.cols());
-    W.derive(transpose(A.value * X.value) * seed);
+    CORE_ASSERT(d_W.value.rows() == d_X.value.cols());
+    CORE_ASSERT(d_W.value.cols() == seed.cols());
+    d_W.derive(transpose(d_A.value * d_X.value) * seed);
 }

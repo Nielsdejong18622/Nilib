@@ -4,8 +4,7 @@
 
 using namespace Nilib;
 
-OuterProductDecoderWeight::OuterProductDecoderWeight(CNode &X, size_t xcol)
-    : X(X), W(xcol, xcol)
+OuterProductDecoderWeight::OuterProductDecoderWeight(CNode &X, size_t xcol) : d_X(X), d_W(xcol, xcol)
 {
     // LOG_DEBUG("Constructed Outerproductdecoder!");
 }
@@ -13,19 +12,19 @@ OuterProductDecoderWeight::OuterProductDecoderWeight(CNode &X, size_t xcol)
 void OuterProductDecoderWeight::evaluate()
 {
     // LOG_DEBUG("OuterProductDecoder eval!");
-    X.evaluate();
+    d_X.evaluate();
     // // float scalefactor = X.value.rows();
-    this->value = X.value * W.value * transpose(X.value);
+    this->value = d_X.value * d_W.value * transpose(d_X.value);
     // this->value /= scalefactor;
 }
 
 void OuterProductDecoderWeight::derive(Nilib::Matrixf const &seed)
 {
-    W.derive(Nilib::transpose(X.value) * seed * X.value);
-    X.derive(seed * X.value * Nilib::transpose(W.value) + Nilib::transpose(seed) * X.value * W.value);
+    d_W.derive(Nilib::transpose(d_X.value) * seed * d_X.value);
+    d_X.derive(seed * d_X.value * Nilib::transpose(d_W.value) + Nilib::transpose(seed) * d_X.value * d_W.value);
 }
 
 void OuterProductDecoderWeight::learnables(Nilib::Module::Weights &add)
 {
-    add.push_back(&W);
+    add.push_back(&d_W);
 }

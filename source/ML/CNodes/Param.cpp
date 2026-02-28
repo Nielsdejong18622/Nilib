@@ -3,8 +3,8 @@
 namespace Nilib
 {
 
-    Param::Param(float const value)
-        : GNode(Matrixf(1, 1, {value}))
+    Param::Param(float val)
+        : GNode(Matrixf(1, 1, {val}))
     {
     }
 

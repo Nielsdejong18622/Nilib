@@ -7,17 +7,17 @@
 
 namespace Nilib
 {
-    struct CNode
-    {
-        Nilib::Matrixf value;
+struct CNode
+{
+    Nilib::Matrixf value;
 
-        virtual ~CNode() {};
+    virtual ~CNode() {};
 
-        virtual void evaluate() = 0;
-        virtual void derive(Nilib::Matrixf const &seed) = 0;
+    virtual void evaluate() = 0;
+    virtual void derive(Nilib::Matrixf const &seed) = 0;
 
-        friend std::ostream &operator<<(std::ostream &os, CNode const &node);
-    };
-}
+    friend std::ostream &operator<<(std::ostream &os, CNode const &node);
+};
+} // namespace Nilib
 
 #endif

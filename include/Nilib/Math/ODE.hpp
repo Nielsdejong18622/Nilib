@@ -3,7 +3,7 @@
 
 #include "Nilib/Math/Matrix.hpp"
 #include "Nilib/Math/LinAlg.hpp"
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 namespace Nilib
 {

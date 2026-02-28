@@ -1,6 +1,6 @@
 #include "Nilib/ML/Optimizers/Adam.hpp"
 
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 using namespace Nilib;
 
@@ -9,14 +9,14 @@ Nilib::Adam::Adam(Module *module, float learning_rate, float weight_decay)
 {
 }
 
-Nilib::Adam::Adam(Weightptrs const &weights, float learning_rate, float weight_decay)
-    : Optimizer(weights), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
+Nilib::Adam::Adam(Weightptrs const &weightptr, float learning_rate, float weight_decay)
+    : Optimizer(weightptr), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
 {
 }
 
 void Nilib::Adam::updateGrad(float const multi)
 {
-    CORE_ASSERT(!(d_lr == 0.0 && d_weight_decay > 0))
+    CORE_ASSERT(!(d_lr == 0.0f && d_weight_decay > 0.0f))
     float const beta = 0.9f;    // Momentum
     float const beta2 = 0.999f; // Velocity
     float const epsilon = 1e-8f;
@@ -24,8 +24,8 @@ void Nilib::Adam::updateGrad(float const multi)
         init();
 
     ++d_step;
-    float const bias_correct_m = 1.0f - std::pow(beta, d_step);
-    float const bias_correct_v = 1.0f - std::pow(beta2, d_step);
+    float const bias_correct_m = 1.0f - std::pow(beta, static_cast<float>(d_step));
+    float const bias_correct_v = 1.0f - std::pow(beta2, static_cast<float>(d_step));
 
     for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
     {
@@ -35,8 +35,7 @@ void Nilib::Adam::updateGrad(float const multi)
         d_momentum[w_idx] = beta * d_momentum[w_idx] + (1.0f - beta) * grad;
 
         // Update velocity (2nd moment)
-        auto const square = [](float t)
-        { return t * t; };
+        auto const square = [](float t) { return t * t; };
         d_velocity[w_idx] = beta2 * d_velocity[w_idx] + (1.0f - beta2) * Nilib::apply(grad, square);
 
         // Bias-corrected moments
@@ -53,13 +52,6 @@ void Nilib::Adam::updateGrad(float const multi)
         // Apply L2 weight decay directly.
         weights[w_idx]->value -= d_weight_decay * weights[w_idx]->value;
     }
-
-    // size_t w_idx = 3;
-    // LOG_DEBUG("Adam weight", w_idx,
-    //           "value:", weights[w_idx]->value.avg(),
-    //           "partial:", weights[w_idx]->partial.avg(),
-    //           "momentum:", d_momentum[w_idx].avg(),
-    //           "velocity:", d_velocity[w_idx].avg());
 }
 
 void Nilib::Adam::init()

@@ -1,5 +1,5 @@
-#include "Nilib/Math/RNG.hpp"
 #include "Nilib/Logger/Log.hpp"
+#include "Nilib/Math/RNG.hpp"
 #include "Nilib/Math/Stats.hpp"
 
 int main()
@@ -20,19 +20,17 @@ int main()
     stats.reset();
     LOG_INFO("Stats:", stats);
 
-
     for (size_t sample = 0; sample < 100'000; ++sample)
     {
-        //float obs = RNG::lognormal(10.0, 5.0);
+        // float obs = RNG::lognormal(10.0, 5.0);
         float obs = RNG::uniform(-20.0, 10.0);
 
         if (obs > 2.5)
             stats.push(obs);
-        else 
+        else
             stats2.push(obs);
-    } 
+    }
     LOG_INFO("Stats1:", stats);
     LOG_INFO("Stats2:", stats2);
     LOG_INFO("Stats1 + Stats2:", stats + stats2);
-    
 }

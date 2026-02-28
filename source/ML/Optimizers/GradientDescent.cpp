@@ -1,9 +1,8 @@
 #include "Nilib/ML/Optimizers/GradientDescent.hpp"
 
-#include "Nilib/Math/LinALg.hpp"
+#include "Nilib/Math/LinAlg.hpp"
 
 using namespace Nilib;
-
 
 Nilib::GradientDescent::GradientDescent(Module *module, float learning_rate, float weight_decay)
     : Optimizer(module), d_lr(learning_rate), d_weight_decay(weight_decay)
@@ -11,13 +10,13 @@ Nilib::GradientDescent::GradientDescent(Module *module, float learning_rate, flo
     ASSERT(weight_decay != 0.0f, "Not implemented yet!");
 }
 
-Nilib::GradientDescent::GradientDescent(Weightptrs const &weights, float learning_rate, float weight_decay)
-    : Optimizer(weights), d_lr(learning_rate), d_weight_decay(weight_decay)
+Nilib::GradientDescent::GradientDescent(Weightptrs const &wptrs, float learning_rate, float weight_decay)
+    : Optimizer(wptrs), d_lr(learning_rate), d_weight_decay(weight_decay)
 {
     ASSERT(weight_decay != 0.0f, "Not implemented yet!");
 }
 
-void Nilib::GradientDescent::updateGrad(float const multi)
+void Nilib::GradientDescent::updateGrad(float multi)
 {
     for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
     {

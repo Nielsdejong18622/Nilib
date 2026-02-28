@@ -12,13 +12,11 @@ int main(int argc, char **argv)
     // Add some keybindings.
     win1.bindkey(std::bind(&Window::close, &win1), Key::Escape, 0, 0);
     win1.bindkey(std::bind(&Window::open, &win2), Key::A, 0, 0);
-    win1.bindkey([&]()
-                 { win1.clearColor(Color::RandomHSL()); }, Key::R, Key::Hold, 0);
+    win1.bindkey([&]() { win1.clearColor(Color::RandomHSL()); }, Key::R, Key::Hold, 0);
 
     win2.bindkey(std::bind(&Window::close, &win2), Key::Escape, 0, 0);
     win2.bindkey(std::bind(&Window::open, &win1), Key::A, 0, 0);
-    win2.bindkey([&]()
-                 { win2.clearColor(Color::RandomHSL()); }, Key::R, Key::Press, 0);
+    win2.bindkey([&]() { win2.clearColor(Color::RandomHSL()); }, Key::R, Key::Press, 0);
 
     win1.open();
     win2.open();

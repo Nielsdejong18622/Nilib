@@ -2,8 +2,8 @@
 #define _BENCHMARK_HPP
 
 #include "Nilib/Core/Profiler.hpp"
-#include "Nilib/Logger/Log.hpp"
 #include "Nilib/Logger/CSV.hpp"
+#include "Nilib/Logger/Log.hpp"
 
 #include <chrono>
 
@@ -18,13 +18,14 @@ namespace Nilib
         std::string d_filename = "";
 
     public:
-        BenchMarkEnv(size_t iterations_per_bench, size_t bench)
-            : BenchMarkEnv(iterations_per_bench, bench, "") {
-              }
+        BenchMarkEnv(size_t iterations_per_bench, size_t bench) : BenchMarkEnv(iterations_per_bench, bench, "")
+        {
+        }
 
         BenchMarkEnv(size_t iterations_per_bench, size_t bench, std::string const &filename)
-            : d_iterations(iterations_per_bench), d_bench_marks(bench), d_filename(filename) {
-              }
+            : d_iterations(iterations_per_bench), d_bench_marks(bench), d_filename(filename)
+        {
+        }
 
         BenchMarkEnv(BenchMarkEnv const &other) = delete;
 
@@ -46,7 +47,7 @@ namespace Nilib
 
                 if (d_filename != "")
                 {
-                    CSV(d_filename.c_str(),name,iterations,total,avg_ns,bench);
+                    CSV(d_filename.c_str(), name, iterations, total, avg_ns, bench);
                 }
                 else
                 {

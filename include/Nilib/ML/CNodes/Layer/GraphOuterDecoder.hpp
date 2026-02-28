@@ -5,17 +5,17 @@
 
 namespace Nilib
 {
-    class OuterProductDecoder : public CNode
-    {
-    public:
-        OuterProductDecoder(CNode &X);
+class OuterProductDecoder : public CNode
+{
+  public:
+    OuterProductDecoder(CNode &X);
 
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-    private:
-        CNode &X;
-    };
+  private:
+    CNode &d_X;
+};
 
 } // namespace Nilib
 #endif

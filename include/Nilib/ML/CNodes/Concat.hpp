@@ -5,30 +5,30 @@
 
 namespace Nilib
 {
-    // Concatentation Gate.
-    class Cbind : public CNode
-    {
-    public:
-        Cbind(CNode &lhs, CNode &rhs);
+// Concatentation Gate.
+class Cbind : public CNode
+{
+  public:
+    Cbind(CNode &lhs, CNode &rhs);
 
-        void evaluate() override;
-        void derive(Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Matrixf const &seed) override;
 
-    private:
-        CNode &lhs, &rhs;
-    };
+  private:
+    CNode &d_lhs, &d_rhs;
+};
 
-    // A, B -> [A, B]
-    class Rbind : public CNode
-    {
-    public:
-        Rbind(CNode &lhs, CNode &rhs);
+// A, B -> [A, B]
+class Rbind : public CNode
+{
+  public:
+    Rbind(CNode &lhs, CNode &rhs);
 
-        void evaluate() override;
-        void derive(Matrixf const &seed) override;
+    void evaluate() override;
+    void derive(Matrixf const &seed) override;
 
-    private:
-        CNode &lhs, &rhs;
-    };
-}
+  private:
+    CNode &d_lhs, &d_rhs;
+};
+} // namespace Nilib
 #endif

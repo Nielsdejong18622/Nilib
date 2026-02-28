@@ -1,12 +1,11 @@
+#include "Nilib/Logger/Log.hpp"
 #include "Nilib/Structures/Circular.hpp"
 #include "Nilib/Structures/StackVector.hpp"
-#include "Nilib/Logger/Log.hpp"
 
 struct SpecialData
 {
     float reward;
-    SpecialData()
-        : reward(10.0f)
+    SpecialData() : reward(10.0f)
     {
     }
     // Friend allows access to private members (if needed)

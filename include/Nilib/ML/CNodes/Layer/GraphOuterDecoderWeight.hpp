@@ -15,8 +15,8 @@ namespace Nilib
         void learnables(Nilib::Module::Weights &add) override;
 
     private:
-        CNode &X;
-        Weight W;
+        CNode &d_X;
+        Weight d_W;
     };
 
 } // namespace Nilib

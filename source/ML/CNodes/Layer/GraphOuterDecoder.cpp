@@ -4,8 +4,7 @@
 
 using namespace Nilib;
 
-OuterProductDecoder::OuterProductDecoder(CNode &X)
-    : X(X)
+OuterProductDecoder::OuterProductDecoder(CNode &X) : d_X(X)
 {
     // LOG_DEBUG("Constructed Outerproductdecoder!");
 }
@@ -13,9 +12,9 @@ OuterProductDecoder::OuterProductDecoder(CNode &X)
 void OuterProductDecoder::evaluate()
 {
     // LOG_DEBUG("OuterProductDecoder eval!");
-    X.evaluate();
+    d_X.evaluate();
     // // float scalefactor = X.value.rows();
-    this->value = X.value * transpose(X.value);
+    this->value = d_X.value * transpose(d_X.value);
     // this->value /= scalefactor;
 }
 
@@ -25,5 +24,5 @@ void OuterProductDecoder::derive(Nilib::Matrixf const &seed)
     // CORE_ASSERT(seed.cols() == X.value.rows());
     // CORE_ASSERT(X.value.rows() == seed.rows());
     // // float scalefactor = X.value.rows();
-    X.derive(seed * X.value + Nilib::transpose(seed) * X.value);
+    d_X.derive(seed * d_X.value + Nilib::transpose(seed) * d_X.value);
 }

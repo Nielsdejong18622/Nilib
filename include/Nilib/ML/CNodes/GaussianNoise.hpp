@@ -17,7 +17,7 @@ namespace Nilib
         void derive(Matrixf const &seed) override;
 
     protected:
-        CNode &input;
+        CNode &d_input;
         float d_mean = 0.0f, d_sigma = 0.0f;
     };
 }

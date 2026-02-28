@@ -7,29 +7,27 @@
 
 namespace Nilib
 {
-    struct Plus : public CNode
-    {
-    public:
-        /// @brief X + Y gate.
-        Plus(CNode &X, CNode &Y);
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+struct Plus : public CNode
+{
+  public:
+    Plus(CNode &X, CNode &Y);
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-    private:
-        CNode &X, &Y;
-    };
+  private:
+    CNode &d_X, &d_Y;
+};
 
-    struct Minus : public CNode
-    {
-    public:
-        /// @brief X - Y gate.
-        Minus(CNode &X, CNode &Y);
-        void evaluate() override;
-        void derive(Nilib::Matrixf const &seed) override;
+struct Minus : public CNode
+{
+  public:
+    Minus(CNode &X, CNode &Y);
+    void evaluate() override;
+    void derive(Nilib::Matrixf const &seed) override;
 
-    private:
-        CNode &X, &Y;
-    };
+  private:
+    CNode &d_X, &d_Y;
+};
 } // namespace Nilib
 
 #endif

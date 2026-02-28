@@ -6,15 +6,21 @@
 
 namespace Nilib
 {
-    struct Selu_fun
+struct Selu_fun
+{
+    static constexpr float lambda = 1.05070f;
+    static constexpr float alpha = 1.67326f;
+    static float evaluate(float x)
     {
-        static constexpr float lambda = 1.05070;
-        static constexpr float alpha = 1.67326;
-        static float evaluate(float x) { return x > 0 ? lambda * x : lambda * alpha * (std::exp(x) - 1.0); }
-        static float derivative(float x) { return x > 0 ? lambda : lambda * alpha * std::exp(x); }
-    };
+        return x > 0 ? lambda * x : lambda * alpha * (std::exp(x) - 1.0f);
+    }
+    static float derivative(float x)
+    {
+        return x > 0 ? lambda : lambda * alpha * std::exp(x);
+    }
+};
 
-    using Selu = Activation<Selu_fun>;
+using Selu = Activation<Selu_fun>;
 
-}
+} // namespace Nilib
 #endif

@@ -1,6 +1,8 @@
 #include "Nilib/Structures/VRPSolution.hpp"
 #include "gurobi_c++.h"
 
+#include "Nilib/Math/RNG.hpp"
+
 using namespace Nilib;
 using namespace Nilib::VRP;
 
@@ -45,16 +47,14 @@ Solution::Solution(Instance const &inst, Matrixf const &X, float const opt_objva
 {
 }
 
-Solution::Solution(Instance const &inst, Matrixf const &X)
-    : Solution(inst, X, 0.0)
+Solution::Solution(Instance const &inst, Matrixf const &X) : Solution(inst, X, 0.0)
 {
 }
 
 void Solution::random()
 {
     adjacencyMatrix = Matrixf::rand(adjacencyMatrix.rows(), adjacencyMatrix.cols());
-    adjacencyMatrix.apply([](float const t)
-                          { return (t > 0.8); });
+    adjacencyMatrix.apply([](float const t) { return (t > 0.8); });
 }
 
 Solution Solution::feasibleSolution(Instance const &inst)
@@ -78,7 +78,7 @@ Solution Solution::feasibleSolution(Instance const &inst)
     }
 
     // Shuffle the customers to create a random order
-    random_shuffle(customers.begin(), customers.end());
+    Nilib::RNG::shuffle(customers);
 
     // Start creating routes
     size_t currentIndex = 0; // Tracks the index of the customer
@@ -122,8 +122,7 @@ Solution Solution::randomSolution(Instance const &inst)
 
     // Really random.
     Matrixf X = Matrixf::rand(numnodes, numnodes);
-    X.apply([](float const t)
-            { return (t > 0.8); });
+    X.apply([](float const t) { return (t > 0.8); });
 
     // Feasible random.
 
@@ -179,7 +178,8 @@ Solution Solution::optimalSolution(Instance const &inst)
             {
                 if (i != j)
                 {
-                    model.addConstr(u[i] - u[j] + (n - 1) * x[i][j] <= n - 2, "MTZ_" + std::to_string(i) + "_" + std::to_string(j));
+                    model.addConstr(u[i] - u[j] + (n - 1) * x[i][j] <= n - 2,
+                                    "MTZ_" + std::to_string(i) + "_" + std::to_string(j));
                 }
             }
             model.addConstr(u[i] <= inst.vehcapacity());
