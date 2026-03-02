@@ -19,7 +19,7 @@ namespace Nilib
         unsigned int id = 0;
 
     private:
-        explicit ShaderProgram(int shaderid);
+        explicit ShaderProgram(unsigned int shaderid);
         // Constructors.
         ShaderProgram();
 

@@ -16,7 +16,7 @@ ShaderProgram::ShaderProgram()
         LOG_ERROR("Unable to create Program!");
 }
 
-ShaderProgram::ShaderProgram(int shaderid)
+ShaderProgram::ShaderProgram(unsigned int shaderid)
     : id(shaderid)
 {
 }
@@ -34,7 +34,7 @@ unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *s
     ASSERT(glfwGetCurrentContext(), "No associated GLFW window context! Has Window been constructed?");
 
     // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         LOG_ERROR("GLAD initialization failed!");
         return 0;

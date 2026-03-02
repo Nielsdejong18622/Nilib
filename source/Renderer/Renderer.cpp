@@ -9,7 +9,7 @@ Renderer::Renderer()
       quad_shader(ShaderProgram::createFromFiles("shaders/quad.vert", "shaders/quad.frag"))
 {
     // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         LOG_ERROR("GLAD initialization failed!");
         throw std::exception();
@@ -32,9 +32,9 @@ Renderer::Renderer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
 
     // Set vertex attribs for triangles
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void*>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0); // Done with triangle VAO
@@ -47,9 +47,9 @@ Renderer::Renderer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), &quad_vertices, GL_STATIC_DRAW);
 
     // Set vertex attribs for quads
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void*>(0));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void*>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0); // Done with quad VAO
@@ -72,7 +72,7 @@ void Renderer::drawCalls()
     // Draw triangles
     triangle_shader.bind();
     glBindVertexArray(VAO_Triangles);
-    glDrawArrays(GL_TRIANGLES, 0, triangle_count);
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLint>(triangle_count));
 
     // Draw quads
     quad_shader.bind();
@@ -82,7 +82,7 @@ void Renderer::drawCalls()
     glUniform3f(cameraLocation, camera.position.x(), camera.position.y(), camera.position.z());
 
     glBindVertexArray(VAO_Quads);
-    glDrawArrays(GL_TRIANGLES, 0, quad_count);
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLint>(quad_count));
 
     triangle_shader.bind();
 }
@@ -92,7 +92,7 @@ void Renderer::endScene() const
 {
 }
 
-void Renderer::startScene(Window const &window) const
+void Renderer::startScene(Window const &) const
 {
 }
 

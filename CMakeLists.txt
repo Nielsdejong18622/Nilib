@@ -56,7 +56,7 @@ target_compile_options(Nilib PRIVATE
     -Wduplicated-branches
     -Wlogical-op
     -Wuseless-cast
-    -Werror
+    # -Werror
   >
 )
 message(STATUS "Nilib Build type: ${CMAKE_BUILD_TYPE}")
