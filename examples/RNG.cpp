@@ -19,11 +19,11 @@ int main()
 
     for (size_t test = 0; test < 1; ++test)
     {
-        PROFILE_SCOPE("Testing RNG::normal(20,0, 10.0)");
+        PROFILE_SCOPE("Testing RNG::normal(20.0f, 10.0f)");
         Nilib::RunningStats probstat;
         for (size_t i = 0; i < 10'000'000; i++)
-            probstat.push(RNG::normal(20.0, 10.0));
-        LOG_INFO("Observed RNG::normal(20,0, 10.0)", probstat);
+            probstat.push(RNG::normal(20.0f, 10.0f));
+        LOG_INFO("Observed RNG::normal(20.0f, 10.0f)", probstat);
     }
 
     for (size_t test = 0; test < 1; ++test)

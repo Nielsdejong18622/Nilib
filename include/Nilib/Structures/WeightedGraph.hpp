@@ -15,11 +15,12 @@ namespace Nilib
         using weight_t = float;
         using node_t = Graph::node_t;
         std::vector<weight_t> weights; // m
-        
-        void addEdge(node_t const node1, node_t const node2, weight_t const weight);
+
+        void addEdge(node_t node1, node_t node2, weight_t weight);
 
         static Weighted empty();
-        static Weighted random(size_t const numNodes, size_t const numEdges);
+        static Weighted random(size_t numNodes, size_t numEdges);
+        static Weighted fromVec2f(std::vector<Vec2f> const &x);
 
         void print();
 

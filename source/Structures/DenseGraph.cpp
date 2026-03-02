@@ -2,6 +2,8 @@
 
 void Nilib::DenseGraph::reserve(size_t const numNodes, size_t const numEdges)
 {
+    CORE_ASSERT(numNodes * numNodes == numEdges);
+    d_adj = Nilib::Matrixf::zeros(numNodes, numNodes);
 }
 
 bool Nilib::DenseGraph::contains(node_t const node_id) const
@@ -12,12 +14,12 @@ bool Nilib::DenseGraph::contains(node_t const node_A, node_t const node_B) const
 {
     return contains(node_A) and
            contains(node_B) and
-           adj[node_A * numNodes() + node_B];
+           d_adj[node_A * numNodes() + node_B];
 }
 
 size_t Nilib::DenseGraph::numNodes() const
 {
-    return adj.cols();
+    return d_adj.cols();
 }
 
 size_t Nilib::DenseGraph::numEdges() const
@@ -28,7 +30,7 @@ size_t Nilib::DenseGraph::numEdges() const
     {
         for (size_t jdx = 0; jdx < n; ++jdx)
         {
-            sum += adj(idx, jdx);
+            sum += static_cast<size_t>(d_adj(idx, jdx));
         }
     }
     return sum;
@@ -40,7 +42,7 @@ size_t Nilib::DenseGraph::out_degree(node_t const node_id) const
     size_t sum = 0;
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
-        sum += adj(node_id, jdx);
+        sum += d_adj(node_id, jdx);
     }
     return sum;
 }
@@ -51,7 +53,7 @@ size_t Nilib::DenseGraph::in_degree(node_t const node_id) const
     size_t sum = 0;
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
-        sum += adj(jdx, node_id);
+        sum += d_adj(jdx, node_id);
     }
     return sum;
 }
@@ -64,16 +66,16 @@ void Nilib::DenseGraph::addNode()
     {
         for (size_t jdx = 0; jdx < n; ++jdx)
         {
-            new_adj(idx, jdx) = adj(idx, jdx);
+            new_adj(idx, jdx) = d_adj(idx, jdx);
         }
     }
-    adj = new_adj;
+    d_adj = new_adj;
 }
 
 void Nilib::DenseGraph::print()
 {
     LOG_DEBUG("DenseGraph", this);
-    LOG_DEBUG("Adjacency:", adj);
+    LOG_DEBUG("Adjacency:", d_adj);
 }
 
 void Nilib::DenseGraph::disconnectNode(uint32_t const node_id)
@@ -82,8 +84,8 @@ void Nilib::DenseGraph::disconnectNode(uint32_t const node_id)
 
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
-        adj(jdx, node_id) = 0.0;
-        adj(node_id, jdx) = 0.0;
+        d_adj(jdx, node_id) = 0.0;
+        d_adj(node_id, jdx) = 0.0;
     }
 }
 
@@ -98,10 +100,10 @@ void Nilib::DenseGraph::removeNode(uint32_t const node_id)
     {
         for (size_t jdx = 0; jdx < n - 1; ++jdx)
         {
-            new_adj(idx, jdx) = adj(idx, jdx);
+            new_adj(idx, jdx) = d_adj(idx, jdx);
         }
     }
-    adj = new_adj;
+    d_adj = new_adj;
 }
 
 void Nilib::DenseGraph::addEdge(node_t const from, node_t const to)
@@ -109,7 +111,7 @@ void Nilib::DenseGraph::addEdge(node_t const from, node_t const to)
     ASSERT(from < numNodes(), "Can not relate edge to", from);
     ASSERT(to < numNodes(), "Can not relate edge to", to);
 
-    adj(from, to) = 1.0;
+    d_adj(from, to) = 1.0;
 }
 
 // Does not remove multi-edges, only one edge!
@@ -117,19 +119,20 @@ void Nilib::DenseGraph::remEdge(node_t const from, node_t const to)
 {
     ASSERT(from < numNodes(), "Can not relate edge to", from);
     ASSERT(to < numNodes(), "Can not relate edge to", to);
-    ASSERT(adj(from, to), "Edge from", from, "to", to, "not present");
-    adj(from, to) = 0.0;
+    ASSERT(d_adj(from, to), "Edge from", from, "to", to, "not present");
+    d_adj(from, to) = 0.0;
 }
 
 Nilib::DenseGraph Nilib::DenseGraph::random(size_t const numNodes, size_t const numEdges)
 {
     ASSERT(numEdges <= numNodes * numNodes, "A dense graph can not have more than n^2 edges!");
     DenseGraph rand;
-    rand.adj = StoreMatrix::rand(numNodes, numNodes);
-    rand.adj.apply([](float const t)
-                   { return (t > 0.5) ? 1.0f : 0.0f; });
+    rand.d_adj = StoreMatrix::rand(numNodes, numNodes);
+    rand.d_adj.apply([](float const t)
+                     { return (t > 0.5) ? 1.0f : 0.0f; });
     return rand;
 }
+
 
 Nilib::DenseGraph Nilib::DenseGraph::empty()
 {
@@ -145,7 +148,7 @@ bool Nilib::DenseGraph::operator==(Nilib::DenseGraph const &other) const
     {
         for (size_t jdx = 0; jdx < n; ++jdx)
         {
-            if (other.adj(idx, jdx) != adj(idx, jdx))
+            if (other.d_adj(idx, jdx) != d_adj(idx, jdx))
                 return false;
         }
     }

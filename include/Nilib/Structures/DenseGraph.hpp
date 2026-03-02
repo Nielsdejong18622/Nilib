@@ -36,6 +36,7 @@ namespace Nilib
         void remEdge(node_t const from, node_t const to);
 
         static DenseGraph random(size_t const numNodes, size_t const numEdges);
+        static DenseGraph connected(size_t numNodes, bool self_loops = false);
         static DenseGraph empty();
 
         bool operator==(DenseGraph const &other) const;
@@ -44,19 +45,19 @@ namespace Nilib
 
     protected:
         using StoreMatrix = Nilib::Matrix<float, DynamicMatrixData<float>>;
-        StoreMatrix adj;
+        StoreMatrix d_adj;
 
         // Iterators.
         struct EdgeView
         {
-            StoreMatrix const &adj;
+            StoreMatrix const &d_adj;
             struct iterator
             {
                 StoreMatrix const &adj;
                 edge_t edge_idx;
 
-                iterator(StoreMatrix const &adj, edge_t idx)
-                    : adj(adj), edge_idx(idx)
+                iterator(StoreMatrix const &adjMatr, edge_t eidx)
+                    : adj(adjMatr), edge_idx(eidx)
                 {
                     skip_zero();
                 }
@@ -69,8 +70,8 @@ namespace Nilib
 
                 std::tuple<node_t, node_t, edge_t> operator*() const
                 {
-                    node_t from = edge_idx / adj.cols();
-                    node_t to = edge_idx % adj.cols();
+                    node_t from = static_cast<node_t>(edge_idx / adj.cols());
+                    node_t to = static_cast<node_t>(edge_idx % adj.cols());
                     return {from, to, edge_idx};
                 }
 
@@ -86,12 +87,12 @@ namespace Nilib
                     return edge_idx != other.edge_idx;
                 }
             };
-            iterator begin() const { return {adj, 0}; }
-            iterator end() const { return {adj, (adj.size() > 0) ? static_cast<edge_t>(adj.size() - 1) : 0}; }
+            iterator begin() const { return {d_adj, 0}; }
+            iterator end() const { return {d_adj, (d_adj.size() > 0) ? static_cast<edge_t>(d_adj.size() - 1) : 0}; }
         };
 
     public:
-        EdgeView arcs() const { return EdgeView{adj}; }
+        EdgeView arcs() const { return EdgeView{d_adj}; }
         // NodeView nodes() const { return NodeView{head, edges}; }
     };
 
