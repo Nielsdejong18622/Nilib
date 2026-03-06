@@ -53,7 +53,7 @@ size_t Nilib::DenseGraph::in_degree(node_t const node_id) const
     size_t sum = 0;
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
-        sum += d_adj(jdx, node_id);
+        sum += d_adj(jdx, node_id) > 0.5;
     }
     return sum;
 }
@@ -119,7 +119,7 @@ void Nilib::DenseGraph::remEdge(node_t const from, node_t const to)
 {
     ASSERT(from < numNodes(), "Can not relate edge to", from);
     ASSERT(to < numNodes(), "Can not relate edge to", to);
-    ASSERT(d_adj(from, to), "Edge from", from, "to", to, "not present");
+    ASSERT(d_adj(from, to) == 1.0, "Edge from", from, "to", to, "not present");
     d_adj(from, to) = 0.0;
 }
 
@@ -132,7 +132,6 @@ Nilib::DenseGraph Nilib::DenseGraph::random(size_t const numNodes, size_t const 
                      { return (t > 0.5) ? 1.0f : 0.0f; });
     return rand;
 }
-
 
 Nilib::DenseGraph Nilib::DenseGraph::empty()
 {

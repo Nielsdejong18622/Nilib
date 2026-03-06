@@ -107,7 +107,6 @@ namespace Nilib
             iterator end() const { return {d_head, d_edges, static_cast<node_t>(d_head.size()), static_cast<edge_t>(d_edges.size())}; }
         };
 
-
     public:
         EdgeView arcs() const { return EdgeView{d_head, d_edges}; }
         // NodeView nodes() const { return NodeView{head, edges}; }
