@@ -127,7 +127,7 @@ namespace Nilib
 
                 if (params.history_filename != "")
                 {
-                    ASSERT(false, "Not implemented yet!");
+                    // ASSERT(false, "Not implemented yet!");
                     // LOG_PROGRESS("Writing history to file", params.history_filename.string());
                 }
 

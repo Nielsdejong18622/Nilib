@@ -36,7 +36,7 @@ namespace Nilib
         !std::is_same_v<std::decay_t<T>, std::string>;  // exclude std::string
 
     // Disallows user to do constructs like LOG_DEBUG("Some text") << "Some more text!\n";
-    struct DisallowedLogger
+    struct DisallowedLogger 
     {
         static DisallowedLogger &empty()
         {
