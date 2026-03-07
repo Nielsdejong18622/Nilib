@@ -17,12 +17,12 @@ int main()
 
     using namespace std::complex_literals;
 
-    // using MatC = Matrix<std::complex<double>, StaticMatrixData<2, 2, std::complex<double>>>;
+    using MatC = Matrix<std::complex<double>, StaticMatrixData<2, 2, std::complex<double>>>;
 
-    // MatC ic;
-    // MatC Complex({std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0),
-    //               std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0)});
-    // ic.print();
+    MatC ic;
+    MatC Complex({std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0),
+                  std::complex<double>(1.0, 1.0), std::complex<double>(1.0, 1.0)});
+    ic.print();
 
     // Sparse
 

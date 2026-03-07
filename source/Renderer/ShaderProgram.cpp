@@ -3,6 +3,7 @@
 #include "Nilib/Core/Assert.hpp"
 
 #include <math.h>
+#include <fstream>
 
 #include "GLAD/glad.h"
 #include <GLFW/glfw3.h>

@@ -6,6 +6,7 @@
 
 #include <numeric>
 #include <functional>
+#include <algorithm>
 #include "Nilib/Core/Assert.hpp"
 
 namespace Nilib

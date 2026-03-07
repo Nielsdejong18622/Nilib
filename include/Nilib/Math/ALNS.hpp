@@ -61,8 +61,7 @@ namespace Nilib
 
             Solver() = delete;
             Solver(Params const &params, std::vector<Operator> const &operators, Solution const &initial)
-                : bestfound(initial), incumbent(initial), params(params), d_operators(operators),
-                  d_logger(params.history_filename), d_callback_global_improvement(nullptr), d_callback_iteration(nullptr)
+                : bestfound(initial), incumbent(initial), params(params), d_operators(operators), d_callback_global_improvement(nullptr), d_callback_iteration(nullptr)
             {
                 ASSERT(operators.size() > 0, "ALNS::Solver requires atleast one operator!");
                 LOG_PROGRESS("ALNS::Solver Version 0.10 build [Win32]");
@@ -128,10 +127,8 @@ namespace Nilib
 
                 if (params.history_filename != "")
                 {
-                    d_logger.reset();
-                    d_logger << "iteration,best_obj,current_obj,delta,current_feasible,next_obj,next_feasible,temperature,"
-                                "selected_operator_idx\n";
-                    LOG_PROGRESS("Writing history to file", params.history_filename.string());
+                    ASSERT(false, "Not implemented yet!");
+                    // LOG_PROGRESS("Writing history to file", params.history_filename.string());
                 }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
@@ -226,9 +223,9 @@ namespace Nilib
                         // CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, delta, current_feasible,
                         // next_obj, next_feasible, temperature, selected_operator_idx);
                         char const sep = ',';
-                        d_logger << iteration << sep << best_obj << sep << current_obj << sep << delta << sep
-                                 << current_feasible << sep << next_obj << sep << next_feasible << sep << temperature << sep
-                                 << selected_operator_idx << '\n';
+                        // d_logger << iteration << sep << best_obj << sep << current_obj << sep << delta << sep
+                        //          << current_feasible << sep << next_obj << sep << next_feasible << sep << temperature << sep
+                        //          << selected_operator_idx << '\n';
                     }
 
                     // Cool down
@@ -236,7 +233,6 @@ namespace Nilib
                 }
 
                 LOG_PROGRESS("ALNS solver performed", iteration, "iterations in", timer.getMilliseconds());
-                d_logger.close();
             }
 
             // This userdefined callback is called at the start of each ALNS iteration.
@@ -253,7 +249,7 @@ namespace Nilib
 
         private:
             std::vector<Operator> d_operators;
-            Nilib::BasicFileLogger d_logger;
+            Nilib::Logger d_logger;
 
             Callback d_callback_global_improvement;
             Callback d_callback_iteration;

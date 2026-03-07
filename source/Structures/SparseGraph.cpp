@@ -1,6 +1,7 @@
 #include "Nilib/Structures/SparseGraph.hpp"
 #include "Nilib/Core/Assert.hpp"
 #include "Nilib/Math/RNG.hpp"
+#include <algorithm>
 
 void Nilib::SparseGraph::reserve(size_t const numNodes, size_t const numEdges)
 {
