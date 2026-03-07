@@ -92,7 +92,7 @@ class Serializer
         return true;
     }
     // Specialization for CNode.
-    bool writeCNode(Nilib::CNode &data)
+    bool writeCNode(Nilib::CNode const &data)
     {
         writeMatrix(data.value);
         return true;

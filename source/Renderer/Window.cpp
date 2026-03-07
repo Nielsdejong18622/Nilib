@@ -1,7 +1,7 @@
 // Own headers
 #include "Nilib/Renderer/Window.hpp"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb/stb_image_write.h>
+// #define STB_IMAGE_WRITE_IMPLEMENTATION
+// #include <stb/stb_image_write.h>
 
 using namespace Nilib;
 
@@ -294,7 +294,8 @@ void Window::screenshotPNG(char const *filename)
     }
 
     // Step 4: Save the flipped pixel data to a file as PNG
-    stbi_write_png(filename, width, height, 3, flippedPixels, width * 3);
+    ASSERT(false, "Screenshotting possibility temporarily removed!");
+    // stbi_write_png(filename, width, height, 3, flippedPixels, width * 3);
 
     // Step 5: Cleanup
     delete[] pixels;

@@ -109,20 +109,20 @@ Matrix<type, DynamicMatrixData<type>> operator*(Matrix<type, DynamicMatrixData<t
     return res;
 }
 
-// SparseMatrix SparseMatrix Product.
-template <typename type>
-Matrix<type, SparseMatrixData<type>> operator*(Matrix<type, SparseMatrixData<type>> const &A,
-                                               Matrix<type, SparseMatrixData<type>> const &B)
-{
-    ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
+// // SparseMatrix SparseMatrix Product.
+// template <typename type>
+// Matrix<type, SparseMatrixData<type>> operator*(Matrix<type, SparseMatrixData<type>> const &A,
+//                                                Matrix<type, SparseMatrixData<type>> const &B)
+// {
+//     ASSERT(A.cols() == B.rows(), "A:", A.rows(), "x", A.cols(), "B:", B.rows(), "x", B.cols());
 
-    Matrix<type, SparseMatrixData<type>> res(A.rows(), B.cols());
-    for (size_t nridx = 0; nridx < A.rows(); ++nridx)
-        for (size_t k = 0; k < A.cols(); ++k)
-            for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
-                res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
-    return res;
-}
+//     Matrix<type, SparseMatrixData<type>> res(A.rows(), B.cols());
+//     for (size_t nridx = 0; nridx < A.rows(); ++nridx)
+//         for (size_t k = 0; k < A.cols(); ++k)
+//             for (size_t ncidx = 0; ncidx < B.cols(); ++ncidx)
+//                 res(nridx, ncidx) += A(nridx, k) * B(k, ncidx);
+//     return res;
+// }
 
 template <typename value_type, typename storage>
 Matrix<value_type, storage> transpose(Matrix<value_type, storage> const &A)
@@ -206,10 +206,10 @@ Matrix<value_type, data> apply(Matrix<value_type, data> const &A, Callable &&fun
 }
 
 // Distance functions between Matrices/Vectors.
-template <typename type, typename storage, float p>
-type minkowski(Matrix<type, storage> const &A, Matrix<type, storage> const &B)
+template <typename type, typename storage>
+type minkowski(Matrix<type, storage> const &A, Matrix<type, storage> const &B, float p = 1.0f)
 {
-    return std::pow(apply(A - B, [](type t) { return std::pow(std::abs(t), p); }).sum(), 1 / p);
+    return std::pow(apply(A - B, [p](type t) { return std::pow(std::abs(t), p); }).sum(), 1 / p);
 }
 
 template <typename type = float, typename storage = DynamicMatrixData<type>>

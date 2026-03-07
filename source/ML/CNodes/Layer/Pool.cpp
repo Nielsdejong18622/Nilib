@@ -15,7 +15,7 @@ void MeanPool::evaluate()
     d_col = d_X.value.cols();
     CORE_ASSERT(d_X.value.size() > 0);
 
-    this->value = Nilib::Matrixf(1, 1, {d_X.value.avg()});
+    this->value = Nilib::Matrixf(1, 1, d_X.value.avg());
 }
 
 void MeanPool::derive(Nilib::Matrixf const &seed)

@@ -12,7 +12,7 @@ int main()
     REGISTER_LOGGER("MyLogger", &customlogger);
     REGISTER_LOGGER("MyLogger2", &customlogger2);
 
-    Matrixf A(1, 1, {2.0});
+    Matrixf A(1, 1, 2.0);
     // LOG_DEBUG("MyLogger", "Test123", "Test456", A) << 'disallowed!';
     LOG_DEBUG() << "MyLogger" << "allowed!\n";
 
@@ -37,10 +37,8 @@ int main()
             LOG_DEBUG() << ch << '/';
         }
         LOG_DEBUG() << ']' << '\n';
-        //LOG_DEBUG() << '\n';//LOG_DEBUG(); // THIS IS IMPORTANT TO CLOSE THE STRING!
-        
+        // LOG_DEBUG() << '\n';//LOG_DEBUG(); // THIS IS IMPORTANT TO CLOSE THE STRING!
     }
-    
 
     LOG_DEBUG(A, 'h', "severity level", LOG_LEVEL);
 
@@ -50,6 +48,6 @@ int main()
     LOG_SUCCESS("MyLogger", "Success message");
     LOG_ERROR("MyLogger", "Error message");
     LOG_PROGRESS("MyLogger", "Progress message");
-    
+
     return 0;
 }

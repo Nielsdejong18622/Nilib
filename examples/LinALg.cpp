@@ -26,12 +26,12 @@ int main()
 
     // Sparse
 
-    using SparseMatrixf = Matrix<float, SparseMatrixData<float>>;
+    // using SparseMatrixf = Matrix<float, SparseMatrixData<float>>;
 
-    SparseMatrixf my_sparsemat = SparseMatrixf::diag(5, 5, 8.8f);
+    // SparseMatrixf my_sparsemat = SparseMatrixf::diag(5, 5, 8.8f);
 
-    LOG_PROGRESS("My SparseMat:", my_sparsemat);
-    my_sparsemat.print();
+    // LOG_PROGRESS("My SparseMat:", my_sparsemat);
+    // my_sparsemat.print();
 
     B.apply([](float const t)
             { return std::sin(t + 1); });
@@ -74,7 +74,7 @@ int main()
     res.print();
 
     auto G = Matrixd::diag(4, 6, 4.0);
-    auto I = Mat3x3::identity(3);
+    auto I = Mat3x3::identity(3, 3);
     LOG_INFO("I", I);
     I.print();
     LOG_INFO("G", G);
@@ -88,15 +88,16 @@ int main()
     auto p = Matrixd::all(10, 10, 9.5);
     auto p2 = Matrixd::all(10, 10, -1.0);
 
-    auto p1 = Mat<10, 10>::all(9.5);
+    auto p1 = Mat<10, 10>::all(10, 10, 9.5);
     LOG_INFO("P:", p);
+    LOG_INFO("P1:", p1);
     p.print();
     LOG_INFO("Random Matrix R", c * R * b);
     (c * R * b + Matrixd::rand(1, 1)).print();
 
-    auto R1 = Mat<10, 10>::rand();
-    auto b1 = Mat<10, 1>::rand();
-    auto c1 = Mat<1, 10>::randn(0.0, 1.0);
+    auto R1 = Mat<10, 10>::rand(10, 10);
+    auto b1 = Mat<10, 1>::rand(10, 1);
+    auto c1 = Mat<1, 10>::randn(1, 10, 0.0, 1.0);
     LOG_INFO("Random Matrix R1", c1 * R1 * b1);
     auto res1 = (c1 * R1 * b1);
     res1.print();
@@ -141,26 +142,8 @@ int main()
             PROFILE_FUNCTION();
             for (size_t i = 0; i < tests; i++)
             {
-                auto M = Mat<m_size, m_size>::rand();
-                auto b = Mat<m_size, 90>::rand();
-                auto M2 = M * M;
-                auto res = M2 * M2 * b;
-                sum += res.sum();
-            }
-        }
-        LOG_INFO("Sum:", sum);
-    }
-
-    // Sparse
-    {
-        float sum = 0;
-        for (size_t j = 0; j < prints; j++)
-        {
-            PROFILE_FUNCTION();
-            for (size_t i = 0; i < tests; i++)
-            {
-                auto M = SparseMatrixf::rand(m_size, m_size);
-                auto b = SparseMatrixf::rand(m_size, 90);
+                auto M = Mat<m_size, m_size>::rand(m_size, m_size);
+                auto b = Mat<m_size, 90>::rand(m_size, 90);
                 auto M2 = M * M;
                 auto res = M2 * M2 * b;
                 sum += res.sum();

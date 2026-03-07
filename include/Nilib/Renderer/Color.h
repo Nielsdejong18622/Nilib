@@ -157,7 +157,7 @@ namespace Nilib
             class Palette
             {
             public:
-                Palette(std::array<Color, N> const &colors) : d_colors(colors) {}
+                explicit Palette(std::array<Color, N> const &colors) : d_colors(colors) {}
 
                 // Sample color by index (wraps around)
                 inline Color const &sample(std::size_t index) const

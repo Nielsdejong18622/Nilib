@@ -93,7 +93,7 @@ namespace Nilib
             return operator[](idx);
         };
 
-        size_t const size() const { return head; }
+        size_t size() const { return head; }
 
         void clear()
         {

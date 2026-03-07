@@ -77,7 +77,7 @@ class BasicConsoleLogger : public Logger
     ~BasicConsoleLogger() override
     {
         // The reset color.
-        insertColor(LogLevel::Info);
+        BasicConsoleLogger::insertColor(LogLevel::Info);
     }
 
     void insertTimestamp(LogLevel const) override
@@ -100,7 +100,6 @@ class BasicConsoleLogger : public Logger
         else
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 #endif
-
 #ifdef __linux__
         switch (level)
         {

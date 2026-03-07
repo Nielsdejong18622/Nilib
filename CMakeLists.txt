@@ -30,10 +30,12 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 target_compile_options(Nilib PRIVATE
 
   # Release defines
+  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DLOG_LEVEL=7>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
-  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DENABLE_PROFILE=0>
+  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DISABLE_PROFILE>
 
   # Debug logging level
+  $<$<CONFIG:Debug>:-DLOG_LEVEL=1>
   $<$<CONFIG:Debug>:-DLOG_LEVEL=1>
 
   # Debug warnings (GCC / MinGW)

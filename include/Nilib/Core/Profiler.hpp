@@ -8,8 +8,8 @@
 namespace Nilib
 {
 
-class Profiler
-{
+  class Profiler
+  {
     void printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const;
 
     std::string_view const d_function_name;
@@ -30,13 +30,13 @@ class Profiler
     std::chrono::seconds getSeconds() const;
     std::chrono::milliseconds getMilliseconds() const;
     std::chrono::nanoseconds getNanoseconds() const;
-};
+  };
 
-using Timer = Profiler;
+  using Timer = Profiler;
 
 }; // namespace Nilib
 
-#ifndef ENABLE_PROFILE
+#ifdef DISABLE_PROFILE
 #define PROFILE_FUNCTION() (void)(0)
 #define PROFILE_SCOPE_LINE2(name, line) (void)(0)
 #define PROFILE_SCOPE_LINE(name, line) (void)(0)

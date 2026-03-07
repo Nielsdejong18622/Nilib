@@ -9,21 +9,21 @@
 
 namespace Nilib
 {
-class Renderer
-{
+  class Renderer
+  {
 
   public:
     struct TriangleVertex
     {
-        Vec3f position;
-        Vec4f color;
-        // Texture coordinate.
-        // Whatever more.
+      Vec3f position;
+      Vec4f color;
+      // Texture coordinate.
+      // Whatever more.
 
-        static TriangleVertex RandomView()
-        {
-            return {.position = Nilib::Vec3f::randunif(-1.0f, 1.0f), .color = Color::RandomHSL()};
-        }
+      static TriangleVertex RandomView()
+      {
+        return {.position = Nilib::Vec3f::rand(3, 1), .color = Color::RandomHSL()};
+      }
     };
 
     Renderer();
@@ -61,7 +61,7 @@ class Renderer
     unsigned int VAO_Quads;     // Recipe
 
     bool d_wireframe = false;
-};
+  };
 } // namespace Nilib
 
 #endif

@@ -5,7 +5,7 @@
 namespace Nilib
 {
     template <typename MLData>
-    void train(MLData &data, size_t const max_epochs, Input &x, Target &y, CNode &module, Optimizer &optimizer, size_t batch_size = 10, size_t log_every = 10)
+    void train(MLData &data, size_t max_epochs, Input &x, Target &y, CNode &module, Optimizer &optimizer, size_t batch_size = 10, size_t log_every = 10)
     {
         for (size_t train_epoch = 0; train_epoch < max_epochs; ++train_epoch)
         {

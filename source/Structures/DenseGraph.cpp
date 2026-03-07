@@ -14,7 +14,7 @@ bool Nilib::DenseGraph::contains(node_t const node_A, node_t const node_B) const
 {
     return contains(node_A) and
            contains(node_B) and
-           d_adj[node_A * numNodes() + node_B];
+           d_adj[node_A * numNodes() + node_B] == 1.0;
 }
 
 size_t Nilib::DenseGraph::numNodes() const
@@ -133,6 +133,17 @@ Nilib::DenseGraph Nilib::DenseGraph::random(size_t const numNodes, size_t const 
     return rand;
 }
 
+Nilib::DenseGraph Nilib::DenseGraph::connected(size_t numNodes, bool self_loops)
+{
+    DenseGraph full;
+    full.d_adj = StoreMatrix::all(numNodes, numNodes, 1.0f);
+    for (size_t node_id = 0; node_id < numNodes and self_loops; node_id++)
+    {
+        full.d_adj(node_id, node_id) = 0.0f;
+    }
+
+    return full;
+}
 Nilib::DenseGraph Nilib::DenseGraph::empty()
 {
     return DenseGraph();

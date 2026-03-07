@@ -57,8 +57,8 @@ namespace Nilib
             virtual void draw(Nilib::Window &window) const = 0;
 
             // Inherited from ALNS::Solution.
-            virtual float objective() const = 0;
-            virtual bool feasible() const = 0;
+            virtual float objective() const override = 0;
+            virtual bool feasible() const override = 0;
         };
     };
 };

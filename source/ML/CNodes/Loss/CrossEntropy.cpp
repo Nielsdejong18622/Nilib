@@ -25,7 +25,7 @@ void Nilib::CrossEntropy::evaluate()
         loss += -(y * std::log(x) + (1 - y) * std::log(1 - x));
     }
 
-    this->value = Nilib::Matrixf(1, 1, {loss / static_cast<float>(n)});
+    this->value = Nilib::Matrixf(1, 1, loss / static_cast<float>(n));
 }
 
 void Nilib::CrossEntropy::derive(Nilib::Matrixf const &seed)

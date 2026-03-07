@@ -204,11 +204,11 @@ namespace Nilib
             return container[RAN<stream>::index(container.size())];
         }
 
-        template <typename Container, typename Weights>
-        static inline auto sample(Container const &container, Weights const &weights) -> decltype(container[0])
-        {
-            return container[RAN<stream>::index(container.size())];
-        }
+        // template <typename Container, typename Weights>
+        // static inline auto sample(Container const &container, Weights const &weights) -> decltype(container[0])
+        // {
+        //     return container[RAN<stream>::index(container.size())];
+        // }
 
         // Uniform sample from an initializer list
         template <typename T>

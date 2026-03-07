@@ -1,9 +1,8 @@
 #ifndef _WINDOW_H
 #define _WINDOW_H
-#pragma once
 
 // External headers.
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 #include <map>
 
@@ -16,39 +15,39 @@
 namespace Nilib
 {
 
-/*
- * Barebones window class. Bind keybindings, Plot some shapes.
- * Non-resizable.
- * Name is given.
- * Immediate mode opengl.
- */
-class Window
-{
+  /*
+   * Barebones window class. Bind keybindings, Plot some shapes.
+   * Non-resizable.
+   * Name is given.
+   * Immediate mode opengl.
+   */
+  class Window
+  {
     // Typedefs.
     typedef std::function<void(void)> Callback;
     typedef std::tuple<int, int, int, int> KeyEvent;
 
     struct Windowdata
     {
-        int width = 800;
-        int height = 800;
-        int screenposx = 0;
-        int screenposy = 0;
-        // size_t framebufx;
-        // size_t framebufy;
-        int minwidth = 0;
-        int minheight = 0;
-        Color clearColor;
-        char const *title;
-        Window *owner = nullptr;
-        std::map<KeyEvent, Callback> keybindings;
+      int width = 800;
+      int height = 800;
+      int screenposx = 0;
+      int screenposy = 0;
+      // size_t framebufx;
+      // size_t framebufy;
+      int minwidth = 0;
+      int minheight = 0;
+      Color clearColor;
+      char const *title;
+      Window *owner = nullptr;
+      std::map<KeyEvent, Callback> keybindings;
 
-        // Immediate mode rendering.
-        float xmin = -1.0f;
-        float xmax = +1.0f;
+      // Immediate mode rendering.
+      float xmin = -1.0f;
+      float xmax = +1.0f;
 
-        float ymin = -1.0f;
-        float ymax = +1.0f;
+      float ymin = -1.0f;
+      float ymax = +1.0f;
     };
 
   public:
@@ -82,19 +81,19 @@ class Window
 
     inline float getXlim_min() const
     {
-        return d_data.xmin;
+      return d_data.xmin;
     };
     inline float getXlim_max() const
     {
-        return d_data.xmax;
+      return d_data.xmax;
     };
     inline float getYlim_min() const
     {
-        return d_data.ymin;
+      return d_data.ymin;
     };
     inline float getYlim_max() const
     {
-        return d_data.ymax;
+      return d_data.ymax;
     };
 
   protected:
@@ -161,7 +160,7 @@ class Window
   private:
     void transform2D(float &x, float &y) const;
     void transform2DDist(float &dist) const;
-};
+  };
 
 } // namespace Nilib
 #endif

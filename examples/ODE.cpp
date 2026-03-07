@@ -63,7 +63,7 @@ int main()
     // // Lotka-Volterra Predator-Prey equations.
     using Y = Nilib::Vec2f;
 
-    Y initval1 = Y::ones();
+    Y initval1 = Y::ones(2, 1);
     initval1(0) = 0.9;
     initval1(1) = 0.4;
 
@@ -78,7 +78,7 @@ int main()
     }
 
     // // Lorentz-Attractor equations.
-    Nilib::Vec3f initval_lorenz = Nilib::Vec3f::ones();
+    Nilib::Vec3f initval_lorenz = Nilib::Vec3f::ones(3 ,1);
     initval_lorenz(0) = 0.9;
     initval_lorenz(1) = 0.0;
     initval_lorenz(2) = 0.0;

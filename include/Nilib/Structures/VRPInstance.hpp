@@ -16,11 +16,11 @@ namespace Nilib
         class Instance
         {
         public:
-            Nilib::Matrixf A; // Adjacency matrix.
-            Nilib::Matrixf X; // Attributes
-            size_t vehcap;    // vehicle capacity. (Assume all nodes have demand 1).
+            Nilib::Matrixf A;   // Adjacency matrix.
+            Nilib::Matrixf X;   // Attributes
+            size_t vehcap = 10; // vehicle capacity. (Assume all nodes have demand 1).
 
-            friend class Solution;
+            friend struct Solution;
             Instance() = default;
 
             Instance(size_t const nnodes, size_t const vehcap, Nilib::Matrixf const &A, Nilib::Matrixf const &X);
@@ -57,12 +57,10 @@ namespace Nilib
             // If fleet is empty, assume unlimited vehicles.
             std::vector<Vehicle> fleet;
 
-            void draw(Nilib::Window &window) const;
-
             bool serialize(Serializer &serializer);
             bool deserialize(Deserializer &deserializer);
 
-            inline size_t vehicle_capacity() const {return fleet.empty() ? 5 : fleet.begin()->capacity;} 
+            constexpr size_t vehicle_capacity() const { return 5; }
 
             static DataInstance empty()
             {

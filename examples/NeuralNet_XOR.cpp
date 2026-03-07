@@ -3,7 +3,7 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/ML/ML.hpp"
 
-int main(int argc, char **argv)
+int main()
 {
     using namespace Nilib;
     Nilib::RNG::seed(126);

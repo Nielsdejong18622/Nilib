@@ -4,7 +4,7 @@ namespace Nilib
 {
 
     Param::Param(float val)
-        : GNode(Matrixf(1, 1, {val}))
+        : GNode(Matrixf(1, 1, val))
     {
     }
 

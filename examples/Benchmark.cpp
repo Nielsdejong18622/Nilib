@@ -18,14 +18,14 @@ int main()
     using namespace Nilib;
 
     double input = 123.456;
-    Mat2x2 mat = Mat2x2::rand();
+    Mat2x2 mat = Mat2x2::rand(2, 2);
     Matrixf mat_dyn = Matrixf::rand(2, 2);
     size_t iters = 1000000;
 
     LOG_DEBUG(mat_dyn);
     mat_dyn.print();
     auto A = mat_dyn * mat_dyn * mat_dyn;
-    A.print();  
+    A.print();
     BenchMarkEnv benchmark(1000000, 10, "Multiplication_bench.csv");
 
     benchmark.function("Cube_double", cube<double>, input);
