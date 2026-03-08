@@ -5,23 +5,6 @@
 int main()
 {
     using namespace Nilib;
-    // PersistentIndexVector<char> pvec(10);
-
-    // LOG_DEBUG(pvec.size());
-    // uint16_t a = pvec.add('a');
-    // uint16_t b = pvec.add('b');
-    // uint16_t c = pvec.add('c');
-    // uint16_t d = pvec.add('d');
-    // pvec.remove('c');
-    // pvec.remove(a);
-    // uint16_t e = pvec.add('e');
-
-    // CORE_ASSERT(pvec[e] == 'e');
-
-    // LOG_DEBUG(pvec);
-    // std::fill(pvec.begin(), pvec.end(), '1');
-    // pvec.shrink_to_fit();
-    // LOG_DEBUG(pvec);
 
     PIndexVector<char> pvec;
 
