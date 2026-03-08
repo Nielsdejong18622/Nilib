@@ -50,6 +50,7 @@ int main()
     // Simple ODE y'(t) = y(t), y(0) = 9.
     float initval = 1;
     initval *= 9;
+    CSVWriter csv("simpleODE.csv");
 
     auto res = Nilib::ODE::RungeKutta4<float>(&simpleODE, 0, 10, initval, 0.01);
 
@@ -57,7 +58,7 @@ int main()
     {
         auto ODEval = res[idx];
         auto realval = initval * exp(idx * 0.01);
-        CSV("simpleODE.csv", idx, ODEval, realval);
+        CSV(csv, idx, ODEval, realval);
     }
 
     // // Lotka-Volterra Predator-Prey equations.
@@ -66,15 +67,15 @@ int main()
     Y initval1 = Y::ones(2, 1);
     initval1(0) = 0.9;
     initval1(1) = 0.4;
-
     auto res_predatorprey = Nilib::ODE::RungeKutta4<Y>(&predatorPrey, 0, 100, initval1, 0.1);
-
+    
+    csv.open("predatorprey.csv");
     for (size_t idx = 0; idx < res_predatorprey.size(); ++idx)
     {
         auto prey = res_predatorprey[idx](0);
         auto predator = res_predatorprey[idx](1);
         float time = idx * 0.1;
-        CSV("predatorprey.csv", time, prey, predator);
+        CSV(csv, time, prey, predator);
     }
 
     // // Lorentz-Attractor equations.
@@ -85,13 +86,14 @@ int main()
 
     auto res_lorentz = Nilib::ODE::RungeKutta4<Nilib::Vec3f>(&lorentzAttractor, 0, 1000, initval_lorenz, 0.001);
 
+    csv.open("lorentz.csv");
     for (size_t idx = 0; idx < res_lorentz.size(); ++idx)
     {
         auto x = res_lorentz[idx](0);
         auto y = res_lorentz[idx](1);
         auto z = res_lorentz[idx](2);
         float time = idx * 0.001;
-        CSV("lorentz.csv", time, x, y, z);
+        CSV(csv, time, x, y, z);
     }
 
     return 0;

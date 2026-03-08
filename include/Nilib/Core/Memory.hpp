@@ -12,10 +12,12 @@
 
 namespace Nilib
 {
-// Global memory tracker
-class MemoryTracker
-{
-    std::string formatBytes(uint64_t bytes, bool useBinary = true) const;
+  // For formatting a count of bytes into human readable format.
+  std::string format_bytes(uint64_t bytes, bool useBinary = true);
+
+  // Global memory tracker
+  class MemoryTracker
+  {
 
   public:
     Nilib::RunningStats<size_t> allocations;
@@ -27,14 +29,14 @@ class MemoryTracker
     void remove(size_t ptr) noexcept;
 
     void report() const noexcept;
-};
+  };
 } // namespace Nilib
 
 // Align memory (optional but safe)
 void *allocateWithSize(std::size_t size);
 void deallocateWithSize(void *userPtr) noexcept;
 
-#ifdef TRACK_MEMORY
+#ifndef TRACK_MEMORY
 // Single object
 void *operator new(std::size_t size);
 void operator delete(void *ptr) noexcept;

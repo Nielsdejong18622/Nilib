@@ -61,7 +61,7 @@ namespace Nilib
 
             Solver() = delete;
             Solver(Params const &params, std::vector<Operator> const &operators, Solution const &initial)
-                : bestfound(initial), incumbent(initial), params(params), d_operators(operators), d_callback_global_improvement(nullptr), d_callback_iteration(nullptr)
+                : bestfound(initial), incumbent(initial), params(params), d_csvwriter(), d_operators(operators), d_callback_global_improvement(nullptr), d_callback_iteration(nullptr)
             {
                 ASSERT(operators.size() > 0, "ALNS::Solver requires atleast one operator!");
                 LOG_PROGRESS("ALNS::Solver Version 0.10 build [Win32]");
@@ -127,8 +127,8 @@ namespace Nilib
 
                 if (params.history_filename != "")
                 {
-                    // ASSERT(false, "Not implemented yet!");
-                    // LOG_PROGRESS("Writing history to file", params.history_filename.string());
+                    d_csvwriter.open(params.history_filename);
+                    LOG_PROGRESS("Writing history to file", params.history_filename.string());
                 }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
@@ -157,7 +157,6 @@ namespace Nilib
                     size_t const selected_operator_idx = Nilib::RNG::index(d_operators.size());
                     Operator op = d_operators[selected_operator_idx];
 
-                    bool current_feasible = next_feasible;
                     op(incumbent);
 
                     // Objective of the new solution
@@ -201,7 +200,7 @@ namespace Nilib
                                 best_obj = next_obj;
                                 bestfound = incumbent;
                                 iteration_without_improv = 0;
-                                // LOG_PROGRESS("Found global improvement, objective:", best_obj);
+                                LOG_PROGRESS("Found global improvement, objective:", best_obj);
                             }
                         }
                         else if (Nilib::RNG::prob() < params.reset_prob)
@@ -218,14 +217,7 @@ namespace Nilib
 
                     if (params.history_filename != "")
                     {
-                        // TODO: CSV does not work when called multiple times as we have static.
-                        // Thus we require LOG_PROGRESS_TO(history_filename, ... ) with header inserted earlier.
-                        // CSV(params.history_filename.c_str(), iteration, best_obj, current_obj, delta, current_feasible,
-                        // next_obj, next_feasible, temperature, selected_operator_idx);
-                        char const sep = ',';
-                        // d_logger << iteration << sep << best_obj << sep << current_obj << sep << delta << sep
-                        //          << current_feasible << sep << next_obj << sep << next_feasible << sep << temperature << sep
-                        //          << selected_operator_idx << '\n';
+                        CSV(d_csvwriter, iteration, best_obj, current_obj, delta, next_obj, next_feasible, selected_operator_idx);
                     }
 
                     // Cool down
@@ -249,7 +241,7 @@ namespace Nilib
 
         private:
             std::vector<Operator> d_operators;
-            Nilib::Logger d_logger;
+            Nilib::CSVWriter d_csvwriter;
 
             Callback d_callback_global_improvement;
             Callback d_callback_iteration;

@@ -33,6 +33,9 @@ namespace Nilib
         template <typename Func, typename... Args>
         void function(std::string const &name, Func &&func, Args... args)
         {
+            CSVWriter csv;
+            if (d_filename != "")
+                csv.open(d_filename);
             size_t const iterations = d_iterations;
             for (size_t bench = 1; bench < d_bench_marks + 1; bench++)
             {
@@ -47,7 +50,7 @@ namespace Nilib
 
                 if (d_filename != "")
                 {
-                    CSV(d_filename.c_str(), name, iterations, total, avg_ns, bench);
+                    CSV(csv, name, iterations, total, avg_ns, bench);
                 }
                 else
                 {

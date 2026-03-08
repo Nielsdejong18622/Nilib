@@ -2,32 +2,7 @@
 
 using namespace Nilib;
 
-void MemoryTracker::add(size_t size) noexcept
-{
-    allocations.push(size);
-}
-
-void MemoryTracker::remove(size_t size) noexcept
-{
-    deallocations.push(size);
-}
-
-void MemoryTracker::report() const noexcept
-{
-    LOG_DEBUG("==== Memory Tracker Report ====");
-    LOG_DEBUG("Total Allocated:", allocations.n(), formatBytes(allocations.sum()));
-    LOG_DEBUG("Total Freed:    ", deallocations.n(), formatBytes(deallocations.sum()));
-    LOG_DEBUG("Leaked:         ", formatBytes(allocations.sum() - deallocations.sum()), "in",
-              allocations.n() - deallocations.n(), "chunks");
-    LOG_DEBUG("=======================");
-}
-
-MemoryTracker::~MemoryTracker()
-{
-    report();
-}
-
-std::string MemoryTracker::formatBytes(uint64_t bytes, bool useBinary) const
+std::string Nilib::format_bytes(uint64_t bytes, bool useBinary)
 {
     const char *siUnits[] = {"B", "KB", "MB", "GB", "TB", "PB"};
     const char *iecUnits[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB"};
@@ -49,12 +24,35 @@ std::string MemoryTracker::formatBytes(uint64_t bytes, bool useBinary) const
     return out.str();
 }
 
+void MemoryTracker::add(size_t size) noexcept
+{
+    allocations.push(size);
+}
+
+void MemoryTracker::remove(size_t size) noexcept
+{
+    deallocations.push(size);
+}
+
+void MemoryTracker::report() const noexcept
+{
+    LOG_DEBUG("==== Memory Tracker Report ====");
+    LOG_DEBUG("Total Allocated:", allocations.n(), format_bytes(allocations.sum()));
+    LOG_DEBUG("Total Freed:    ", deallocations.n(), format_bytes(deallocations.sum()));
+    LOG_DEBUG("Leaked:         ", format_bytes(allocations.sum() - deallocations.sum()), "in",
+              allocations.n() - deallocations.n(), "chunks");
+    LOG_DEBUG("=======================");
+}
+
+MemoryTracker::~MemoryTracker()
+{
+    report();
+}
+
 // Declare global static instance
 static MemoryTracker gMemoryTracker;
 
-// Align size for pointer arithmetic (optional, but good practice)
-constexpr size_t HEADER_SIZE = sizeof(std::size_t);
-
+#ifdef TRACK_MEMORY
 // Safe allocation
 void *allocateWithHeader(std::size_t size)
 {
@@ -104,5 +102,5 @@ void operator delete[](void *ptr, std::size_t size) noexcept
 {
     deallocateWithHeader(ptr, size);
 }
-
+#endif
 #endif

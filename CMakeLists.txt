@@ -36,7 +36,7 @@ target_compile_options(Nilib PRIVATE
 
   # Debug logging level
   $<$<CONFIG:Debug>:-DLOG_LEVEL=1>
-  $<$<CONFIG:Debug>:-DLOG_LEVEL=1>
+  $<$<CONFIG:Debug>:-DTRACK_MEMORY>
 
   # Debug warnings (GCC / MinGW)
   $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:
