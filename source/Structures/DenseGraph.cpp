@@ -136,12 +136,7 @@ Nilib::DenseGraph Nilib::DenseGraph::random(size_t const numNodes, size_t const 
 Nilib::DenseGraph Nilib::DenseGraph::connected(size_t numNodes, bool self_loops)
 {
     DenseGraph full;
-    full.d_adj = StoreMatrix::all(numNodes, numNodes, 1.0f);
-    for (size_t node_id = 0; node_id < numNodes and self_loops; node_id++)
-    {
-        full.d_adj(node_id, node_id) = 0.0f;
-    }
-
+    full.d_adj = StoreMatrix::diag(numNodes, numNodes, self_loops, 1.0f);
     return full;
 }
 Nilib::DenseGraph Nilib::DenseGraph::empty()

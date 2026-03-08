@@ -31,6 +31,12 @@ namespace Nilib
         // Add or remove.
         index add(Type const &type);
         void remove(index);
+        void clear()
+        {
+            d_data.clear();
+            d_head.clear();
+            d_tail.clear();
+        }
 
         // Accessors
         Type &operator[](index id)
@@ -47,6 +53,7 @@ namespace Nilib
         // check if an index exists.
         bool contains(index id) const { return id < d_head.size() and d_head[id] < d_data.size(); }
         size_t size() const { return d_data.size(); }
+        bool empty() const { return d_data.empty(); }
 
         class Iterator
         {
