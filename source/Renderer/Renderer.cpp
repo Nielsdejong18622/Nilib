@@ -32,9 +32,9 @@ Renderer::Renderer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
 
     // Set vertex attribs for triangles
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void*>(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void *>(0));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void*>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0); // Done with triangle VAO
@@ -47,9 +47,9 @@ Renderer::Renderer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), &quad_vertices, GL_STATIC_DRAW);
 
     // Set vertex attribs for quads
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void*>(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), static_cast<void *>(0));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void*>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Renderer::TriangleVertex), reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0); // Done with quad VAO

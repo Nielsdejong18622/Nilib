@@ -42,3 +42,9 @@ target_link_libraries(Persistent PUBLIC Nilib)
 target_link_libraries(Benchmark PUBLIC Nilib)
 target_link_libraries(GNN PUBLIC Nilib)
 
+
+# add_test(NAME Triangle COMMAND Triangle)
+# add_test(NAME AdvancedTriangle COMMAND AdvancedTriangle)
+# add_test(NAME ODE COMMAND ODE)
+add_test(NAME Structures COMMAND Structures)
+add_test(NAME RNG2 COMMAND RNG2)

@@ -18,27 +18,28 @@ struct SpecialData
 int main()
 {
     using namespace Nilib;
-
     {
-        CircularStack<int, 5> buffer(0);
+
+        CircularStack<int, 5> buffer(-1);
 
         LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
-        CORE_ASSERT(buffer.head == 0);
+        buffer.push_back(0);
         buffer.push_back(1);
-        CORE_ASSERT(buffer.head == 1);
-
         buffer.push_back(2);
-        CORE_ASSERT(buffer.head == 2);
         buffer.push_back(3);
-        CORE_ASSERT(buffer.head == 3);
+        buffer.push_back(4);
+        buffer.push_back(5);
+        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
         auto node3 = buffer.pop_back();
-        CORE_ASSERT(buffer.head == 2);
-        CORE_ASSERT(node3 == 3);
+        CORE_ASSERT(node3 == 5);
+        buffer.push_back(50);
+        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer, node3);
+        auto node50 = buffer.pop_back();
+        CORE_ASSERT(node50 == 50);
         buffer.push_back(4);
         buffer.push_back(5);
         buffer.push_back(6);
         buffer.push_back(7);
-        // CORE_ASSERT(buffer.head == );
         auto node7 = buffer.pop_back();
         CORE_ASSERT(node7 == 7);
 
@@ -78,4 +79,5 @@ int main()
     }
 
     LOG_SUCCESS("Structure Example completed!");
+    return EXIT_SUCCESS;
 }

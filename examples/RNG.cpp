@@ -12,7 +12,8 @@ int main()
 
     // Generate a number between 0-1.
     auto gen = RNG::prob();
-
+    LOG_DEBUG("Random number:", gen);
+    LOG_DEBUG("Random number:", RNG::prob());
     // Generate a lognormal number.
     RNG::lognormal(2.38, 0.683);
     RNG::weibull(2.38, 0.683);
@@ -21,15 +22,15 @@ int main()
     {
         PROFILE_SCOPE("Testing RNG::normal(20.0f, 10.0f)");
         Nilib::RunningStats probstat;
-        for (size_t i = 0; i < 10'000'000; i++)
-            probstat.push(RNG::normal(20.0f, 10.0f));
+        for (size_t i = 0; i < 10'00'000; i++)
+            probstat.push(RNG::normal(-20.0f, 10.0f));
         LOG_INFO("Observed RNG::normal(20.0f, 10.0f)", probstat);
     }
 
     for (size_t test = 0; test < 1; ++test)
     {
         PROFILE_SCOPE("Testing RNG::index(10)");
-        Nilib::RunningStats probstat;
+        Nilib::RunningStats<int> probstat;
         for (size_t i = 0; i < 10'000'000; i++)
             probstat.push(RNG::index(10));
         LOG_INFO("Observed RNG::index(10):", probstat);

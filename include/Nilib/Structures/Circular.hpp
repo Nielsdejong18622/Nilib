@@ -13,12 +13,12 @@ namespace Nilib
     class CircularStack
     {
         std::array<Element, N> data;
+        size_t head = 0;
 
     public:
-        size_t head = 0;
         CircularStack() = default;
 
-        CircularStack(Element const &element)
+        explicit CircularStack(Element const &element)
         {
             data.fill(element);
         }
@@ -34,7 +34,7 @@ namespace Nilib
         Element &pop_back()
         {
             head = (head + N - 1) % N;
-            return data[head + 1];
+            return data[head];
         }
         // Iterators for range-for compatibility and STL algorithms
         auto begin() noexcept { return data.begin(); }

@@ -44,6 +44,7 @@ Nilib::Vec3f lorentzAttractor(Nilib::Vec3f const &Y, float const t)
 
 int main()
 {
+    LOG_DEBUG("Running ODE example!");
     using namespace Nilib;
     using namespace Nilib::ODE;
 
