@@ -115,7 +115,7 @@ void Nilib::DenseGraph::addEdge(node_t const from, node_t const to)
 }
 
 // Does not remove multi-edges, only one edge!
-void Nilib::DenseGraph::remEdge(node_t const from, node_t const to)
+void Nilib::DenseGraph::removeEdge(node_t const from, node_t const to)
 {
     ASSERT(from < numNodes(), "Can not relate edge to", from);
     ASSERT(to < numNodes(), "Can not relate edge to", to);

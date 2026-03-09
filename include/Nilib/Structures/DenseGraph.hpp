@@ -33,7 +33,7 @@ namespace Nilib
         void disconnectNode(node_t const node_id);
         void removeNode(node_t const node_id);
         void addEdge(node_t const from, node_t const to);
-        void remEdge(node_t const from, node_t const to);
+        void removeEdge(node_t const from, node_t const to);
 
         static DenseGraph random(size_t const numNodes, size_t const numEdges);
         static DenseGraph connected(size_t numNodes, bool self_loops = false);
