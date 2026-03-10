@@ -1,6 +1,5 @@
 #include "Nilib/Core/Memory.hpp"
 #include "Nilib/Logger/Log.hpp"
-#include "Memory.hpp"
 
 std::string Nilib::format_bytes(size_t bytes, bool useBinary)
 {
