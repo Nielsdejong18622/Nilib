@@ -6,7 +6,7 @@
 
 namespace Nilib
 {
-  std::string format_bytes(uint64_t bytes, bool useBinary = true);
+  std::string format_bytes(size_t bytes, bool useBinary = true);
 }
 
 #endif
