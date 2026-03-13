@@ -17,6 +17,7 @@ namespace Nilib
     public:
         using node_t = uint32_t;
         using edge_t = uint32_t;
+        using StoreMatrix = Nilib::Matrix<float, DynamicMatrixData<float>>;
 
         void reserve(size_t const numNodes, size_t const numEdges);
 
@@ -42,9 +43,9 @@ namespace Nilib
         bool operator==(DenseGraph const &other) const;
 
         void print();
+        StoreMatrix const &adjMat() const { return d_adj; }
 
     protected:
-        using StoreMatrix = Nilib::Matrix<float, DynamicMatrixData<float>>;
         StoreMatrix d_adj;
 
         // Iterators.

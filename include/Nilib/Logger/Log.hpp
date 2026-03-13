@@ -88,8 +88,8 @@ namespace Nilib
                     first_elem = false;
                 }
                 *d_stream << ']';
-                // Or exceptions.
             }
+            // Or exceptions.
             else if constexpr (std::is_base_of_v<std::exception, std::remove_cvref_t<T>>)
             {
                 *d_stream << typeid(first).name() << ' ' << first.what();
@@ -129,11 +129,20 @@ namespace Nilib
         // Base case for empty variadic
         Logger &log()
         {
-            auto now = std::chrono::system_clock::now();
-            std::string formatted_time = std::format("{:%Y-%m-%d %H:%M:%S}", now);
+            fast_time(); // Gets d_cached_time.
             if (d_stream)
-                *d_stream << '[' << formatted_time << "]:";
+                *d_stream << d_cached_time << '|';
             return *this;
+        }
+
+        // Recursive log printing of template arguments
+        template <typename T, typename... Args>
+        DisallowedLogger &log(T &&first, Args &&...args)
+        {
+            fast_time(); // Gets d_cached_time.
+            if (d_stream)
+                *d_stream << d_cached_time << '|';
+            return log_internal(std::forward<T>(first), std::forward<Args>(args)...); // Template recurse
         }
 
         // Set the upcoming level and other options.
@@ -173,16 +182,6 @@ namespace Nilib
             return *this;
         }
 
-        // Recursive log printing of template arguments
-        template <typename T, typename... Args>
-        DisallowedLogger &log(T &&first, Args &&...args)
-        {
-            auto now = std::chrono::system_clock::now();
-            std::string formatted_time = std::format("{:%Y-%m-%d %H:%M:%S}", now);
-            *d_stream << '[' << formatted_time << "]:";
-            return log_internal(std::forward<T>(first), std::forward<Args>(args)...); // Template recurse
-        }
-
         // Redirects the stream.
         void redirect(std::ostream &other)
         {
@@ -213,8 +212,33 @@ namespace Nilib
         }
 
     private:
+        std::string const &fast_time()
+        {
+            auto now = std::chrono::system_clock::now();
+            auto sec = std::chrono::system_clock::to_time_t(now);
+
+            if (sec != d_cached_sec)
+            {
+                d_cached_sec = sec;
+
+                std::tm tm;
+#ifdef _WIN32
+                localtime_s(&tm, &sec);
+#else
+                localtime_r(&sec, &tm);
+#endif
+                char buf[20];
+                std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
+                d_cached_time = buf;
+            }
+
+            return d_cached_time;
+        }
+
         // std::mutex d_mutex;     // protects log output
         std::ostream *d_stream = &std::cout;
+        std::string d_cached_time;
+        std::time_t d_cached_sec = 0;
         char d_end = '\n';
         char d_sep = ' ';
     };
@@ -226,7 +250,6 @@ namespace Nilib
 
     // Logger needs to end with '\n'.
     // Logger_r needs to end with '\r'.
-
 };
 
 // Macro's
