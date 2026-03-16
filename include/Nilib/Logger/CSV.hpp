@@ -23,14 +23,31 @@ namespace Nilib
         {
             ASSERT(d_file.is_open(), "Open the CSVWriter file first! Use CSVWriter.open('filename.csv')!");
             d_header_inserted = true;
+
+            // CSV'ing of custom types such as ranges:
+            if constexpr (is_range<T>)
+            {
+                bool first_elem = true;
+                for (auto &&elem : first)
+                {
+                    if (!first_elem)
+                        d_file << ',';
+                    d_file << elem;
+                    first_elem = false;
+                }
+            }
+            else
+            {
+                d_file << first;
+            }
             if constexpr (sizeof...(args) > 0)
             {                                                  // Check if there are more arguments
-                d_file << first << ',';                        // Print separator
+                d_file << ',';                                 // Print separator
                 return write_row(std::forward<Args>(args)...); // Template recurse
             }
             else
             {
-                d_file << first << '\n';
+                d_file << '\n';
             }
         }
 
@@ -53,9 +70,14 @@ namespace Nilib
             }
         }
 
-        void close() noexcept
+        void flush() noexcept
         {
             d_file.flush();
+        }
+
+        void close() noexcept
+        {
+            flush();
             d_file.close();
         }
 
