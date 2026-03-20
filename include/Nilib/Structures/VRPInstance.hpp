@@ -60,7 +60,7 @@ namespace Nilib
             bool serialize(Serializer &serializer);
             bool deserialize(Deserializer &deserializer);
 
-            constexpr size_t vehicle_capacity() const { return 5; }
+            constexpr size_t vehicle_capacity() const { return 10; }
 
             static DataInstance empty()
             {

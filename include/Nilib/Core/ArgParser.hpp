@@ -89,19 +89,7 @@ namespace Nilib
     {
         try
         {
-            if constexpr (std::is_same_v<type, int>)
-            {
-                return std::stoi(std::string(value));
-            }
-            else if constexpr (std::is_same_v<type, double>)
-            {
-                return std::stod(std::string(value));
-            }
-            else if constexpr (std::is_same_v<type, size_t>)
-            {
-                return std::stoull(std::string(value));
-            }
-            else if constexpr (std::is_same_v<type, bool>)
+            if constexpr (std::is_same_v<type, bool>)
             {
                 if (value == "true" || value == "1")
                     return true;
@@ -109,6 +97,17 @@ namespace Nilib
                     return false;
                 ASSERT(false, "Unsupported boolean type!");
                 return false;
+            }
+            else if constexpr (std::is_integral_v<type>)
+            {
+                if constexpr (std::is_signed_v<type>)
+                    return static_cast<type>(std::stoll(std::string(value)));
+                else
+                    return static_cast<type>(std::stoull(std::string(value)));
+            }
+            else if constexpr (std::is_floating_point_v<type>)
+            {
+                return static_cast<type>(std::stod(std::string(value)));
             }
             else if constexpr (std::is_same_v<type, std::string>)
             {

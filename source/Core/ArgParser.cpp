@@ -57,7 +57,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
 
     // Match argv with d_clargs.
     bool next_arg_expected_value = false;
-    std::vector<CLArg>::iterator last;
+    std::vector<CLArg>::iterator last = d_clargs.end();
 
     // Iterate through the raw command line.
     for (int idx = 1; idx < argc; ++idx)
@@ -80,13 +80,13 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
             }
 
             // Long option (or flag). --verbose, --obs=4 and --obs 4
-            // Convert --name to -name.
             // Short option (or flag) -verbose, -o=5 and -o 5
+            // Convert --name to -name.
             if (arg.size() > 1 and arg[1] == '-')
             {
                 arg = arg.substr(1, arg.size());
             }
-            // (-)-obs=4
+            // We only deal with short options from now, e.g. -obs=4
             if (arg.contains('='))
             {
                 // Split on '='
@@ -112,6 +112,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
                 }
                 else
                 {
+                    // LOG_DEBUG("Unrecognized!", arg);
                     d_unrecognized.push_back(arg);
                 }
                 next_arg_expected_value = false;
@@ -153,8 +154,6 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
             CORE_ASSERT(last != d_clargs.end());
             last->parsed = true;
             last->set_val(arg);
-            d_clargs[idx - 1].parsed = true;
-            d_clargs[idx - 1].set_val(arg);
             next_arg_expected_value = false;
         }
         else
@@ -177,6 +176,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
             // If not matched to a positional argument, it is an unrecognized command line argument.
             if (jdx == d_clargs.size())
             {
+                // LOG_DEBUG("Unrecognized argument!", arg);
                 d_unrecognized.push_back(arg);
             }
 
@@ -186,7 +186,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
     // Previous option must have been a flag.
     if (next_arg_expected_value)
     {
-        LOG_DEBUG("Last argument must have been a flag!");
+        // LOG_DEBUG("Last argument must have been a flag!");
         last->set_val("true");
         last->parsed = true;
     }
