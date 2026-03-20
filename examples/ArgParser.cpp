@@ -8,7 +8,7 @@ ENUM(Strategy, DIVIDE = 1, BENDERS = 2, CGA = 0, DEFAULT = 3);
 
 int main(int argc, char **argv)
 {
-    Argparser parser("Example program that shows how to use the Argparser class.", argc, argv);
+    ArgParser parser("Example program that shows how to use the Argparser class.", "1.0");
 
     // // Which positional arguments does this program neeed!
     std::string inputfile = "Inputfile";
@@ -16,15 +16,14 @@ int main(int argc, char **argv)
     bool verbose = false;
     Strategy strat = Strategy::DEFAULT;
 
-    parser.argument(inputfile, "inputfile", "Inputfile for the program.");
-    parser.argument<int>(integer, "dim", "Dimension.");
-    parser.option(verbose, "verbose", "Enables verbose printing of messages.", 'v');
+    parser.option(inputfile, "inputfile", "Inputfile for the program.", true);
+    parser.argument<int>(integer, "Dimension");
+    parser.flag(verbose, "verbose", "Enables verbose printing of messages.", 'v');
 
-    // TODO: integrate such that Strategy can also be parsed instead of explcitily converting from string to strategy.
-    parser.argument<Strategy>(strat, "strategy", Strategy::description());
-    parser.check();
+    parser.argument<Strategy>(strat, Strategy::description());
+    parser.parse_or_exit(argc, argv);
 
-    LOG_SUCCESS("Program", parser.programName(), "arguments:", "InputFile:", inputfile, "integerDim:", integer,
+    LOG_SUCCESS("Program", parser.program_name(), "arguments:", "InputFile:", inputfile, "integerDim:", integer,
                 "verbose:", verbose, "strategy:", std::string(strat));
 
     return 0;

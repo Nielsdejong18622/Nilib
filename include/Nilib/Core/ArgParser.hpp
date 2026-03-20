@@ -4,417 +4,180 @@
 #include "Nilib/Core/Assert.hpp"
 #include "Nilib/Core/Enum.hpp"
 #include "Nilib/Logger/Log.hpp"
-
+#include <functional>
 #include <algorithm>
-#include <iomanip>
-#include <vector>
 
 namespace Nilib
 {
-    class Argparser
+
+    class ArgParser
     {
     public:
-        Argparser(int argc, char **argv) : d_checked(false)
-        {
-            parse(argc, argv);
-        }
+        // Create an ArgParser object. Call parse or parse_or_exit to obtain the
+        ArgParser(std::string_view program_description, std::string_view version);
+        ~ArgParser() = default;
+        ArgParser(ArgParser const &) = delete;
+        ArgParser(ArgParser const &&) = delete;
 
-        Argparser(std::string const &program_description, int argc, char **argv)
-            : d_program_descr(program_description), d_checked(false)
-        {
-            parse(argc, argv);
-        }
+        // Sets store = true; iff flag_char, -flag_char or --flag_char flag_name, -flag_name or --flag_name is found in argv (otherwise sets store = false).
+        void flag(bool &store, std::string_view flag_name, std::string_view description, char flag_char);
 
-        ~Argparser()
-        {
-            if (!d_checked)
-            {
-                LOG_WARNING("Do not forget to check the ArgParser!");
-                check();
-            }
-        }
+        // An option such as: --option=value, --option value, -option value -option
+        // Attempts to convert option to value and store it in store.
+        template <typename type>
+        void option(type &store, std::string_view option_name, std::string_view description, bool required = false);
 
-        inline std::string const programName() const
-        {
-            auto pos = d_commandline.begin()->data.find_last_of("\\");
-            if (pos + 1 != std::string::npos)
-                return d_commandline.begin()->data.substr(pos + 1);
-            return d_commandline.begin()->data;
-        }
+        // Handle as positional argument. For example, programname file1.txt
+        // Converts argument to type and saves in store. If conversion fails,
+        template <typename type>
+        void argument(type &store, std::string_view description);
 
-        // Check if parsing went well. Throws error if not!
-        void check()
-        {
-            d_checked = true;
+        // Obtain the program name.
+        std::string_view program_name() const;
 
-            // // Look for "-h" or "--help"
-            CommandLineArg hstr("-h");
-            CommandLineArg helpstr("--help");
-            if (contains(d_commandline, hstr) | contains(d_commandline, helpstr))
-            {
-                help();
-                std::exit(EXIT_SUCCESS);
-                return;
-            }
+        // Obtain number of arguments (argc).
+        int argc() const;
 
-            size_t user_parsed = static_cast<size_t>(
-                std::count_if(d_user.begin(), d_user.end(), [](UserArg const &arg)
-                              { return arg.parsed; }));
-            size_t command_parsed = static_cast<size_t>(std::count_if(
-                d_commandline.begin(), d_commandline.end(), [](CommandLineArg const &arg)
-                { return arg.parsed; }));
+        // Parses commandline arguments.
+        // Returns true if succes, otherwise false.
+        [[nodiscard]] bool parse(int argc, char **argv);
 
-            LOG_DEBUG("Check: userArgs:", user_parsed, '/', d_user.size(), "commandLineArgs:", command_parsed, '/',
-                      d_commandline.size());
-            if (command_parsed < d_commandline.size())
-            {
-                for (auto &&c_arg : d_commandline)
-                {
-                    if (!c_arg.parsed)
-                    {
-                        if (std::count(d_commandline.begin(), d_commandline.end(), c_arg) > 1)
-                        {
-                            LOG_ERROR("Duplicate command line argument:", c_arg.data);
-                        }
-                        else if (c_arg.data.size() <= 3)
-                        {
-                            LOG_ERROR("Unrecognized command line option:", c_arg.data);
-                        }
-                        // else if (c_arg.data.starts_with("-"))
-                        // {
-                        //     LOG_ERROR("Unrecognized command line argument:", c_arg.data, "did you mean", '-' +
-                        //     c_arg.data);
-                        // }
-                        else
-                        {
-                            LOG_ERROR("Unrecognized command line argument:", c_arg.data);
-                        }
-                    }
-                }
-                help();
-                fail();
-                return;
-            }
-            size_t missing = 0;
-            for (auto &&user_arg : d_user)
-            {
-                if (user_arg.required && !user_arg.parsed)
-                {
-                    missing++;
-                    LOG_ERROR("Missing command line argument:", user_arg.arg_desc);
-                }
-            }
-            if (missing > 0)
-            {
+        // Parses commandline arguments. Or exits with help printed.
+        void parse_or_exit(int argc, char **argv);
 
-                help();
-                fail();
-            }
-        }
-
-        // template <typename Type>
-        // void required_argument(Type &store, char const *arg_desc, char const *description)
-        // {
-        //     argument<Type>(store, '\0', arg_desc, description, true);
-        // }
-
-        template <typename Type>
-        void argument(Type &store, std::string_view argc_name, std::string_view const description)
-        {
-            argument_interal<Type>(store, argc_name, description, false);
-        }
-
-        bool option(bool &store, std::string_view arg_desc, std::string_view description, char const arg_short = '\0')
-        {
-            option_internal(store, arg_desc, description, arg_short);
-            return store;
-        }
-
-        // Displays the help (-h) command.
-        void help() const
-        {
-            std::stringstream required;
-            const int indentWidth = 16; // Adjust based on longest arg name
-
-            // Print usage.
-            for (auto &&userArg : d_user)
-            {
-                if (userArg.required)
-                    required << ' ' << userArg.arg_desc << ' ';
-            }
-            LOG_PROGRESS(" Usage:");
-            if (!required.str().empty())
-                LOG_PROGRESS(" ", programName(), "[Options]", required.str(), "[Arguments]");
-            else
-                LOG_PROGRESS(" ", programName(), "[Options] [Arguments]");
-            LOG_PROGRESS(' ');
-            if (!d_program_descr.empty())
-            {
-                LOG_PROGRESS(d_program_descr);
-                LOG_PROGRESS(' ');
-            }
-
-            LOG_PROGRESS(" Arguments:");
-            for (auto &&userArg : d_user)
-            {
-                if (!userArg.option)
-                {
-                    LOG_PROGRESS() << "  " << std::left << std::setw(indentWidth) << ("--" + userArg.arg_desc)
-                                   << ((userArg.arg_short == '\0') ? " \t"
-                                                                   : (std::string("[-") + userArg.arg_short + "]\t"))
-                                   << userArg.description << '\n';
-                }
-            }
-
-            LOG_PROGRESS(" ");
-            LOG_PROGRESS(" Options:");
-            for (auto &&userArg : d_user)
-            {
-                if (userArg.option)
-                {
-                    LOG_PROGRESS() << "  " << std::left << std::setw(indentWidth) << ("--" + userArg.arg_desc)
-                                   << ((userArg.arg_short == '\0') ? " \t"
-                                                                   : (std::string("[-") + userArg.arg_short + "]\t"))
-                                   << userArg.description << '\n';
-                }
-            }
-
-            LOG_PROGRESS() << "  " << std::left << std::setw(indentWidth) << "--help"
-                           << "[-h]\tShows this menu.\n";
-        };
+        // Prints help text.
+        void help() const;
 
     private:
-        struct UserArg
+        template <typename type>
+        static type convert(std::string_view value);
+        bool all_parsed() const;
+
+        struct CLArg
         {
-            std::string arg_desc, description;
-            char arg_short;
-            bool parsed;
-            bool option;
+            enum class Type : int
+            {
+                ARGUMENT = 0,
+                OPTION = 1,
+                FLAG = 2
+            } type; // Sort on type.
+
+            std::string short_name;
+            std::string long_name;
+            std::string description;
+            uint16_t pos; // Position we expect this CLArg at (if pARG)
             bool required;
-        };
-
-        struct CommandLineArg
-        {
-            std::string data;
             bool parsed;
+            std::function<void(std::string_view)> set_val;
 
-            explicit CommandLineArg(std::string const &string) : data(string), parsed(false)
-            {
-            }
-
-            // operator std::string &()
-            // {
-            //     return data;
-            // } // Implicit conversion.
-            friend bool operator==(CommandLineArg const &self, CommandLineArg const &other)
-            {
-                return self.data == other.data;
-            }
+            bool operator<(CLArg const &other) const { return static_cast<int>(type) < static_cast<int>(other.type); }
         };
 
-        std::vector<CommandLineArg> d_commandline;
-        std::vector<UserArg> d_user;
-        std::string d_program_descr;
-        bool d_checked;
-
-        // Utility functions.
-        template <typename Type>
-        size_t find(std::vector<Type> const &search, Type const &key)
-        {
-            return static_cast<size_t>(
-                std::distance(std::begin(search), std::find(std::begin(search), std::end(search), key)));
-        }
-
-        size_t find_substr(std::vector<CommandLineArg> const &search, std::string const &prefix,
-                           std::vector<CommandLineArg>::const_iterator const &start)
-        {
-            auto pred = [&prefix](CommandLineArg const &type)
-            { return type.data.starts_with(prefix); };
-            return static_cast<size_t>(std::distance(std::begin(search), std::find_if(start, std::end(search), pred)));
-        }
-
-        template <typename Type>
-        bool contains(std::vector<Type> const &search, Type const &key)
-        {
-            return find(search, key) != search.size();
-        }
-
-        void parse(int argc, char **argv)
-        {
-            d_commandline.reserve(static_cast<size_t>(argc));
-            for (int i = 0; i < argc; i++)
-            {
-                d_commandline.emplace_back(argv[i]);
-            }
-            d_commandline[0].parsed = true;
-        }
-
-        void fail()
-        {
-            // throw std::runtime_error{std::string("Failure while parsing") + programName()};
-            std::exit(EXIT_FAILURE);
-        }
-
-        template <typename Type>
-        bool equality_arg(CommandLineArg const &shorthand_eq, Type &store)
-        {
-            size_t short_it = find_substr(d_commandline, shorthand_eq.data, d_commandline.begin());
-            if (short_it < d_commandline.size())
-            {
-                // If it was already parsed, the symbol has been used before.
-                if (d_commandline[short_it].parsed)
-                {
-                    LOG_ERROR("Argument", shorthand_eq.data, "is supplied more than once!");
-                    fail();
-                    return false;
-                }
-                d_commandline[short_it].parsed = true;
-
-                // Otherwise we parse it.
-                std::string value = d_commandline[short_it].data.substr(shorthand_eq.data.size());
-                std::stringstream convert(value);
-                try
-                {
-                    if (!(convert >> store) || !(convert >> std::ws).eof())
-                    {
-                        LOG_ERROR("Failed parsing of argument:", d_commandline[short_it].data, value);
-                        fail();
-                        return false;
-                    }
-                    d_user.back().parsed = true;
-                }
-                catch (const std::exception &e)
-                {
-                    LOG_ERROR("Failed parsing of argument:", d_commandline[short_it].data, value);
-                    fail();
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        template <typename Type>
-        bool space_arg(CommandLineArg const &arg, Type &store)
-        {
-            if (contains(d_commandline, arg))
-            {
-                size_t short_it = find(d_commandline, arg);
-                // If it was already parsed, the symbol has been used before.
-                if (d_commandline[short_it].parsed)
-                {
-                    LOG_ERROR("Argument", arg.data, "is supplied more than once!");
-                    fail();
-                    return false;
-                }
-                d_commandline[short_it].parsed = true;
-
-                // This must be the value of the argument.
-                size_t val_it = short_it + 1;
-                if (val_it >= d_commandline.size())
-                {
-                    LOG_ERROR("Expected argument value following", arg.data);
-                    fail();
-                    return false;
-                }
-                if (d_commandline[val_it].data == "-h" || d_commandline[val_it].data == "--help")
-                {
-                    return false;
-                }
-                else if (d_commandline[val_it].data.starts_with('-'))
-                {
-                    LOG_ERROR("Expected argument value following", arg.data, "but got", d_commandline[val_it].data);
-                    fail();
-                    return false;
-                }
-                d_commandline[val_it].parsed = true;
-                try
-                {
-                    // Otherwise we parse it.
-                    std::stringstream convert(d_commandline[val_it].data);
-                    if (!(convert >> store) || !(convert >> std::ws).eof())
-                    {
-                        LOG_ERROR("Failed parsing of argument:", arg.data, d_commandline[val_it].data);
-                        fail();
-                        return false;
-                    }
-                    d_user.back().parsed = true;
-                }
-                catch (const std::exception &e)
-                {
-                    LOG_ERROR("Failed parsing of argument:", arg.data, d_commandline[val_it].data);
-                    fail();
-                    return false;
-                }
-            }
-            return true;
-        }
-        // If the option is found. Toggle store.
-        void option_internal(bool &store, std::string_view arg_desc, std::string_view description, char arg_short = '\0')
-        {
-            UserArg arg;
-            arg.arg_desc = arg_desc;
-            arg.arg_short = arg_short;
-            arg.description = description;
-            arg.required = false;
-            arg.parsed = false;
-            arg.option = true;
-
-            CommandLineArg const longhand = CommandLineArg(std::string("--") + std::string(arg_desc));
-            size_t command2_id = find(d_commandline, longhand);
-            CommandLineArg const shorthand = CommandLineArg(std::string("-") + arg_short);
-            size_t command1_id = find(d_commandline, shorthand);
-            if (command1_id < d_commandline.size())
-            {
-                d_commandline[command1_id].parsed = true;
-                arg.parsed = true;
-                store = !store;
-            }
-            else if (command2_id < d_commandline.size())
-            {
-                d_commandline[command2_id].parsed = true;
-                arg.parsed = true;
-                store = !store;
-            }
-            d_user.push_back(arg);
-        }
-
-        template <typename Type>
-        void argument_interal(Type &store, std::string_view arg_desc, std::string_view description,
-                              bool const required = false, char arg_short = '\0')
-        {
-            UserArg arg;
-            arg.arg_desc = arg_desc;
-            arg.arg_short = arg_short;
-            arg.description = description;
-            arg.required = required;
-            arg.parsed = false;
-            arg.option = false;
-            d_user.push_back(arg);
-
-            CORE_ASSERT(arg.arg_desc != "help");
-            CORE_ASSERT(arg.arg_short != 'h');
-
-            // Search for shorthand space, e.g. '-i myfile.csv'
-            CommandLineArg const shorthand = CommandLineArg(std::string("-") + arg_short);
-            if (!space_arg<Type>(shorthand, store))
-                return;
-
-            // Search for command lines starting with shorthand_eq, e.g. '-i='
-            CommandLineArg const shorthand_eq = CommandLineArg(std::string("-") + arg_short + '=');
-            if (!equality_arg<Type>(shorthand_eq, store))
-                return;
-
-            // Search for shorthand space, e.g. '--inputfile myfile.csv'
-            CommandLineArg const arg_space = CommandLineArg(std::string("--") + std::string(arg_desc));
-            if (!space_arg<Type>(arg_space, store))
-                return;
-
-            // Search for command lines starting with shorthand_eq, e.g. '-i='
-            CommandLineArg const arg_eq = CommandLineArg(std::string("--") + std::string(arg_desc) + '=');
-            if (!equality_arg<Type>(arg_eq, store))
-                return;
-        }
+        // Stack of CLARG as set by the user.
+        std::vector<CLArg> d_clargs;
+        std::vector<std::string> d_unrecognized;
+        std::string d_program_name;
+        std::string d_program_description;
+        std::string d_version;
+        bool d_display_help;
+        int d_argc;
     };
+
+    // Helper conversion function.
+    template <typename type>
+    type ArgParser::convert(std::string_view value)
+    {
+        try
+        {
+            if constexpr (std::is_same_v<type, int>)
+            {
+                return std::stoi(std::string(value));
+            }
+            else if constexpr (std::is_same_v<type, double>)
+            {
+                return std::stod(std::string(value));
+            }
+            else if constexpr (std::is_same_v<type, size_t>)
+            {
+                return std::stoull(std::string(value));
+            }
+            else if constexpr (std::is_same_v<type, bool>)
+            {
+                if (value == "true" || value == "1")
+                    return true;
+                if (value == "false" || value == "0")
+                    return false;
+                ASSERT(false, "Unsupported boolean type!");
+                return false;
+            }
+            else if constexpr (std::is_same_v<type, std::string>)
+            {
+                return std::string(value);
+            }
+            else if constexpr (std::is_constructible_v<type, std::string>)
+            {
+                return type(std::string(value));
+            }
+            else
+            {
+                std::stringstream iss((std::string(value)));
+                type result;
+                if (iss >> result)
+                {
+                    return result;
+                }
+                static_assert(!sizeof(type), "Unsupported type");
+            }
+        }
+        catch (const std::exception &e)
+        {
+            LOG_ERROR("Unable to convert", value, "to required type! Using default constructed value instead!");
+            // ASSERT(false, "Unable to convert", value, "to required type! Using default constructed value instead!");
+        }
+        return type{};
+    }
+
+    template <typename type>
+    void ArgParser::option(type &store, std::string_view option_name, std::string_view description, bool required)
+    {
+        ASSERT(!option_name.contains('-'), "Option_name is written without '-'!");
+        CLArg opt;
+        opt.long_name = option_name;
+        opt.type = CLArg::Type::OPTION;
+        opt.description = description;
+        opt.required = required;
+        opt.pos = d_clargs.size();
+        opt.parsed = false;
+
+        // store how to assign value later
+        opt.set_val = [&store](std::string_view value)
+        {
+            store = ArgParser::convert<type>(value);
+        };
+
+        d_clargs.emplace_back(std::move(opt));
+    }
+
+    template <typename type>
+    void ArgParser::argument(type &store, std::string_view description)
+    {
+        CLArg arg;
+        arg.type = CLArg::Type::ARGUMENT;
+        arg.long_name = "";
+        arg.description = description;
+        arg.required = true;
+        arg.pos = 1 + std::count_if(d_clargs.begin(), d_clargs.end(), [](CLArg const &arg)
+                                    { return arg.type == CLArg::Type::ARGUMENT; });
+        arg.parsed = false;
+
+        // store how to assign value later
+        arg.set_val = [&store](std::string_view value)
+        {
+            store = ArgParser::convert<type>(value);
+        };
+
+        d_clargs.emplace_back(std::move(arg));
+    }
 
 } // namespace Nilib
 

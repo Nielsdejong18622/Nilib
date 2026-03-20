@@ -20,6 +20,14 @@ namespace Nilib
         EnumName(value v) : val(v)                                                   \
         {                                                                            \
         }                                                                            \
+        EnumName(std::string const &string) : val()                                 \
+        {                                                                            \
+            for (auto const &[num, name] : valueToStringMap())                       \
+            {                                                                        \
+                if (name == string)                                                  \
+                    val = num;                                                       \
+            }                                                                        \
+        }                                                                            \
                                                                                      \
         operator std::string() const                                                 \
         {                                                                            \

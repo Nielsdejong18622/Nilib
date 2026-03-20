@@ -55,20 +55,20 @@ void myfunction(DemoSolution &sol)
 int main(int argc, char **argv)
 {
 
-    Nilib::Argparser parser(argc, argv);
-    Nilib::RNG::seed();
-
     Nilib::ALNS::Params params;
+    params.max_iterations = 10'000;
+    Nilib::ArgParser parser("ALNS demo example", "1.1");
+    parser.option<std::filesystem::path>(params.history_filename, "outputlog", "ALNS history filename (.csv)", true);
+    parser.option<size_t>(params.max_iterations, "iterations", "ALNS maximum number of iterations", true);
+    parser.parse_or_exit(argc, argv);
+    
+    Nilib::RNG::seed();
 
     params.num_threads = 10;
 
     DemoSolution demo(40.0f, 10.0f);
 
     std::vector<Nilib::ALNS::Solver<DemoSolution>::Operator> operators = {op1, op2};
-
-    parser.argument<std::filesystem::path>(params.history_filename, "outputfile", "ALNS history filename (.csv)");
-    parser.argument<size_t>(params.max_iterations, "iterations", "ALNS maximum number of iterations");
-    parser.check();
 
     Nilib::ALNS::Solver<DemoSolution> solver(params, operators, demo);
 
