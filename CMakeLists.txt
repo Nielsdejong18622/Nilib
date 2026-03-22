@@ -7,14 +7,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add the external GLFW submodule
 if(WIN32)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/gurobi1103)
+  add_subdirectory(external/gurobi1103)
 endif()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glfw)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
+add_subdirectory(external/glfw)
+add_subdirectory(external/glad)
+# set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build HiGHS as static library" FORCE)
+add_subdirectory(external/HiGHS)
 
 # Add subdirectories for the Nilibrary
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
+add_subdirectory(source)
 
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_STANDALONE)
 
@@ -28,7 +30,8 @@ string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" NILIB_S
 # define LOG_LEVEL_PROGRESS 6
 
 target_compile_options(Nilib PRIVATE
-
+  # Supress Microsoft include warnings. 
+  -Wno-microsoft-include
   # Release defines
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DLOG_LEVEL=9>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
@@ -65,8 +68,8 @@ message(STATUS "Nilib Build type: ${CMAKE_BUILD_TYPE}")
 
 if(NILIB_STANDALONE)
   enable_testing()
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+  add_subdirectory(tests)
 
   # Build example directory.
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+  add_subdirectory(examples)
 endif()
