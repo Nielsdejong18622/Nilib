@@ -210,6 +210,9 @@ namespace Nilib
     using Vec4f = Matrix<float, StaticMatrixData<4, 1, float>>;
     using Vec3f = Matrix<float, StaticMatrixData<3, 1, float>>;
     using Vec2f = Matrix<float, StaticMatrixData<2, 1, float>>;
+    using Vec4d = Matrix<double, StaticMatrixData<4, 1, double>>;
+    using Vec3d = Matrix<double, StaticMatrixData<3, 1, double>>;
+    using Vec2d = Matrix<double, StaticMatrixData<2, 1, double>>;
     template <size_t n, size_t m>
     using Mat = Matrix<float, StaticMatrixData<n, m, float>>;
     template <typename scalar>

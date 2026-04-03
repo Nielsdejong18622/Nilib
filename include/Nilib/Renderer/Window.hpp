@@ -143,6 +143,8 @@ namespace Nilib
     void clearColor(Color const &color);
     void linewidth(float const lw) const;
 
+    
+    void drawArc(Vec2d const &A, Vec2d const &B, double const linewidth = 1.0) const;
     void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
     void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f,
                     unsigned int sides = 12) const;

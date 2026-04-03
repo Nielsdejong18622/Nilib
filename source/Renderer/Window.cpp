@@ -348,6 +348,23 @@ void Window::key_callback(GLFWwindow *window, int key, int scancode, int action,
         win.d_data.keybindings.at(keyev)();
 };
 
+void Window::drawArc(Vec2d const &A, Vec2d const &B, double const linewidth) const
+{
+    // Line segment from this to adjacent.
+    glLineWidth(linewidth);
+    glBegin(GL_LINES);
+    float ax = A.x();
+    float ay = A.y();
+    float bx = B.x();
+    float by = B.y();
+
+    transform2D(ax, ay);
+    transform2D(bx, by);
+    glVertex3f(ax, ay, 0.0f);
+    glVertex3f(bx, by, 0.0f);
+    glEnd();
+}
+
 void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) const
 {
     // Line segment from this to adjacent.

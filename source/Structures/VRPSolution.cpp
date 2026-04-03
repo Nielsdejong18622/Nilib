@@ -54,7 +54,8 @@ Solution::Solution(Instance const &inst, Matrixf const &X) : Solution(inst, X, 0
 void Solution::random()
 {
     adjacencyMatrix = Matrixf::rand(adjacencyMatrix.rows(), adjacencyMatrix.cols());
-    adjacencyMatrix.apply([](float const t) { return (t > 0.8); });
+    adjacencyMatrix.apply([](float const t)
+                          { return (t > 0.8); });
 }
 
 Solution Solution::feasibleSolution(Instance const &inst)
@@ -122,7 +123,8 @@ Solution Solution::randomSolution(Instance const &inst)
 
     // Really random.
     Matrixf X = Matrixf::rand(numnodes, numnodes);
-    X.apply([](float const t) { return (t > 0.8); });
+    X.apply([](float const t)
+            { return (t > 0.8); });
 
     // Feasible random.
 
