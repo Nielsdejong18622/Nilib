@@ -104,31 +104,31 @@ namespace Nilib
     Windowdata d_data;
 
     void setCallbacks() const;
-    void static key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-    void static drop_callback(GLFWwindow *window, int path_count, const char *paths[]);
-    void static cursorPos_callback(GLFWwindow *window, double xpos, double ypos);
-    void static framebuffer_size_callback(GLFWwindow *window, int width, int height);
-    void static windowPos_callback(GLFWwindow *window, int xpos, int ypos);
-    void static windowSize_callback(GLFWwindow *window, int width, int height);
-    void static mouseButton_callback(GLFWwindow *window, int button, int action, int mods);
-    void static windowFocus_callback(GLFWwindow *window, int focused);
-    void static windowMaximize_callback(GLFWwindow *window, int maximized);
-    void static windowContentScale_callback(GLFWwindow *window, float xscale, float yscale);
-    void static windowIconify_callback(GLFWwindow *window, int iconified);
-    void static cursorEnter_callback(GLFWwindow *window, int entered);
-    void static scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-    void static error_callback(int code, char const *description);
-    void static windowClose_callback(GLFWwindow *window);
+    static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    static void drop_callback(GLFWwindow *window, int path_count, const char *paths[]);
+    static void cursorPos_callback(GLFWwindow *window, double xpos, double ypos);
+    static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+    static void windowPos_callback(GLFWwindow *window, int xpos, int ypos);
+    static void windowSize_callback(GLFWwindow *window, int width, int height);
+    static void mouseButton_callback(GLFWwindow *window, int button, int action, int mods);
+    static void windowFocus_callback(GLFWwindow *window, int focused);
+    static void windowMaximize_callback(GLFWwindow *window, int maximized);
+    static void windowContentScale_callback(GLFWwindow *window, float xscale, float yscale);
+    static void windowIconify_callback(GLFWwindow *window, int iconified);
+    static void cursorEnter_callback(GLFWwindow *window, int entered);
+    static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+    static void error_callback(int code, char const *description);
+    static void windowClose_callback(GLFWwindow *window);
 
     // Utility function.
     static Window &windowFromPtr(GLFWwindow *window);
 
   public:
     // Poll and handle events and block the calling thread.
-    void static updateidletasks();
+    static void updateidletasks();
 
     // Poll and handle events.
-    void static update();
+    static void update();
 
     void screenshotPNG(char const *filename = "Screenshot.png");
 
@@ -143,7 +143,6 @@ namespace Nilib
     void clearColor(Color const &color);
     void linewidth(float const lw) const;
 
-    
     void drawArc(Vec2d const &A, Vec2d const &B, double const linewidth = 1.0) const;
     void drawArc(Vec2f const &A, Vec2f const &B, float const linewidth = 1.0f) const;
     void drawCircle(Vec2f const &centre, float const radius = 1.0f, float const linewidth = 1.0f,

@@ -188,16 +188,16 @@ namespace Nilib
             d_stream = &other;
         }
 
-        Logger() : d_stream(&std::cout), d_end('\n'), d_sep(' ')
-        {
-        }
 
         Logger(Logger const &other) : d_stream(other.d_stream), d_end('\n'), d_sep(' ')
         {
         }
 
-        Logger(std::ostream &os, char end = '\n', char sep = ' ') : d_stream(&os), d_end(end), d_sep(sep)
+        Logger(std::ostream &os = std::cout, char end = '\n', char sep = ' ') : d_stream(&os), d_end(end), d_sep(sep)
         {
+            // Faster logging.
+            std::ios_base::sync_with_stdio(false);
+            std::cin.tie(nullptr);
         }
 
         ~Logger()
