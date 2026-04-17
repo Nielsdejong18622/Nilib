@@ -17,11 +17,11 @@ namespace Nilib
         Matrix(std::initializer_list<type> const &list) : d_data(list) {}
         Matrix(std::initializer_list<std::initializer_list<type>> const &listlist) : d_data(listlist) {}
 
-        static Matrix all(size_t rows, size_t cols, type val) { return Matrix(rows, cols, val); }
-        static Matrix zeros(size_t rows, size_t cols) { return all(rows, cols, 0); }
-        static Matrix ones(size_t rows, size_t cols) { return all(rows, cols, 1); }
-        static Matrix rand(size_t rows, size_t cols) { return randunif(rows, cols, 0.0, 1.0); }
-        static Matrix randunif(size_t rows, size_t cols, type min, type max)
+        [[nodiscard]] static Matrix all(size_t rows, size_t cols, type val) { return Matrix(rows, cols, val); }
+        [[nodiscard]] static Matrix zeros(size_t rows, size_t cols) { return all(rows, cols, 0); }
+        [[nodiscard]] static Matrix ones(size_t rows, size_t cols) { return all(rows, cols, 1); }
+        [[nodiscard]] static Matrix rand(size_t rows, size_t cols) { return randunif(rows, cols, 0.0, 1.0); }
+        [[nodiscard]] static Matrix randunif(size_t rows, size_t cols, type min, type max)
         {
             Matrix random(rows, cols);
             random.apply([min, max](type)
@@ -30,7 +30,7 @@ namespace Nilib
         }
 
         // A matrix filled with random normal variables.
-        static Matrix randn(size_t rows, size_t cols, type mean, type var)
+        [[nodiscard]] static Matrix randn(size_t rows, size_t cols, type mean, type var)
         {
             Matrix random(rows, cols);
             random.apply([mean, var](type)
@@ -56,7 +56,7 @@ namespace Nilib
         inline size_t rows() const { return d_data.rows(); }
         inline size_t cols() const { return d_data.cols(); }
         inline size_t size() const { return d_data.rows() * d_data.cols(); }
-        bool operator==(Matrix const &other) { return d_data == other.d_data; }
+        bool operator==(Matrix const &other) const { return d_data == other.d_data; }
         friend std::ostream &operator<<(std::ostream &os, Matrix const &mat)
         {
             if constexpr (std::is_same_v<MatrixData, DynamicMatrixData<float>>)

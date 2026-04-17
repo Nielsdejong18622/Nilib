@@ -58,6 +58,11 @@ namespace Nilib
             return d_data[idx];
         };
 
+        bool operator==(StaticMatrixData const &other) const
+        {
+            return d_data == other.d_data;
+        }
+
         type operator()(size_t row, size_t col) const { return operator()(row * cols() + col); }
         type &operator()(size_t row, size_t col) { return operator()(row * cols() + col); }
 
