@@ -253,12 +253,10 @@ type manhattan(Matrix<type, storage> const &A, Matrix<type, storage> const &B)
 // Specialization for Vec2.
 template <typename type> type manhattan(Vec2<type> const &A, Vec2<type> const &B)
 {
-    // Access the underlying data (assuming a 2x1 static matrix structure)
-    type diff1 = A(0, 0) - B(0, 0);
-    type diff2 = A(1, 0) - B(1, 0);
+
 
     // Compute Manhattan distance directly
-    return std::abs(diff1) + std::abs(diff2);
+    return std::abs(A.x() - B.x()) + std::abs(A.y() - B.y());
 }
 
 // Normalize matrix as if it were a vector.

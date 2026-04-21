@@ -64,6 +64,14 @@ target_compile_options(Nilib PRIVATE
     # -Werror
   >
 )
+
+set_property(TARGET Nilib PROPERTY
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
+set_property(TARGET Nilib PROPERTY
+    INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
+
+
 message(STATUS "Nilib Build type: ${CMAKE_BUILD_TYPE}")
 
 if(NILIB_STANDALONE)

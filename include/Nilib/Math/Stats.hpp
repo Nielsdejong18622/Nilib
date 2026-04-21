@@ -30,9 +30,9 @@ namespace Nilib
         {
             type delta, delta_n, delta_n2, term1;
             d_lag = obs;
+            d_n++;
             type d_n_f = static_cast<type>(d_n);
             type n1 = d_n_f;
-            d_n++;
 
             delta = obs - d_M1;
             delta_n = delta / d_n_f;
