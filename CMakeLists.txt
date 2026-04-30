@@ -33,9 +33,9 @@ target_compile_options(Nilib PRIVATE
   # Supress Microsoft include warnings. 
   -Wno-microsoft-include
   # Release defines
-  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DLOG_LEVEL=9>
+  # $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DLOG_LEVEL=9>
   $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DASSERT_OFF>
-  $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DISABLE_PROFILE>
+  # $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:-DISABLE_PROFILE>
 
   # Debug logging level
   $<$<CONFIG:Debug>:-DLOG_LEVEL=1>

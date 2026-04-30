@@ -5,9 +5,9 @@
 
 namespace Nilib
 {
-/// @brief Takes a row vector x [1 * col] and multiplies by W [col * neurons], adds b [1, neurons].
-class MultilayerPerceptron : public Module
-{
+  /// @brief Takes a row vector x [1 * col] and multiplies by W [col * neurons], adds b [1, neurons].
+  class MultilayerPerceptron : public Module
+  {
   public:
     MultilayerPerceptron(CNode &x, size_t const x_col, size_t const neurons);
 
@@ -20,7 +20,7 @@ class MultilayerPerceptron : public Module
     CNode &d_x;
     Weight d_W;
     Weight d_b;
-};
+  };
 
 } // namespace Nilib
 

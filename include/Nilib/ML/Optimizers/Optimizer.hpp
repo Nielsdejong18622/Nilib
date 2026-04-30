@@ -10,6 +10,7 @@ namespace Nilib
 {
 
 // In charge of updating the selected weights of a computational graph.
+// Minimizes by default (Set -1.0 on updateGrad to maximize).
 class Optimizer
 {
   public:

@@ -2,12 +2,14 @@
 #define _ML_NEURALNET_HPP
 
 #include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
+#include "Nilib/ML/CNodes/Activation/Linear.hpp"
 #include "Nilib/ML/CNodes/Activation/Selu.hpp"
 #include "Nilib/ML/CNodes/Activation/Sigmoid.hpp"
 
 namespace Nilib
 {
     /// @brief A simple neural network with two hidden layers. Takes a row layer x [1, xcol] -> hidden1 -> hidden2 -> output : [1, outputdim]
+    
     class NeuralNet : public Module
     {
     public:
@@ -23,7 +25,7 @@ namespace Nilib
         MultilayerPerceptron mlp2;
         Selu mlp2_act;
         MultilayerPerceptron mlp3;
-        Selu mlp3_act;
+        Linear mlp3_act;
     };
 
 } // namespace Nilib

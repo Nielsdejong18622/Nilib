@@ -47,12 +47,12 @@ namespace Nilib
             return res;
         }
         static Matrix identity(size_t rows, size_t cols) { return diag(rows, cols, 1.0, 0.0); }
-        type operator()(size_t row, size_t col) const { return d_data(row * d_data.cols() + col); }
-        type &operator()(size_t row, size_t col) { return d_data(row * d_data.cols() + col); }
-        type operator()(size_t idx) const { return d_data(idx); }
-        type &operator()(size_t idx) { return d_data(idx); }
-        type operator[](size_t idx) const { return d_data(idx); }
-        type &operator[](size_t idx) { return d_data(idx); }
+        inline type operator()(size_t row, size_t col) const { return d_data(row * d_data.cols() + col); }
+        inline type &operator()(size_t row, size_t col) { return d_data(row * d_data.cols() + col); }
+        inline type operator()(size_t idx) const { return d_data(idx); }
+        inline type &operator()(size_t idx) { return d_data(idx); }
+        inline type operator[](size_t idx) const { return d_data(idx); }
+        inline type &operator[](size_t idx) { return d_data(idx); }
         inline size_t rows() const { return d_data.rows(); }
         inline size_t cols() const { return d_data.cols(); }
         inline size_t size() const { return d_data.rows() * d_data.cols(); }

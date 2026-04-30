@@ -19,6 +19,15 @@ namespace Nilib
         void write_row() {}
 
         template <typename T, typename... Args>
+        void write_header(T &&first, Args &&...args)
+        {
+            if (d_header_inserted)
+                return;
+            d_header_inserted = true;
+            write_row(std::forward<T>(first), std::forward<Args>(args)...);
+        }
+
+        template <typename T, typename... Args>
         void write_row(T &&first, Args &&...args)
         {
             ASSERT(d_file.is_open(), "Open the CSVWriter file first! Use CSVWriter.open('filename.csv')!");
@@ -38,8 +47,9 @@ namespace Nilib
             }
             else
             {
-                d_file << first;
+                d_file << std::fixed << first;
             }
+
             if constexpr (sizeof...(args) > 0)
             {                                                  // Check if there are more arguments
                 d_file << ',';                                 // Print separator
@@ -83,7 +93,6 @@ namespace Nilib
 
         void open(std::filesystem::path const &name)
         {
-            close();
             d_header_inserted = false;
             d_name = name.string();
             d_file.open(d_name, std::ios_base::trunc);
@@ -112,11 +121,17 @@ namespace Nilib
 
 // MACRO for dumping variables to CSVfile. Automatically inserts header based on variable names.
 #define CSV_STRINGIFY(...) #__VA_ARGS__
-#define CSV(CSVwriter, ...)                              \
-    if (!CSVwriter.header_inserted())                    \
-    {                                                    \
-        CSVwriter.write_row(CSV_STRINGIFY(__VA_ARGS__)); \
-    }                                                    \
-    CSVwriter.write_row(__VA_ARGS__);
+#define CSV(CSVwriter, ...)                                     \
+    {                                                           \
+        if (!CSVwriter.is_open())                               \
+        {                                                       \
+            CSVwriter.open(#CSVwriter);                         \
+        }                                                       \
+        if (!CSVwriter.header_inserted())                       \
+        {                                                       \
+            CSVwriter.write_header(CSV_STRINGIFY(__VA_ARGS__)); \
+        }                                                       \
+        CSVwriter.write_row(__VA_ARGS__);                       \
+    }
 
 #endif
