@@ -50,7 +50,7 @@ void Nilib::Adam::updateGrad(float const multi)
         }
 
         // Apply L2 weight decay directly.
-        weights[w_idx]->value -= d_weight_decay * weights[w_idx]->value;
+        weights[w_idx]->value -= d_lr * d_weight_decay * weights[w_idx]->value;
     }
 }
 

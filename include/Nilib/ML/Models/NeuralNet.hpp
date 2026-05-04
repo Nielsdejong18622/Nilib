@@ -5,6 +5,7 @@
 #include "Nilib/ML/CNodes/Activation/Linear.hpp"
 #include "Nilib/ML/CNodes/Activation/Selu.hpp"
 #include "Nilib/ML/CNodes/Activation/Sigmoid.hpp"
+#include "Nilib/ML/CNodes/Activation/Tanh.hpp"
 
 namespace Nilib
 {
@@ -25,7 +26,7 @@ namespace Nilib
         MultilayerPerceptron mlp2;
         Selu mlp2_act;
         MultilayerPerceptron mlp3;
-        Linear mlp3_act;
+        Activation<Tanh_fun_scaled<20.0f>> mlp3_act;
     };
 
 } // namespace Nilib
