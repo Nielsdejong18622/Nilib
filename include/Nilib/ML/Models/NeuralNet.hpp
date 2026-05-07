@@ -4,13 +4,13 @@
 #include "Nilib/ML/Models/MultiLayerPerceptron.hpp"
 #include "Nilib/ML/CNodes/Activation/Linear.hpp"
 #include "Nilib/ML/CNodes/Activation/Selu.hpp"
+#include "Nilib/ML/CNodes/Activation/Relu.hpp"
 #include "Nilib/ML/CNodes/Activation/Sigmoid.hpp"
 #include "Nilib/ML/CNodes/Activation/Tanh.hpp"
 
 namespace Nilib
 {
-    /// @brief A simple neural network with two hidden layers. Takes a row layer x [1, xcol] -> hidden1 -> hidden2 -> output : [1, outputdim]
-    
+    template <typename OutputLayer = Relu>
     class NeuralNet : public Module
     {
     public:
@@ -22,12 +22,43 @@ namespace Nilib
 
     public:
         MultilayerPerceptron mlp1;
-        Selu mlp1_act;
+        Relu mlp1_act;
         MultilayerPerceptron mlp2;
-        Selu mlp2_act;
+        Relu mlp2_act;
         MultilayerPerceptron mlp3;
-        Activation<Tanh_fun_scaled<20.0f>> mlp3_act;
+        OutputLayer mlp3_act;
     };
+
+    template <typename OutputLayer>
+    NeuralNet<OutputLayer>::NeuralNet(CNode &x, size_t const x_col, size_t const hidden1, size_t const hidden2, size_t const outputdim)
+        : mlp1(x, x_col, hidden1),
+          mlp1_act(mlp1),
+          mlp2(mlp1_act, hidden1, hidden2),
+          mlp2_act(mlp2),
+          mlp3(mlp2_act, hidden2, outputdim),
+          mlp3_act(mlp3)
+    {
+    }
+
+    template <typename OutputLayer>
+    void NeuralNet<OutputLayer>::evaluate()
+    {
+        mlp3_act.evaluate();
+        this->value = mlp3_act.value;
+    }
+    template <typename OutputLayer>
+    void NeuralNet<OutputLayer>::derive(Nilib::Matrixf const &seed)
+    {
+        mlp3_act.derive(seed);
+    }
+
+    template <typename OutputLayer>
+    void NeuralNet<OutputLayer>::learnables(Weights &add)
+    {
+        mlp1.learnables(add);
+        mlp2.learnables(add);
+        mlp3.learnables(add);
+    }
 
 } // namespace Nilib
 
