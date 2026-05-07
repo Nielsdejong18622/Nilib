@@ -26,6 +26,14 @@ namespace Nilib
             reset();
         };
 
+        RunningStats(std::vector<type> const &vec)
+        {
+            for (type i : vec)
+            {
+                push(i);
+            }
+        };
+
         void push(type const obs)
         {
             type delta, delta_n, delta_n2, term1;
