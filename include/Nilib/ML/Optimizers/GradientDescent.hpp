@@ -6,21 +6,21 @@
 namespace Nilib
 {
 
-class GradientDescent : public Optimizer
-{
+  class GradientDescent : public Optimizer
+  {
   public:
     /// @brief Updates gradients according to the GradientDescent optimizer.
     /// @param weights # Pointer of weights to optimize.
     /// @param learning_rate Learning rate.
     /// @param weight_decay Squared norm.
-    GradientDescent(Weightptrs const &weights, float learning_rate = 0.001f, float weight_decay = 0.0f);
-    GradientDescent(Module *module, float learning_rate = 0.001f, float weight_decay = 0.0f);
+    explicit GradientDescent(Weightptrs const &weights, float learning_rate = 0.001f, float weight_decay = 0.0f);
+    explicit GradientDescent(Module *module, float learning_rate = 0.001f, float weight_decay = 0.0f);
     void updateGrad(float multi = 1.0f) override;
 
   protected:
     float d_lr;           // Learning rate.
     float d_weight_decay; // L2 weight decay
-};
+  };
 } // namespace Nilib
 
 #endif

@@ -29,13 +29,14 @@ void Nilib::Adam::updateGrad(float const multi)
 
     for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
     {
-        Nilib::Matrixf &grad = weights[w_idx]->partial;
+        Nilib::Matrixf const &grad = weights[w_idx]->partial;
 
         // Update momentum (1st moment)
         d_momentum[w_idx] = beta * d_momentum[w_idx] + (1.0f - beta) * grad;
 
         // Update velocity (2nd moment)
-        auto const square = [](float t) { return t * t; };
+        auto const square = [](float t)
+        { return t * t; };
         d_velocity[w_idx] = beta2 * d_velocity[w_idx] + (1.0f - beta2) * Nilib::apply(grad, square);
 
         // Bias-corrected moments

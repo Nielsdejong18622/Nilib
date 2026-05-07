@@ -39,10 +39,10 @@ void Nilib::Optimizer::printWeights() const
     CORE_ASSERT(checkgradients());
     for (Weight const *w : weights)
         LOG_PROGRESS() << "Weight " << w << ' ' << w->value << std::setprecision(4) << " value " << w->value.avg()
-                    // << '(' << w->value.stddev() << ')' 
-                    << " partial " << w->partial.avg() 
-                    // << '(' << w->partial.stddev() << ')'
-                    << '\n';
+                       // << '(' << w->value.stddev() << ')'
+                       << " partial " << w->partial.avg()
+                       // << '(' << w->partial.stddev() << ')'
+                       << '\n';
 }
 
 void Nilib::Optimizer::save(std::filesystem::path const &file) const

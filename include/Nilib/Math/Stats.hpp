@@ -52,7 +52,7 @@ namespace Nilib
         void reset()
         {
             d_M1 = d_M2 = d_M3 = d_M4 = d_sum = d_lag = 0;
-            d_max = std::numeric_limits<type>::min();
+            d_max = std::numeric_limits<type>::lowest();
             d_min = std::numeric_limits<type>::max();
             d_n = 0;
         }

@@ -7,13 +7,13 @@ using namespace Nilib;
 Nilib::GradientDescent::GradientDescent(Module *module, float learning_rate, float weight_decay)
     : Optimizer(module), d_lr(learning_rate), d_weight_decay(weight_decay)
 {
-    ASSERT(weight_decay != 0.0f, "Not implemented yet!");
+    ASSERT(weight_decay == 0.0f, "Not implemented yet!", weight_decay);
 }
 
 Nilib::GradientDescent::GradientDescent(Weightptrs const &wptrs, float learning_rate, float weight_decay)
     : Optimizer(wptrs), d_lr(learning_rate), d_weight_decay(weight_decay)
 {
-    ASSERT(weight_decay != 0.0f, "Not implemented yet!");
+    ASSERT(weight_decay == 0.0f, "Not implemented yet!", weight_decay);
 }
 
 void Nilib::GradientDescent::updateGrad(float multi)

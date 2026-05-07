@@ -60,6 +60,18 @@ struct Module : public CNode
             }
             return weight_val;
         }
+        RunningStats<float> weight_partials() const
+        {
+            RunningStats<float> weight_part;
+            for (auto &&w : weights)
+            {
+                for (size_t i = 0; i < w->partial.size(); ++i)
+                {
+                    weight_part.push(w->partial(i));
+                }
+            }
+            return weight_part;
+        }
 
         [[nodiscard]] bool empty() const
         {
