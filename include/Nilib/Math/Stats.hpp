@@ -28,6 +28,7 @@ namespace Nilib
 
         RunningStats(std::vector<type> const &vec)
         {
+            reset();
             for (type i : vec)
             {
                 push(i);

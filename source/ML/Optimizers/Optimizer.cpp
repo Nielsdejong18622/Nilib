@@ -57,7 +57,7 @@ void Nilib::Optimizer::load(std::filesystem::path const &file) const
     Deserializer loader(file.string());
     if (loader.opened())
     {
-        LOG_WARNING("Loading weights from", file);
+        LOG_WARNING("Loading weights from", file.string());
         for (Weight *w : weights)
         {
             // size_t row = w->value.rows(), col = w->value.cols();
