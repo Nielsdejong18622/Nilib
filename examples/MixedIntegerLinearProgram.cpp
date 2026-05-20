@@ -12,11 +12,11 @@ int main()
     Options default_options;
 
     Options opt1;
-    opt1.backend = Options::Backend::GUROBI;
+    opt1.backend = Options::Backend::GUROBI_BACKEND;
     opt1.verbosity = Options::Verbosity::QUIET;
 
     Options opt2;
-    opt2.backend = Options::Backend::HIGHS;
+    opt2.backend = Options::Backend::HIGHS_BACKEND;
     opt2.verbosity = Options::Verbosity::QUIET;
 
     // create_milp(default_options);
@@ -34,7 +34,7 @@ void create_milp(Options options)
     // Set some options.
     options.sense = Options::Sense::MAXIMIZE;
 
-    // Create the program. 
+    // Create the program.
     MixedIntegerLinearProgram milp(options);
 
     // Add some variables.
@@ -54,7 +54,7 @@ void create_milp(Options options)
     }
     // Add another constraint.
     uint32_t c1 = milp.addConstraint({x, y}, {2.0, 2.0}, 5.0, ConstrType::LEQ);
-    
+
     // Solve the model.
     milp.solve();
 

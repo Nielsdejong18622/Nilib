@@ -1,8 +1,7 @@
 #include "Nilib/Optimization/HighsBackend.hpp"
 #include "Nilib/Core/Assert.hpp"
 
-// #include <stdexcept>
-// #include <limits>
+#ifdef HIGHS
 
 using namespace Nilib::MixedIntegerLinearProgram;
 
@@ -182,3 +181,5 @@ double HighsBackend::dual(constr_t constraint) const
     CORE_ASSERT(d_solution.dual_valid);
     return d_solution.row_dual.at(constraint);
 }
+
+#endif // Highs

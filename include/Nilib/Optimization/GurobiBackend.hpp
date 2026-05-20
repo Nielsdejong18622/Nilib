@@ -1,14 +1,14 @@
 #ifndef _GUROBI_BACKEND_HPP
 #define _GUROBI_BACKEND_HPP
 
-#include "gurobi_c++.h"
 #include "Nilib/Optimization/MixedIntegerLinearProgram.hpp"
+#ifdef GUROBI
+#include "gurobi_c++.h"
 
 namespace Nilib
 {
     namespace MixedIntegerLinearProgram
     {
-
         class GurobiBackend : public MILPBackend
         {
         public:
@@ -34,8 +34,7 @@ namespace Nilib
             double dual(constr_t constraint) const override;
 
         private:
-        
-            std::unique_ptr<GRBEnv> d_env;
+                    std::unique_ptr<GRBEnv> d_env;
             std::unique_ptr<GRBModel> d_model;
 
             std::vector<GRBVar> d_vars;
@@ -48,4 +47,5 @@ namespace Nilib
 
 } // namespace Nilib
 
+#endif // GUROBI
 #endif

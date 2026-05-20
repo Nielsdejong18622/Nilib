@@ -5,13 +5,19 @@
 #include <math.h>
 #include <fstream>
 
+#ifdef GLFW
 #include "GLAD/glad.h"
 #include <GLFW/glfw3.h>
+#endif
 
 using namespace Nilib;
 
 ShaderProgram::ShaderProgram()
+#ifdef GLFW
     : id(glCreateProgram())
+#else
+    : id(0)
+#endif
 {
     if (!id)
         LOG_ERROR("Unable to create Program!");
@@ -24,13 +30,16 @@ ShaderProgram::ShaderProgram(unsigned int shaderid)
 
 ShaderProgram::~ShaderProgram()
 {
+#ifdef GLFW
     glDeleteProgram(id);
     id = 0;
+#endif
 }
 
 // Function to compile shaders
 unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *shaderSource)
 {
+#ifdef GLFW
     LOG_DEBUG("Compiling", ((shaderType == 0x8B31) ? "VertexShader" : "FragmentShader"));
     ASSERT(glfwGetCurrentContext(), "No associated GLFW window context! Has Window been constructed?");
 
@@ -57,6 +66,9 @@ unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *s
     }
     CORE_ASSERT(shader);
     return shader;
+#else
+    return 0;
+#endif
 }
 
 // Function to create a shader program
@@ -89,6 +101,7 @@ ShaderProgram ShaderProgram::createFromFiles(const char *vertexsourcefilename, c
 // Function to create a shader program
 ShaderProgram ShaderProgram::createFromStrings(const char *vertexSource, const char *fragmentSource)
 {
+#ifdef GLFW
     unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
     unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 
@@ -112,11 +125,15 @@ ShaderProgram ShaderProgram::createFromStrings(const char *vertexSource, const c
     // Clean up shaders as they're no longer needed after linking
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
     return ShaderProgram(programid);
+#else
+    return ShaderProgram(0);
+#endif
 }
 
 void ShaderProgram::bind() const
 {
+#ifdef GLFW
     glUseProgram(id);
+#endif
 }

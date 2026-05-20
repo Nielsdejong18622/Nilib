@@ -91,13 +91,13 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
             {
                 // Split on '='
                 std::string::iterator equal_sign = std::find(arg.begin(), arg.end(), '=');
-                size_t pos = std::distance(arg.begin(), equal_sign);
+                size_t pos = static_cast<size_t>(std::distance(arg.begin(), equal_sign));
                 std::string name = arg.substr(1, pos - 1);
                 std::string value = arg.substr(pos + 1, arg.size());
 
                 // LOG_DEBUG("Option/flag with equality!", name, value);
-                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &arg)
-                                    { return (arg.long_name == name or arg.short_name == name) and !arg.parsed; });
+                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &argu)
+                                    { return (argu.long_name == name or argu.short_name == name) and !argu.parsed; });
                 if (last != d_clargs.end())
                 {
                     last->parsed = true;
@@ -123,8 +123,8 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
                 std::string name = arg.substr(1, arg.size());
                 // LOG_DEBUG("Option/flag without equality!", name);
 
-                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &arg)
-                                    { return (arg.long_name == name or arg.short_name == name) and !arg.parsed; });
+                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &argu)
+                                    { return (argu.long_name == name or argu.short_name == name) and !argu.parsed; });
 
                 // If found. Value comes next ()
                 if (last != d_clargs.end())

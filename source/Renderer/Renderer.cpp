@@ -1,13 +1,17 @@
+#ifdef GLFW
 #include "GLAD/glad.h"
+#endif
 
 #include "Nilib/Renderer/Renderer.h"
 
 using namespace Nilib;
 
+
 Renderer::Renderer()
     : triangle_shader(ShaderProgram::createFromFiles("shaders/vertex.vert", "shaders/fragment.frag")),
       quad_shader(ShaderProgram::createFromFiles("shaders/quad.vert", "shaders/quad.frag"))
 {
+#ifdef GLFW
     // Initialize GLAD
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
@@ -53,20 +57,24 @@ Renderer::Renderer()
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0); // Done with quad VAO
+#endif
 }
 
 void Renderer::toggleWireFrameMode()
 {
+#ifdef GLFW
     if (d_wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     d_wireframe = !d_wireframe;
+#endif
 }
 
 void Renderer::drawCalls()
 {
+#ifdef GLFW
     // LOG_DEBUG("Drawing:", triangle_count, quad_count);
 
     // Draw triangles
@@ -85,6 +93,7 @@ void Renderer::drawCalls()
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLint>(quad_count));
 
     triangle_shader.bind();
+#endif
 }
 
 // Bind triangle Buffer.
@@ -99,6 +108,7 @@ void Renderer::startScene(Window const &) const
 // Counter Clockwise.
 void Renderer::submitQuad(TriangleVertex const &v1, TriangleVertex const &v2, TriangleVertex const &v3, TriangleVertex const &v4)
 {
+#ifdef GLFW
     if (quad_count > maxQuads - 6)
     {
         LOG_WARNING("Not enough space for triangle on Renderer!");
@@ -114,11 +124,13 @@ void Renderer::submitQuad(TriangleVertex const &v1, TriangleVertex const &v2, Tr
     // TODO: Perhaps use subbufferdata?
     glBindBuffer(GL_ARRAY_BUFFER, VBO_quads);
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->quad_vertices), &quad_vertices, GL_STATIC_DRAW);
+#endif
 }
 
 // Counter Clockwise.
 void Renderer::submitTriangle(TriangleVertex const &v1, TriangleVertex const &v2, TriangleVertex const &v3)
 {
+#ifdef GLFW
     if (triangle_count > maxTriangles - 3)
     {
         LOG_WARNING("Not enough space for triangle on Renderer!");
@@ -132,14 +144,17 @@ void Renderer::submitTriangle(TriangleVertex const &v1, TriangleVertex const &v2
     glBindBuffer(GL_ARRAY_BUFFER, VBO_triangles);
     // TODO: Perhaps use subbufferdata?
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->triangle_vertices), &triangle_vertices, GL_STATIC_DRAW);
+#endif
 }
 
 Renderer::~Renderer()
 {
+#ifdef GLFW
     // Cleanup
     glDeleteVertexArrays(1, &VAO_Triangles);
     glDeleteBuffers(1, &VBO_triangles);
 
     glDeleteVertexArrays(1, &VAO_Quads);
     glDeleteBuffers(1, &VBO_quads);
+#endif
 }

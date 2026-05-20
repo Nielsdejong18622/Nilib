@@ -1,7 +1,8 @@
-// Own headers
 #include "Nilib/Renderer/Window.hpp"
-// #define STB_IMAGE_WRITE_IMPLEMENTATION
-// #include <stb/stb_image_write.h>
+
+#ifdef GLFW
+#include <GLFW/glfw3.h>
+#endif
 
 using namespace Nilib;
 
@@ -16,6 +17,7 @@ Window::Window(size_t width,
                bool decorated,
                bool resizeable)
 {
+#ifdef GLFW
     /* Initialize the glfw library */
     if (!glfwInit())
         throw std::runtime_error("Failed to initialize the GLFW libary!");
@@ -74,6 +76,7 @@ Window::Window(size_t width,
 
     Window::s_windowsactive++;
     LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
+#endif
 }
 
 Window::Window(size_t width, size_t height, char const *title)
@@ -82,9 +85,14 @@ Window::Window(size_t width, size_t height, char const *title)
 }
 
 // Utility function.
-Window &Window::windowFromPtr(GLFWwindow *window)
+Window &Window::windowFromPtr(WindowBackend *window)
 {
+#ifdef GLFW
     return *reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
+#else
+    static Window defaultWindow(0, 0, "");
+    return defaultWindow;
+#endif
 }
 
 char const *Window::title() const
@@ -94,16 +102,22 @@ char const *Window::title() const
 
 void Window::title(std::string const &title) const
 {
+
+#ifdef GLFW
     glfwSetWindowTitle(d_window, title.c_str());
+#endif
 }
 
 void Window::title(char const *title) const
 {
+#ifdef GLFW
     glfwSetWindowTitle(d_window, title);
+#endif
 }
 
 void Window::setCallbacks() const
 {
+#ifdef GLFW
     // Callbacks.
     // glfwSetCharCallback()
     // glfwSetCharModsCallback();
@@ -122,15 +136,18 @@ void Window::setCallbacks() const
     glfwSetWindowMaximizeCallback(d_window, Window::windowMaximize_callback);
     glfwSetFramebufferSizeCallback(d_window, Window::framebuffer_size_callback);
     glfwSetWindowContentScaleCallback(d_window, Window::windowContentScale_callback);
+#endif
 }
 
-void Window::framebuffer_size_callback(GLFWwindow *, int width, int height)
+void Window::framebuffer_size_callback(WindowBackend *, int width, int height)
 {
+#ifdef GLFW
     // LOG_DEBUG("[WEVENT] Resizing framebuffer ", width, 'x', height);
     glViewport(0, 0, width, height);
+#endif
 };
 
-void Window::drop_callback(GLFWwindow *window, int path_count, const char *paths[])
+void Window::drop_callback(WindowBackend *window, int path_count, const char *paths[])
 {
     // LOG_DEBUG("[WEVENT] Window", window, "dropping", path_count, "files");
     for (int path = 0; path < path_count; ++path)
@@ -140,63 +157,64 @@ void Window::error_callback(int code, char const *description)
 {
     LOG_ERROR("[WEVENT] Error ", code, description);
 }
-void Window::windowClose_callback(GLFWwindow *window)
+void Window::windowClose_callback(WindowBackend *window)
 {
     // LOG_DEBUG("[WEVENT] Closing window", windowFromPtr(window).title());
     windowFromPtr(window).close();
 }
 
-void Window::windowPos_callback(GLFWwindow *window, int xpos, int ypos)
+void Window::windowPos_callback(WindowBackend *window, int xpos, int ypos)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "position:", xpos, ypos);
 }
 
-void Window::windowSize_callback(GLFWwindow *window, int width, int height)
+void Window::windowSize_callback(WindowBackend *window, int width, int height)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "(re)size:", width, height);
 }
 
-void Window::mouseButton_callback(GLFWwindow *window, int button, int action, int mods)
+void Window::mouseButton_callback(WindowBackend *window, int button, int action, int mods)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "mouse button:", button, "action:", action, "mods:", mods);
 }
 
-void Window::windowFocus_callback(GLFWwindow *window, int focused)
+void Window::windowFocus_callback(WindowBackend *window, int focused)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "focus:", focused);
 }
 
-void Window::windowIconify_callback(GLFWwindow *window, int iconified)
+void Window::windowIconify_callback(WindowBackend *window, int iconified)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "iconified:", iconified);
 }
 
-void Window::windowMaximize_callback(GLFWwindow *window, int maximized)
+void Window::windowMaximize_callback(WindowBackend *window, int maximized)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "maximized:", maximized);
 }
 
-void Window::windowContentScale_callback(GLFWwindow *window, float xscale, float yscale)
+void Window::windowContentScale_callback(WindowBackend *window, float xscale, float yscale)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "content scale:", xscale, yscale);
 }
-void Window::cursorEnter_callback(GLFWwindow *window, int entered)
+void Window::cursorEnter_callback(WindowBackend *window, int entered)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursor enter", entered);
 }
 
-void Window::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+void Window::scroll_callback(WindowBackend *window, double xoffset, double yoffset)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "scroll:", xoffset, yoffset);
 }
 
-void Window::cursorPos_callback(GLFWwindow *window, double xpos, double ypos)
+void Window::cursorPos_callback(WindowBackend *window, double xpos, double ypos)
 {
     // LOG_DEBUG("[WEVENT] Window", windowFromPtr(window).title(), "cursurpos", xpos, ypos);
 }
 
 void Window::open()
 {
+#ifdef GLFW
     CORE_ASSERT(d_window);
     // If already open.
     if (!glfwWindowShouldClose(d_window))
@@ -209,10 +227,12 @@ void Window::open()
     glfwSetWindowShouldClose(d_window, GLFW_FALSE);
     glfwShowWindow(d_window);
     LOG_DEBUG("Showing window", title());
+#endif
 };
 
 Window::~Window()
 {
+#ifdef GLFW
     CORE_ASSERT(d_window);
     glfwDestroyWindow(d_window);
     LOG_DEBUG("Window", title(), "destructed!");
@@ -222,21 +242,27 @@ Window::~Window()
         glfwTerminate();
         LOG_DEBUG("Destructed GLFW library");
     }
+#endif
 };
 
 void Window::requestAttention() const
 {
+#ifdef GLFW
     ASSERT(d_window, "Window not init!");
     glfwRequestWindowAttention(d_window);
+#endif
 }
 
 void Window::linewidth(float const lw) const
 {
+#ifdef GLFW
     glLineWidth(lw);
+#endif
 }
 
 void Window::startScene()
 {
+#ifdef GLFW
     if (!d_window || glfwWindowShouldClose(d_window))
     {
         LOG_WARNING("Starting scene on unopened Window", title());
@@ -250,25 +276,33 @@ void Window::startScene()
     d_data.clearColor.RGBAf(&R, &G, &B, &A);
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(R, G, B, A);
+#endif
 };
 
 void Window::endScene()
 {
+#ifdef GLFW
     glfwSwapBuffers(d_window);
+#endif
 };
 
 void Window::updateidletasks()
 {
+#ifdef GLFW
     glfwWaitEvents();
+#endif
 };
 
 void Window::update()
 {
+#ifdef GLFW
     glfwPollEvents();
+#endif
 };
 
 void Window::screenshotPNG(char const *filename)
 {
+#ifdef GLFW
     int width = d_data.width;
     int height = d_data.height;
     LOG_PROGRESS("Saving Framebuffer screenshot to file", filename, "dimensions", width, 'x', height);
@@ -300,29 +334,39 @@ void Window::screenshotPNG(char const *filename)
     // Step 5: Cleanup
     delete[] pixels;
     delete[] flippedPixels;
+#endif
 }
 
 void Window::close()
 {
+#ifdef GLFW
     // if (glfwWindowShouldClose(d_window)) return;
     glfwSetWindowShouldClose(d_window, GLFW_TRUE);
     glfwHideWindow(d_window);
     LOG_DEBUG() << "Closed window.\n";
+#endif
 };
 
 bool Window::opened() const
 {
+#ifdef GLFW
     return !glfwWindowShouldClose(d_window);
+#else
+    return false;
+#endif
 };
 
 // Default bindkey for Key::Press / No modifications.
 void Window::bindkey(Callback const &bindfun, KeyCode key)
 {
+#ifdef GLFW
     bindkey(bindfun, key, Key::Press, 0);
+#endif
 }
 
 void Window::bindkey(Callback const &bindfun, KeyCode const key, KeyAction const action, int mods)
 {
+#ifdef GLFW
     if (!glfwInit())
     {
         LOG_ERROR("Binding key while GLFW is not initialized!");
@@ -333,12 +377,14 @@ void Window::bindkey(Callback const &bindfun, KeyCode const key, KeyAction const
 
     KeyEvent keyevent = {key, scancode, action, mods};
     d_data.keybindings[keyevent] = bindfun;
-    // ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+// ASSERT(!d_data.keybindings.contains(keyevent), "Key", key, "is binded more than once!")
+#endif
 }
 
 // Required function by the glfw render library. Handles user key input.
-void Window::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void Window::key_callback(WindowBackend *window, int key, int scancode, int action, int mods)
 {
+#ifdef GLFW
     Window &win = Window::windowFromPtr(window);
 
     // Look in the keymap for the key Callback and call it.
@@ -346,27 +392,12 @@ void Window::key_callback(GLFWwindow *window, int key, int scancode, int action,
     std::map<KeyEvent, Callback> keymap = win.d_data.keybindings;
     if (keymap.find(keyev) != keymap.end())
         win.d_data.keybindings.at(keyev)();
+#endif
 };
-
-void Window::drawArc(Vec2d const &A, Vec2d const &B, double const linewidth) const
-{
-    // Line segment from this to adjacent.
-    glLineWidth(linewidth);
-    glBegin(GL_LINES);
-    float ax = A.x();
-    float ay = A.y();
-    float bx = B.x();
-    float by = B.y();
-
-    transform2D(ax, ay);
-    transform2D(bx, by);
-    glVertex3f(ax, ay, 0.0f);
-    glVertex3f(bx, by, 0.0f);
-    glEnd();
-}
 
 void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) const
 {
+#ifdef GLFW
     // Line segment from this to adjacent.
     glLineWidth(linewidth);
     glBegin(GL_LINES);
@@ -380,10 +411,12 @@ void Window::drawArc(Vec2f const &A, Vec2f const &B, float const linewidth) cons
     glVertex3f(ax, ay, 0.0f);
     glVertex3f(bx, by, 0.0f);
     glEnd();
+#endif
 }
 
 void Window::drawCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
 {
+#ifdef GLFW
     float arc = 0.0f;
     // Start on the right.
     float cx = centre.x();
@@ -407,10 +440,12 @@ void Window::drawCircle(Vec2f const &centre, float const radius, float const lin
         glVertex3f(nwarcx, nwarcy, 0.0f);
     }
     glEnd();
+#endif
 }
 
 void Window::drawFilledCircle(Vec2f const &centre, float const radius, float const linewidth, unsigned int sides) const
 {
+#ifdef GLFW
     float arc = 0.0f;
     // Start on the right.
     float cx = centre.x();
@@ -434,15 +469,19 @@ void Window::drawFilledCircle(Vec2f const &centre, float const radius, float con
         glVertex3f(nwarcx, nwarcy, 0.0f);
     }
     glEnd();
+#endif
 }
 
 void Window::drawDiamond(Vec2f const &center, float const radius, float const linewidth) const
 {
-    return drawFilledCircle(center, radius, linewidth, 4);
+#ifdef GLFW
+    drawFilledCircle(center, radius, linewidth, 4);
+#endif
 }
 
 void Window::drawPole(Vec2f const &centre, float const size) const
 {
+#ifdef GLFW
     glBegin(GL_LINES);
 
     float lx = centre.x() - 1 * size;
@@ -468,10 +507,12 @@ void Window::drawPole(Vec2f const &centre, float const size) const
     glVertex3f(tx, ty, 0.0f);
 
     glEnd();
+#endif
 }
 
 void Window::drawTriangleUp(Vec2f const &centre, float const size) const
 {
+#ifdef GLFW
     glBegin(GL_TRIANGLES);
     float ax = centre.x();
     float ay = centre.y() + size;
@@ -487,10 +528,12 @@ void Window::drawTriangleUp(Vec2f const &centre, float const size) const
     glVertex3f(bx, by, 0.0f); // Bottom right
     glVertex3f(cx, cy, 0.0f); // Bottom left
     glEnd();
+#endif
 }
 
 void Window::drawSquare(Vec2f const &centre, float const size) const
 {
+#ifdef GLFW
     glBegin(GL_QUADS);
     float a = centre.x() - size;
     float c = centre.x() + size;
@@ -503,6 +546,7 @@ void Window::drawSquare(Vec2f const &centre, float const size) const
     glVertex3f(c, d, 0.0f);
     glVertex3f(a, d, 0.0f);
     glEnd();
+#endif
 }
 
 void Window::drawRectangle(Vec2f const &leftup, Vec2f const &rightdown) const
@@ -512,6 +556,7 @@ void Window::drawRectangle(Vec2f const &leftup, Vec2f const &rightdown) const
 
 void Window::drawCross(Vec2f const &centre, float const size) const
 {
+#ifdef GLFW
     glBegin(GL_LINES);
     float a = centre.x() - size;
     float c = centre.x() + size;
@@ -524,10 +569,12 @@ void Window::drawCross(Vec2f const &centre, float const size) const
     glVertex3f(a, b, 0.0f);
     glVertex3f(c, d, 0.0f);
     glEnd();
+#endif
 };
 
 void Window::drawTriangleDown(Vec2f const &centre, float const size) const
 {
+#ifdef GLFW
     glBegin(GL_TRIANGLES);
     float ax = centre.x();
     float ay = centre.y() + size;
@@ -543,14 +590,17 @@ void Window::drawTriangleDown(Vec2f const &centre, float const size) const
     glVertex3f(bx, ay, 0.0f); // Bottom right
     glVertex3f(cx, ay, 0.0f); // Bottom left
     glEnd();
+#endif
 }
 
 // For immediate mode drawing.
 void Window::color(Color const &color) const
 {
+#ifdef GLFW
     float r, g, b, a;
     color.RGBAf(&r, &g, &b, &a);
     glColor4f(r, g, b, a);
+#endif
 }
 
 void Window::clearColor(Color const &color)

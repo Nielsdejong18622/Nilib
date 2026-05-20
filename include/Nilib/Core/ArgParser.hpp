@@ -65,7 +65,7 @@ namespace Nilib
             std::string short_name;
             std::string long_name;
             std::string description;
-            uint16_t pos; // Position we expect this CLArg at (if pARG)
+            size_t pos; // Position we expect this CLArg at (if pARG)
             bool required;
             bool parsed;
             std::function<void(std::string_view)> set_val;
@@ -165,8 +165,8 @@ namespace Nilib
         arg.long_name = "";
         arg.description = description;
         arg.required = true;
-        arg.pos = 1 + std::count_if(d_clargs.begin(), d_clargs.end(), [](CLArg const &arg)
-                                    { return arg.type == CLArg::Type::ARGUMENT; });
+        arg.pos = 1 + std::count_if(d_clargs.begin(), d_clargs.end(), [](CLArg const &argu)
+                                    { return argu.type == CLArg::Type::ARGUMENT; });
         arg.parsed = false;
 
         // store how to assign value later
