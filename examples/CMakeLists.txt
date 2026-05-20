@@ -36,7 +36,10 @@ target_link_libraries(OnlineStatistics PUBLIC Nilib)
 target_link_libraries(ComputationalGraph PUBLIC Nilib)
 target_link_libraries(CSV PUBLIC Nilib)
 target_link_libraries(ODE PUBLIC Nilib)
-target_link_libraries(ALNS PUBLIC Nilib)
+
+find_package(Threads REQUIRED)
+target_link_libraries(ALNS PUBLIC Nilib Threads::Threads)
+
 target_link_libraries(Enum PUBLIC Nilib)
 target_link_libraries(Structures PUBLIC Nilib)
 target_link_libraries(Persistent PUBLIC Nilib)
