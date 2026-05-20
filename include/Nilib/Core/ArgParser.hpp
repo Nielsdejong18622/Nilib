@@ -139,7 +139,7 @@ namespace Nilib
     template <typename type>
     void ArgParser::option(type &store, std::string_view option_name, std::string_view description, bool required)
     {
-        ASSERT(!option_name.contains('-'), "Option_name is written without '-'!");
+        ASSERT(option_name.find('-') == std::string::npos, "Option_name is written without '-'!");
         CLArg opt;
         opt.long_name = option_name;
         opt.type = CLArg::Type::OPTION;
