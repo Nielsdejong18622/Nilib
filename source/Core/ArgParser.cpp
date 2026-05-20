@@ -10,7 +10,7 @@ Nilib::ArgParser::ArgParser(std::string_view program_description, std::string_vi
 
 void Nilib::ArgParser::flag(bool &store, std::string_view flag_name, std::string_view description, char flag_char)
 {
-    ASSERT(!flag_name.contains('-'), "Flag_name is written without '-'!");
+    ASSERT(d_program_name.find('-') == std::string::npos, "Flag_name is written without '-'!");
     ASSERT(flag_char != '-', "Flag_char can not be -!");
     CLArg flag;
     flag.description = description;
@@ -46,7 +46,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
     d_argc = argc;
     // Process program name.
     d_program_name = std::string(argv[0]);
-    if (d_program_name.contains('\\'))
+    if (d_program_name.find('\\') != std::string::npos)
     {
         size_t const pos = d_program_name.find_last_of('\\');
         d_program_name = d_program_name.substr(pos + 1, d_program_name.size());
@@ -87,7 +87,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
                 arg = arg.substr(1, arg.size());
             }
             // We only deal with short options from now, e.g. -obs=4
-            if (arg.contains('='))
+            if (arg.find('=') != std::string::npos)
             {
                 // Split on '='
                 std::string::iterator equal_sign = std::find(arg.begin(), arg.end(), '=');

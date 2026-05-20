@@ -16,12 +16,17 @@
 namespace Nilib
 {
 
-  /*
-   * Barebones window class. Bind keybindings, Plot some shapes.
-   * Non-resizable.
-   * Name is given.
-   * Immediate mode opengl.
-   */
+/*
+ * Barebones window class. Bind keybindings, Plot some shapes.
+ * Non-resizable.
+ * Name is given.
+ * Immediate mode opengl.
+ */
+#ifdef GLFW
+  using WindowBackend = GLFWwindow;
+#else
+  using WindowBackend = void;
+#endif
   class Window
   {
   public:
@@ -106,11 +111,7 @@ namespace Nilib
 
   protected:
     typedef std::tuple<int, int, int, int> KeyEvent;
-#ifdef GLFW
-    using WindowBackend = GLFWwindow;
-#else
-    using WindowBackend = void;
-#endif
+
     WindowBackend *d_window = nullptr;
     WindowBackend *d_monitor = nullptr;
     static size_t s_windowsactive;
