@@ -20,6 +20,7 @@ add_executable(Persistent Persistent.cpp)
 add_executable(Benchmark Benchmark.cpp)
 add_executable(GNN GNN.cpp)
 add_executable(MixedIntegerLinearProgram MixedIntegerLinearProgram.cpp)
+add_executable(PINN PINN.cpp)
 
 # Link the static library to the example executable
 target_link_libraries(Triangle PUBLIC Nilib)
@@ -46,6 +47,7 @@ target_link_libraries(Persistent PUBLIC Nilib)
 target_link_libraries(Benchmark PUBLIC Nilib)
 target_link_libraries(GNN PUBLIC Nilib)
 target_link_libraries(MixedIntegerLinearProgram PUBLIC Nilib)
+target_link_libraries(PINN PUBLIC Nilib)
 
 
 # add_test(NAME Triangle COMMAND Triangle)

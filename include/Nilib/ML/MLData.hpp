@@ -94,7 +94,7 @@ struct CIRCLEobs
     Matrixf X, Y;
 };
 
-MLData<CIRCLEobs> CIRCLE(size_t const ntrain_points = 100);
+MLData<CIRCLEobs> CIRCLE(size_t const nobs = 100);
 
 } // namespace Nilib
 

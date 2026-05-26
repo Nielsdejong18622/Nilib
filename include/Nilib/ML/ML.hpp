@@ -30,6 +30,7 @@
 
 #include "Nilib/ML/Optimizers/Optimizer.hpp"
 #include "Nilib/ML/Optimizers/Adam.hpp"
+#include "Nilib/ML/Optimizers/GradientDescent.hpp"
 #include "Nilib/ML/Optimizers/Momentum.hpp"
 
 #include "Nilib/ML/MLData.hpp"

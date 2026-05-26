@@ -7,13 +7,13 @@ using namespace Nilib;
 Nilib::Momentum::Momentum(Module *module, float learning_rate, float weight_decay)
     : Optimizer(module), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
 {
-    ASSERT(weight_decay != 0.0f, "Not implemented yet!");
+    ASSERT(weight_decay == 0.0f, "Not implemented yet!");
 }
 
 Nilib::Momentum::Momentum(Weightptrs const &weightptr, float learning_rate, float weight_decay)
     : Optimizer(weightptr), d_lr(learning_rate), d_weight_decay(weight_decay), d_step(0)
 {
-    ASSERT(weight_decay != 0.0f, "Not implemented yet!");
+    ASSERT(weight_decay == 0.0f, "Not implemented yet!");
 }
 
 void Nilib::Momentum::updateGrad(float multi)
