@@ -29,7 +29,7 @@ void Nilib::Optimizer::initWeights() const
     float prev_layer = 0.0f;
     for (Weight *w : weights)
     {
-        w->partial.setrandn(0.0f, 1.0f / (1.0f + prev_layer));
+        w->value.setrandn(0.0f, 1.0f / (1.0f + prev_layer));
         // prev_layer = w->value.cols();
     }
 }
