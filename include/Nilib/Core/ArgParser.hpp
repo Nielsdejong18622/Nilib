@@ -65,7 +65,7 @@ namespace Nilib
             std::string short_name;
             std::string long_name;
             std::string description;
-            uint16_t pos; // Position we expect this CLArg at (if pARG)
+            size_t pos; // Position we expect this CLArg at (if pARG)
             bool required;
             bool parsed;
             std::function<void(std::string_view)> set_val;
@@ -139,7 +139,7 @@ namespace Nilib
     template <typename type>
     void ArgParser::option(type &store, std::string_view option_name, std::string_view description, bool required)
     {
-        ASSERT(!option_name.contains('-'), "Option_name is written without '-'!");
+        ASSERT(option_name.find('-') == std::string::npos, "Option_name is written without '-'!");
         CLArg opt;
         opt.long_name = option_name;
         opt.type = CLArg::Type::OPTION;
@@ -165,8 +165,8 @@ namespace Nilib
         arg.long_name = "";
         arg.description = description;
         arg.required = true;
-        arg.pos = 1 + std::count_if(d_clargs.begin(), d_clargs.end(), [](CLArg const &arg)
-                                    { return arg.type == CLArg::Type::ARGUMENT; });
+        arg.pos = 1 + std::count_if(d_clargs.begin(), d_clargs.end(), [](CLArg const &argu)
+                                    { return argu.type == CLArg::Type::ARGUMENT; });
         arg.parsed = false;
 
         // store how to assign value later

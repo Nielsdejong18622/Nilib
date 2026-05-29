@@ -3,7 +3,6 @@
 
 namespace Nilib
 {
-
     class ShaderProgram
     {
     public:

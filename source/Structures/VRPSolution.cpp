@@ -1,5 +1,4 @@
 #include "Nilib/Structures/VRPSolution.hpp"
-#include "gurobi_c++.h"
 
 #include "Nilib/Math/RNG.hpp"
 
@@ -143,104 +142,104 @@ Solution Solution::optimalSolution(Instance const &inst)
     int n = inst.numlocations(); // Number of nodes
     Matrixf d_X = Matrixf(n, n);
     double objValue = 0.0;
-    try
-    {
-        static GRBEnv env = GRBEnv(true);
-        env.start();
+    // try
+    // {
+    //     static GRBEnv env = GRBEnv(true);
+    //     env.start();
 
-        GRBModel model = GRBModel(env);
+    //     GRBModel model = GRBModel(env);
 
-        // Silence the solver output
-        model.set(GRB_IntParam_OutputFlag, 1);
+    //     // Silence the solver output
+    //     model.set(GRB_IntParam_OutputFlag, 1);
 
-        // Create decision variables
-        std::vector<std::vector<GRBVar>> x(n, std::vector<GRBVar>(n));
-        std::vector<GRBVar> u(n); // Auxiliary variables for MTZ constraints
+    //     // Create decision variables
+    //     std::vector<std::vector<GRBVar>> x(n, std::vector<GRBVar>(n));
+    //     std::vector<GRBVar> u(n); // Auxiliary variables for MTZ constraints
 
-        for (int i = 0; i < n; ++i)
-        {
-            for (int j = 0; j < n; ++j)
-            {
-                float const xdist = std::pow(inst.X(i, 0) - inst.X(j, 0), 2.0f);
-                float const ydist = std::pow(inst.X(i, 1) - inst.X(j, 1), 2.0f);
-                float const dist = std::sqrt(xdist + ydist);
-                x[i][j] = model.addVar(0.0, 1.0, dist, GRB_BINARY, "x_" + std::to_string(i) + "_" + std::to_string(j));
-            }
-        }
+    //     for (int i = 0; i < n; ++i)
+    //     {
+    //         for (int j = 0; j < n; ++j)
+    //         {
+    //             float const xdist = std::pow(inst.X(i, 0) - inst.X(j, 0), 2.0f);
+    //             float const ydist = std::pow(inst.X(i, 1) - inst.X(j, 1), 2.0f);
+    //             float const dist = std::sqrt(xdist + ydist);
+    //             x[i][j] = model.addVar(0.0, 1.0, dist, GRB_BINARY, "x_" + std::to_string(i) + "_" + std::to_string(j));
+    //         }
+    //     }
 
-        for (int i = 1; i < n; ++i)
-        {
-            u[i] = model.addVar(1, n - 1, 0.0, GRB_CONTINUOUS, "u_" + std::to_string(i));
-        }
+    //     for (int i = 1; i < n; ++i)
+    //     {
+    //         u[i] = model.addVar(1, n - 1, 0.0, GRB_CONTINUOUS, "u_" + std::to_string(i));
+    //     }
 
-        // MTZ Subtour Elimination Constraints
-        for (int i = 1; i < n; ++i)
-        {
-            for (int j = 1; j < n; ++j)
-            {
-                if (i != j)
-                {
-                    model.addConstr(u[i] - u[j] + (n - 1) * x[i][j] <= n - 2,
-                                    "MTZ_" + std::to_string(i) + "_" + std::to_string(j));
-                }
-            }
-            model.addConstr(u[i] <= inst.vehcapacity());
-        }
+    //     // MTZ Subtour Elimination Constraints
+    //     for (int i = 1; i < n; ++i)
+    //     {
+    //         for (int j = 1; j < n; ++j)
+    //         {
+    //             if (i != j)
+    //             {
+    //                 model.addConstr(u[i] - u[j] + (n - 1) * x[i][j] <= n - 2,
+    //                                 "MTZ_" + std::to_string(i) + "_" + std::to_string(j));
+    //             }
+    //         }
+    //         model.addConstr(u[i] <= inst.vehcapacity());
+    //     }
 
-        // Constraints
-        // Each node must be entered and exited exactly once
-        for (int i = 1; i < n; ++i)
-        {
-            GRBLinExpr entry = 0;
-            GRBLinExpr exit = 0;
-            for (int j = 0; j < n; ++j)
-            {
-                if (i != j)
-                {
-                    entry += x[j][i];
-                    exit += x[i][j];
-                }
-            }
-            model.addConstr(entry == 1, "entry_" + std::to_string(i));
-            model.addConstr(exit == 1, "exit_" + std::to_string(i));
-        }
+    //     // Constraints
+    //     // Each node must be entered and exited exactly once
+    //     for (int i = 1; i < n; ++i)
+    //     {
+    //         GRBLinExpr entry = 0;
+    //         GRBLinExpr exit = 0;
+    //         for (int j = 0; j < n; ++j)
+    //         {
+    //             if (i != j)
+    //             {
+    //                 entry += x[j][i];
+    //                 exit += x[i][j];
+    //             }
+    //         }
+    //         model.addConstr(entry == 1, "entry_" + std::to_string(i));
+    //         model.addConstr(exit == 1, "exit_" + std::to_string(i));
+    //     }
 
-        // Add constraints for vehicle capacity
-        // Assuming k is the vehicle capacity constraint (simplified)
-        // Adding additional constraints to ensure vehicle capacity constraint
+    //     // Add constraints for vehicle capacity
+    //     // Assuming k is the vehicle capacity constraint (simplified)
+    //     // Adding additional constraints to ensure vehicle capacity constraint
 
-        // Optimize the model
-        model.optimize();
-        // Print the solution
-        if (model.get(GRB_IntAttr_Status) == GRB_OPTIMAL)
-        {
-            // std::cout << "Optimal solution found!" << std::endl;
-            objValue = model.get(GRB_DoubleAttr_ObjVal);
+    //     // Optimize the model
+    //     model.optimize();
+    //     // Print the solution
+    //     if (model.get(GRB_IntAttr_Status) == GRB_OPTIMAL)
+    //     {
+    //         // std::cout << "Optimal solution found!" << std::endl;
+    //         objValue = model.get(GRB_DoubleAttr_ObjVal);
 
-            // Retrieve and print the solution
-            for (int i = 0; i < n; ++i)
-            {
-                for (int j = 0; j < n; ++j)
-                {
-                    d_X(i, j) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
-                    // d_X(j, i) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
-                }
-            }
-        }
-        else
-        {
-            // std::cout << "No optimal solution found." << std::endl;
-        }
-    }
-    catch (GRBException &e)
-    {
-        // std::cerr << "Error code = " << e.getErrorCode() << std::endl;
-        // std::cerr << e.getMessage() << std::endl;
-    }
-    catch (...)
-    {
-        // std::cerr << "Exception during optimization" << std::endl;
-    }
+    //         // Retrieve and print the solution
+    //         for (int i = 0; i < n; ++i)
+    //         {
+    //             for (int j = 0; j < n; ++j)
+    //             {
+    //                 d_X(i, j) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
+    //                 // d_X(j, i) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
+    //             }
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // std::cout << "No optimal solution found." << std::endl;
+    //     }
+    // }
+    // catch (GRBException &e)
+    // {
+    //     // std::cerr << "Error code = " << e.getErrorCode() << std::endl;
+    //     // std::cerr << e.getMessage() << std::endl;
+    // }
+    // catch (...)
+    // {
+    //     // std::cerr << "Exception during optimization" << std::endl;
+    // }
 
     Solution sol = Solution(inst, d_X, objValue);
     return sol;

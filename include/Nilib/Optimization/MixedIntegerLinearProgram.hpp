@@ -55,9 +55,9 @@ namespace Nilib
             // Preferred backend.
             enum class Backend
             {
-                GUROBI,
-                HIGHS
-            } backend = Backend::GUROBI;
+                GUROBI_BACKEND,
+                HIGHS_BACKEND
+            } backend = Backend::GUROBI_BACKEND;
         };
 
         struct MILPBackend

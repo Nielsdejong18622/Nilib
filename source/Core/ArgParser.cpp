@@ -10,7 +10,7 @@ Nilib::ArgParser::ArgParser(std::string_view program_description, std::string_vi
 
 void Nilib::ArgParser::flag(bool &store, std::string_view flag_name, std::string_view description, char flag_char)
 {
-    ASSERT(!flag_name.contains('-'), "Flag_name is written without '-'!");
+    ASSERT(d_program_name.find('-') == std::string::npos, "Flag_name is written without '-'!");
     ASSERT(flag_char != '-', "Flag_char can not be -!");
     CLArg flag;
     flag.description = description;
@@ -46,7 +46,7 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
     d_argc = argc;
     // Process program name.
     d_program_name = std::string(argv[0]);
-    if (d_program_name.contains('\\'))
+    if (d_program_name.find('\\') != std::string::npos)
     {
         size_t const pos = d_program_name.find_last_of('\\');
         d_program_name = d_program_name.substr(pos + 1, d_program_name.size());
@@ -87,17 +87,17 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
                 arg = arg.substr(1, arg.size());
             }
             // We only deal with short options from now, e.g. -obs=4
-            if (arg.contains('='))
+            if (arg.find('=') != std::string::npos)
             {
                 // Split on '='
                 std::string::iterator equal_sign = std::find(arg.begin(), arg.end(), '=');
-                size_t pos = std::distance(arg.begin(), equal_sign);
+                size_t pos = static_cast<size_t>(std::distance(arg.begin(), equal_sign));
                 std::string name = arg.substr(1, pos - 1);
                 std::string value = arg.substr(pos + 1, arg.size());
 
                 // LOG_DEBUG("Option/flag with equality!", name, value);
-                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &arg)
-                                    { return (arg.long_name == name or arg.short_name == name) and !arg.parsed; });
+                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &argu)
+                                    { return (argu.long_name == name or argu.short_name == name) and !argu.parsed; });
                 if (last != d_clargs.end())
                 {
                     last->parsed = true;
@@ -123,8 +123,8 @@ bool Nilib::ArgParser::parse(int argc, char **argv)
                 std::string name = arg.substr(1, arg.size());
                 // LOG_DEBUG("Option/flag without equality!", name);
 
-                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &arg)
-                                    { return (arg.long_name == name or arg.short_name == name) and !arg.parsed; });
+                last = std::find_if(d_clargs.begin(), d_clargs.end(), [&name](CLArg const &argu)
+                                    { return (argu.long_name == name or argu.short_name == name) and !argu.parsed; });
 
                 // If found. Value comes next ()
                 if (last != d_clargs.end())

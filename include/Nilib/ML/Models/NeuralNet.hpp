@@ -10,7 +10,7 @@
 
 namespace Nilib
 {
-    template <typename OutputLayer = Relu>
+    template <typename InnerLayer = LeakyRelu, typename OutputLayer = Relu>
     class NeuralNet : public Module
     {
     public:
@@ -22,15 +22,15 @@ namespace Nilib
 
     public:
         MultilayerPerceptron mlp1;
-        Relu mlp1_act;
+        InnerLayer mlp1_act;
         MultilayerPerceptron mlp2;
-        Relu mlp2_act;
+        InnerLayer mlp2_act;
         MultilayerPerceptron mlp3;
         OutputLayer mlp3_act;
     };
 
-    template <typename OutputLayer>
-    NeuralNet<OutputLayer>::NeuralNet(CNode &x, size_t const x_col, size_t const hidden1, size_t const hidden2, size_t const outputdim)
+    template <typename InnerLayer, typename OutputLayer>
+    NeuralNet<InnerLayer, OutputLayer>::NeuralNet(CNode &x, size_t const x_col, size_t const hidden1, size_t const hidden2, size_t const outputdim)
         : mlp1(x, x_col, hidden1),
           mlp1_act(mlp1),
           mlp2(mlp1_act, hidden1, hidden2),
@@ -40,20 +40,20 @@ namespace Nilib
     {
     }
 
-    template <typename OutputLayer>
-    void NeuralNet<OutputLayer>::evaluate()
+    template <typename InnerLayer, typename OutputLayer>
+    void NeuralNet<InnerLayer, OutputLayer>::evaluate()
     {
         mlp3_act.evaluate();
         this->value = mlp3_act.value;
     }
-    template <typename OutputLayer>
-    void NeuralNet<OutputLayer>::derive(Nilib::Matrixf const &seed)
+    template <typename InnerLayer, typename OutputLayer>
+    void NeuralNet<InnerLayer, OutputLayer>::derive(Nilib::Matrixf const &seed)
     {
         mlp3_act.derive(seed);
     }
 
-    template <typename OutputLayer>
-    void NeuralNet<OutputLayer>::learnables(Weights &add)
+    template <typename InnerLayer, typename OutputLayer>
+    void NeuralNet<InnerLayer, OutputLayer>::learnables(Weights &add)
     {
         mlp1.learnables(add);
         mlp2.learnables(add);

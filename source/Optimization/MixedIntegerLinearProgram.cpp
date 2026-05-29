@@ -9,22 +9,28 @@ using namespace Nilib::MixedIntegerLinearProgram;
 MixedIntegerLinearProgram::MixedIntegerLinearProgram(Options const &options)
     : d_backend(nullptr), d_model_continuous(true)
 {
-    if (options.backend == Options::Backend::GUROBI)
+    if (options.backend == Options::Backend::GUROBI_BACKEND)
     {
+#ifdef GUROBI
         d_backend = std::make_unique<GurobiBackend>(options);
+#else
+        ASSERT(false, "Gurobi backend not enabled during compilation!");
+#endif
     }
     else
     {
+#ifdef HIGHS
         d_backend = std::make_unique<HighsBackend>(options);
+#else
+        ASSERT(false, "HiGHS backend not enabled during compilation!");
+#endif
     }
     CORE_ASSERT(d_backend);
 }
 
 MixedIntegerLinearProgram::MixedIntegerLinearProgram()
-    : d_backend(std::make_unique<HighsBackend>(Options{})),
-      d_model_continuous(true)
+    : MixedIntegerLinearProgram(Options{.backend = Options::Backend::HIGHS_BACKEND})
 {
-    CORE_ASSERT(d_backend);
 }
 
 MixedIntegerLinearProgram::var_t MixedIntegerLinearProgram::addVar(double coeff, VarType type, double lb, double ub)

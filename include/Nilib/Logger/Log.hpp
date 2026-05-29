@@ -196,8 +196,8 @@ namespace Nilib
         Logger(std::ostream &os = std::cout, char end = '\n', char sep = ' ') : d_stream(&os), d_end(end), d_sep(sep)
         {
             // Faster logging.
-            std::ios_base::sync_with_stdio(false);
-            std::cin.tie(nullptr);
+            // std::ios_base::sync_with_stdio(false);
+            // std::cin.tie(nullptr);
         }
 
         ~Logger()
