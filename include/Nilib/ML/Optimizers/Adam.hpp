@@ -16,7 +16,7 @@ class Adam : public Optimizer
     Adam(Weightptrs const &weightptr, float learning_rate = 0.001f, float weight_decay = 0.0f);
     Adam(Module *module, float learning_rate = 0.001f, float weight_decay = 0.0f);
     void updateGrad(float const multi = 1.0f) override;
-
+    void zeroMomentumVelocity();
   protected:
     void init();
 

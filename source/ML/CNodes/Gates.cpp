@@ -29,11 +29,11 @@ void Plus::evaluate()
 {
     d_X.evaluate();
     d_Y.evaluate();
-    this->value = d_X.value + d_Y.value;
+    this->value = 0.5f * (d_X.value + d_Y.value);
 }
 
 void Plus::derive(Matrixf const &seed)
 {
-    d_X.derive(seed);
-    d_Y.derive(seed);
+    d_X.derive(0.5f * seed);
+    d_Y.derive(0.5f * seed);
 }

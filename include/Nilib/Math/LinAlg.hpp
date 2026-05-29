@@ -322,6 +322,18 @@ template <typename value_type, typename type> Matrix<value_type, type> colMeans(
     res /= static_cast<value_type>(A.rows());
     return res;
 }
+template <typename value_type, typename type> Matrix<value_type, type> rowMeans(Matrix<value_type, type> const &A)
+{
+    CORE_ASSERT(A.cols() > 0);
+    Matrix<value_type, type> res = Matrix<value_type, type>::zeros(A.rows(), 1);
+
+    for (size_t row_idx = 0; row_idx < A.rows(); row_idx++)
+        for (size_t col_idx = 0; col_idx < A.cols(); col_idx++)
+            res(row_idx) += A(row_idx, col_idx);
+
+    res /= static_cast<value_type>(A.cols());
+    return res;
+}
 
 } // namespace Nilib
 #endif

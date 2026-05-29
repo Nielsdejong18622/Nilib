@@ -1,5 +1,4 @@
 #include "Nilib/ML/Optimizers/Adam.hpp"
-
 #include "Nilib/Math/LinAlg.hpp"
 
 using namespace Nilib;
@@ -53,6 +52,16 @@ void Nilib::Adam::updateGrad(float const multi)
         // Apply L2 weight decay directly.
         weights[w_idx]->value -= d_lr * d_weight_decay * weights[w_idx]->value;
     }
+}
+
+void Nilib::Adam::zeroMomentumVelocity()
+{
+    if (checkgradients())
+        for (size_t w_idx = 0; w_idx < weights.size(); w_idx++)
+        {
+            d_momentum[w_idx].zero();
+            d_velocity[w_idx].zero();
+        }
 }
 
 void Nilib::Adam::init()
