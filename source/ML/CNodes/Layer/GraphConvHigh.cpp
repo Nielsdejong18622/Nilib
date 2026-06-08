@@ -9,8 +9,8 @@ GraphConvHigh::GraphConvHigh(CNode &A, CNode &X, size_t const colX, size_t const
 {
     CORE_ASSERT(outdim > 0);
     CORE_ASSERT(colX > 0);
-    // d_W1.value = Nilib::Matrixf::diag(colX, outdim, 1.0f) + Nilib::Matrixf::randn(colX, outdim, 0.0f, 0.001f);
-    // d_W2.value = Nilib::Matrixf::diag(colX, outdim, 1.0f) + Nilib::Matrixf::randn(colX, outdim, 0.0f, 0.001f);
+    d_W1.value = Nilib::Matrixf::diag(colX, outdim, 1.0f) + Nilib::Matrixf::randn(colX, outdim, 0.0f, 0.1f);
+    d_W2.value = Nilib::Matrixf::diag(colX, outdim, 1.0f) + Nilib::Matrixf::randn(colX, outdim, 0.0f, 0.1f);
 }
 
 void GraphConvHigh::evaluate()
