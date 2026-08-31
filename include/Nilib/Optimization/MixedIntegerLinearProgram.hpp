@@ -67,11 +67,16 @@ namespace Nilib
 
             virtual ~MILPBackend() = default;
             virtual var_t addVar(double coeff, VarType type, double lb, double ub) = 0;
+            virtual var_t addColumn(double obj_coeff, VarType type, double lb, double ub, std::vector<constr_t> const &constr, std::vector<double> const &coeff) = 0;
             virtual constr_t addConstraint(std::vector<var_t> const &variables, std::vector<double> const &coeffs, double rhs, ConstrType type) = 0;
+
+            virtual void removeConstraints(std::vector<constr_t> const &constraints) = 0;
+            virtual void removeVariables(std::vector<var_t> const &variables) = 0;
             virtual void solve() = 0;
             virtual Status status() const = 0;
             virtual double objective() const = 0;
-            virtual double variable_value(var_t variable) const = 0;
+            virtual double variableValue(var_t variable) const = 0;
+            virtual double variableObjective(var_t variable) const = 0;
             virtual double dual(constr_t constraint) const = 0;
         };
 
@@ -96,10 +101,16 @@ namespace Nilib
             // std::vector<var_t> addVars(double coeff, VarType type, double lb, double ub);
 
             // Add constraints to the model.
-            constr_t addConstraint(std::vector<var_t> const &variables, std::vector<double> const &coeffs, double rhs, ConstrType type);
+            constr_t addConstraints(std::vector<var_t> const &variables, std::vector<double> const &coeffs, double rhs, ConstrType type);
+            constr_t addConstraint(var_t variable, double coeff, double rhs, ConstrType type);
             // std::vector<constr_t> addConstraints(std::vector<var_t> const &variables, std::vector<double> const &coeffs);
 
+            // Remove components of the model.
+            void removeVariable(var_t variable);
+            void removeConstraint(constr_t variable);
+
             // Add a complete column to the model.
+            var_t addColumn(double obj_coeff, VarType type, double lb, double ub, std::vector<constr_t> const &constr, std::vector<double> const &coeff);
 
             // Add a complete row to the model.
 
@@ -111,12 +122,19 @@ namespace Nilib
             // Get the objective value (after a solve).
             double objective() const;
             // Get the value of a variable (after a solve).
-            double variable_value(var_t variable) const;
+            double variableValue(var_t variable) const;
+            // Get the objective coefficient of a variable (after a solve).
+            double variableObjective(var_t variable) const;
             // Get the dual variable of a constraint (after a solve).
             double dual(constr_t constraint) const;
 
+            size_t numConstraints() const { return d_numconstraints; }
+            size_t numVariables() const { return d_numvariables; }
+
         private:
             std::unique_ptr<MILPBackend> d_backend;
+            size_t d_numvariables;
+            size_t d_numconstraints;
             bool d_model_continuous;
         };
     } // namespace MixedIntegerLinearProgram

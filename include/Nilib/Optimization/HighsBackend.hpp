@@ -28,10 +28,14 @@ namespace Nilib
 
             void solve() override;
 
+            var_t addColumn(double obj_coeff, VarType type, double lb, double ub, std::vector<constr_t> const &constr, std::vector<double> const &coeff) override;
+            void removeConstraints(std::vector<constr_t> const &constraints) override;
+            void removeVariables(std::vector<var_t> const &variables) override;
             Status status() const override;
 
             double objective() const override;
-            double variable_value(var_t variable) const override;
+            double variableValue(var_t variable) const override;
+            double variableObjective(var_t variable) const override;
             double dual(constr_t constraint) const override;
 
         private:
@@ -52,6 +56,12 @@ namespace Nilib
             // Sparse matrix (row-wise first, converted later)
             std::vector<std::vector<var_t>> d_row_vars;
             std::vector<std::vector<double>> d_row_coeffs;
+
+            // Mappings for persistent index.
+            std::vector<bool> d_active_vars;
+            std::vector<bool> d_active_constraints;
+            std::vector<int> d_var_to_col;
+            std::vector<int> d_constr_to_row;
 
             // Solution
             HighsSolution d_solution;
