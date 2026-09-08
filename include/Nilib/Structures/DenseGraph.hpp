@@ -55,9 +55,9 @@ namespace Nilib
             struct iterator
             {
                 StoreMatrix const &adj;
-                edge_t edge_idx;
+                size_t edge_idx;
 
-                iterator(StoreMatrix const &adjMatr, edge_t eidx)
+                iterator(StoreMatrix const &adjMatr, size_t eidx)
                     : adj(adjMatr), edge_idx(eidx)
                 {
                     skip_zero();
@@ -65,14 +65,19 @@ namespace Nilib
 
                 void skip_zero()
                 {
-                    while (edge_idx < adj.size() && adj(edge_idx) == 0.0f)
+                    const auto size = adj.size();
+
+                    while (edge_idx < size && adj(edge_idx) == 0.0f)
                         ++edge_idx;
                 }
 
-                std::tuple<node_t, node_t, edge_t> operator*() const
+                std::tuple<node_t, node_t, size_t> operator*() const
                 {
-                    node_t from = static_cast<node_t>(edge_idx / adj.cols());
-                    node_t to = static_cast<node_t>(edge_idx % adj.cols());
+                    const auto cols = adj.cols();
+
+                    node_t from = static_cast<node_t>(edge_idx / cols);
+                    node_t to = static_cast<node_t>(edge_idx % cols);
+
                     return {from, to, edge_idx};
                 }
 
@@ -88,8 +93,16 @@ namespace Nilib
                     return edge_idx != other.edge_idx;
                 }
             };
-            iterator begin() const { return {d_adj, 0}; }
-            iterator end() const { return {d_adj, (d_adj.size() > 0) ? static_cast<edge_t>(d_adj.size() - 1) : 0}; }
+
+            iterator begin() const
+            {
+                return {d_adj, 0};
+            }
+
+            iterator end() const
+            {
+                return {d_adj, d_adj.size()};
+            }
         };
 
     public:
