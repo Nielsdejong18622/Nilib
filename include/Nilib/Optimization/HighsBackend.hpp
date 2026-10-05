@@ -1,8 +1,9 @@
 #ifndef _HIGHS_BACKEND_HPP
 #define _HIGHS_BACKEND_HPP
 
-#ifdef HIGHS
 #include "Nilib/Optimization/MixedIntegerLinearProgram.hpp"
+#include "Nilib/Core/Assert.hpp"
+#ifdef HIGHS
 #include "Highs.h"
 
 namespace Nilib

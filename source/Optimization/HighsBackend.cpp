@@ -1,5 +1,4 @@
 #include "Nilib/Optimization/HighsBackend.hpp"
-#include "Nilib/Core/Assert.hpp"
 
 #ifdef HIGHS
 
