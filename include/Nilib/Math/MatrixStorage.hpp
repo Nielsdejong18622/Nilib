@@ -46,13 +46,13 @@ namespace Nilib
             }
         }
 
-        type &operator()(size_t idx)
+        inline type &operator()(size_t idx)
         {
             CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
         };
 
-        type operator()(size_t idx) const
+        inline type operator()(size_t idx) const
         {
             CORE_ASSERT(idx < d_data.size());
             return d_data[idx];
@@ -63,12 +63,12 @@ namespace Nilib
             return d_data == other.d_data;
         }
 
-        type operator()(size_t row, size_t col) const { return operator()(row * cols() + col); }
-        type &operator()(size_t row, size_t col) { return operator()(row * cols() + col); }
+        inline type operator()(size_t row, size_t col) const { return operator()(row * cols() + col); }
+        inline type &operator()(size_t row, size_t col) { return operator()(row * cols() + col); }
 
-        constexpr size_t rows() const { return n; }
-        constexpr size_t cols() const { return m; }
-        constexpr size_t size() const { return n * m; }
+        inline constexpr size_t rows() const { return n; }
+        inline constexpr size_t cols() const { return m; }
+        inline constexpr size_t size() const { return n * m; }
 
         type sum() const { return std::accumulate(d_data.begin(), d_data.end(), 0.0); }
 
