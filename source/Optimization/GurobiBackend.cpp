@@ -125,7 +125,6 @@ MILPBackend::constr_t GurobiBackend::addConstraint(
 
 void GurobiBackend::solve()
 {
-    d_model->update();
     d_model->optimize();
 
     int grb_status = d_model->get(GRB_IntAttr_Status);

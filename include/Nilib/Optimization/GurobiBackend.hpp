@@ -40,7 +40,7 @@ namespace Nilib
         private:
             std::unique_ptr<GRBEnv> d_env;
             std::unique_ptr<GRBModel> d_model;
-            
+
             std::vector<GRBVar> d_vars;
             std::vector<GRBConstr> d_constrs;
 
