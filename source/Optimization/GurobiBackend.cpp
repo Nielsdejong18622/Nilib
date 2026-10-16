@@ -125,6 +125,7 @@ MILPBackend::constr_t GurobiBackend::addConstraint(
 
 void GurobiBackend::solve()
 {
+    d_model->update();
     d_model->optimize();
 
     int grb_status = d_model->get(GRB_IntAttr_Status);
@@ -190,7 +191,6 @@ void GurobiBackend::removeConstraints(std::vector<constr_t> const &constraints)
         d_model->remove(d_constrs[constraint]);
         d_active_constrs[constraint] = false;
     }
-    d_model->update();
 }
 void GurobiBackend::removeVariables(std::vector<var_t> const &variables)
 {
@@ -204,7 +204,6 @@ void GurobiBackend::removeVariables(std::vector<var_t> const &variables)
         d_model->remove(d_vars[variable]);
         d_active_vars[variable] = false;
     }
-    d_model->update();
 }
 
 #endif
