@@ -42,7 +42,7 @@ void create_milp(Options options)
     uint32_t y = milp.addVar(2.0, VarType::CONTINUOUS, 0.0, 20.0);
 
     // Add some constraints.
-    uint32_t c = milp.addConstraint({x, y}, {1.0, 1.0}, 5.0, ConstrType::LEQ);
+    uint32_t c = milp.addConstraints({x, y}, {1.0, 1.0}, 5.0, ConstrType::LEQ);
 
     // Solve the model.
     milp.solve();
@@ -50,10 +50,10 @@ void create_milp(Options options)
     // Print the solution.
     if (milp.status() == Status::OPTIMAL)
     {
-        LOG_WARNING("Solved! obj:", milp.objective(), "x:", milp.variable_value(x), 'y', milp.variable_value(y), "dual:", milp.dual(c));
+        LOG_WARNING("Solved! obj:", milp.objective(), "x:", milp.variableValue(x), 'y', milp.variableValue(y), "dual:", milp.dual(c));
     }
     // Add another constraint.
-    uint32_t c1 = milp.addConstraint({x, y}, {2.0, 2.0}, 5.0, ConstrType::LEQ);
+    uint32_t c1 = milp.addConstraints({x, y}, {2.0, 2.0}, 5.0, ConstrType::LEQ);
 
     // Solve the model.
     milp.solve();
@@ -61,6 +61,6 @@ void create_milp(Options options)
     // Print the solution.
     if (milp.status() == Status::OPTIMAL)
     {
-        LOG_WARNING("Solved! obj:", milp.objective(), "x:", milp.variable_value(x), 'y', milp.variable_value(y), "dual:", milp.dual(c));
+        LOG_WARNING("Solved! obj:", milp.objective(), "x:", milp.variableValue(x), 'y', milp.variableValue(y), "dual:", milp.dual(c));
     }
 }
