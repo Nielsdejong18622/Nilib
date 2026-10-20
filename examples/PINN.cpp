@@ -9,7 +9,8 @@ float f(float t)
 {
     // return std::sin(t);
     // return 1.0 - std::exp(-t);
-    return 1.0f / (1.0f + std::exp(-t));
+    float const B = 4.0;
+    return 1.0f / (1.0f + B * std::exp(-t));
 }
 
 void train_pinn(CSVWriter &writer, float labda = 0.0);
