@@ -27,8 +27,7 @@ Profiler::~Profiler()
 void Profiler::printFormattedTime(std::chrono::duration<long long, std::nano> const &duration) const
 {
     auto duration_casted = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-    LOG_DEBUG() << "PROFILED: __" << d_function_name << "__ in file " << d_file << ':' << d_line
-                << " execution time: " << duration_casted << '\n';
+    LOG_DEBUG("Profiled __{}__ in file {}:{} execution time: {}", d_function_name, d_file, d_line, duration_casted);
 }
 
 void Profiler::reset()

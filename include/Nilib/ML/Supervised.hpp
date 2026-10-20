@@ -45,7 +45,7 @@ namespace Nilib
                 break;
             // Log progress (to file)
             if (train_epoch == 0 || (train_epoch + 1) % log_every == 0)
-                LOG_INFO("Epoch:", train_epoch + 1, "Train loss:", train_loss.mean(), "Validation loss:", valid_loss.mean());
+                LOG_INFO("Epoch: {} Train loss: {}. Validation loss: {}.", train_epoch + 1, train_loss.mean(), valid_loss.mean());
         }
 
         // Report final test_loss;
@@ -59,7 +59,7 @@ namespace Nilib
             module.evaluate();
             test_loss.push(module.value(0));
         }
-        LOG_INFO("Finished training, Test loss:", test_loss.mean());
+        LOG_INFO("Finished training, Test loss: {}", test_loss.mean());
     }
 
 }

@@ -83,10 +83,12 @@ namespace Nilib
         };
 
         // Support for looping over the PIndexVector
-        PIndexVector<Type>::Iterator begin() { return Iterator(0, this); };
-        PIndexVector<Type>::Iterator end() { return Iterator(d_data.size(), this); };
-        PIndexVector<Type>::IndexIterator ibegin() { return IndexIterator(0, this); };
-        PIndexVector<Type>::IndexIterator iend() { return IndexIterator(d_data.size(), this); };
+        auto begin() noexcept { return d_data.begin(); }
+        auto end() noexcept { return d_data.end(); }
+
+        auto begin() const noexcept { return d_data.begin(); }
+        auto end() const noexcept { return d_data.end(); }
+
 
     private:
         std::vector<Type> d_data;  // Stores the data.
@@ -117,7 +119,7 @@ namespace Nilib
     template <typename Type>
     void PIndexVector<Type>::remove(PIndexVector<Type>::index index)
     {
-        ASSERT(contains(index), "Attempt to remove index", index, "which has not been reassigned!");
+        ASSERT(contains(index), "Attempt to remove index {} which has not been reassigned!", index);
         // Swap back the data with the last entry.
         std::swap(d_data[index], d_data[d_data.size() - 1]);
         // Swap the data pos -> index vector!

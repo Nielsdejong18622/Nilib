@@ -80,7 +80,7 @@ size_t Instance::vehcapacity() const
 
 bool Instance::serialize(Serializer &serializer)
 {
-    LOG_DEBUG() << "Serializing Instance!\n";
+    LOG_DEBUG("Serializing Instance!");
     // serializer.writeObject(A);
     // serializer.writeObject(X);
     serializer.writeRaw(vehcap);
@@ -90,7 +90,7 @@ bool Instance::serialize(Serializer &serializer)
 
 bool Instance::deserialize(Deserializer &deserializer)
 {
-    LOG_DEBUG() << "Deserializing Instance!\n";
+    LOG_DEBUG("Deerializing Instance!");
     // deserializer.readObject(A);
     // deserializer.readObject(X);
     deserializer.readRaw(vehcap);

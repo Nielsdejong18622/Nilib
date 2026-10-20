@@ -54,7 +54,7 @@ namespace Nilib
                 }
                 else
                 {
-                    LOG_DEBUG("Function:", name, "| Avg Time:", avg_ns, "ns");
+                    LOG_DEBUG("Function: {} | Avg. Time: {} ns", name, avg_ns);
                 }
             }
         }

@@ -20,5 +20,5 @@ int main()
         CSV(iteration_writer, iteration, iteration2);
     }
 
-    LOG_SUCCESS("CSV example complete! Wrote to", writer.file_name());
+    LOG_SUCCESS("CSV example complete! Wrote to {}", writer.file_name());
 }

@@ -130,7 +130,7 @@ namespace Nilib
         }
         catch (const std::exception &e)
         {
-            LOG_ERROR("Unable to convert", value, "to required type! Using default constructed value instead!");
+            LOG_ERROR("Unable to convert {} to required type! Using default constructed value instead!", value);
             // ASSERT(false, "Unable to convert", value, "to required type! Using default constructed value instead!");
         }
         return type{};

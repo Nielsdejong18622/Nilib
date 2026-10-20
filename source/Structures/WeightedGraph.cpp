@@ -39,28 +39,6 @@ namespace Nilib
         return res;
     }
 
-    // template <>
-    // Nilib::Weighted<DenseGraph> Nilib::Weighted<DenseGraph>::fromVec2f(std::vector<Vec2f> const &x)
-    // {
-    //     size_t const numnodes = x.size();
-    //     Weighted<DenseGraph> res(DenseGraph::connected(numnodes, numnodes * numnodes));
-
-    //     for (Nilib::Weighted<Nilib::DenseGraph>::node_t nodeID = 0; nodeID < numnodes; nodeID++)
-    //     {
-    //         for (Nilib::Weighted<Nilib::DenseGraph>::node_t nodeJD = 0; nodeJD < numnodes; nodeJD++)
-    //         {
-    //             // No self loops are added!
-    //             if (nodeJD != nodeID)
-    //             {
-    //                 float const dist = Nilib::euclidean(x[nodeID], x[nodeJD]);
-    //                 res.addEdge(nodeID, nodeJD, dist);
-    //             }
-    //         }
-    //     }
-
-    //     return res;
-    // }
-
     template <>
     void Nilib::Weighted<DenseGraph>::addEdge(node_t const node1, node_t const node2, weight_t const weight)
     {
@@ -80,18 +58,10 @@ namespace Nilib
     template <>
     void Nilib::Weighted<DenseGraph>::print()
     {
-        LOG_DEBUG("Weighted DenseGraph", this);
-        LOG_DEBUG("Adjacency:", d_adj);
-        d_adj.print();
-        LOG_DEBUG("Weights:", weights);
     }
 
     template <>
     void Nilib::Weighted<SparseGraph>::print()
     {
-        LOG_DEBUG("Weighted SparseGraph", this);
-        LOG_DEBUG("Head:", d_head);
-        LOG_DEBUG("Edges:", d_edges);
-        LOG_DEBUG("Weights:", weights);
     }
 }; // namespace Nilib

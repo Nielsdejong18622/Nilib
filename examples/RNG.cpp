@@ -12,8 +12,8 @@ int main()
 
     // Generate a number between 0-1.
     auto gen = RNG::prob();
-    LOG_DEBUG("Random number:", gen);
-    LOG_DEBUG("Random number:", RNG::prob());
+    LOG_DEBUG("Random number: {}", gen);
+    LOG_DEBUG("Random number: {}", RNG::prob());
     // Generate a lognormal number.
     RNG::lognormal(2.38, 0.683);
     RNG::weibull(2.38, 0.683);
@@ -24,7 +24,7 @@ int main()
         Nilib::RunningStats probstat;
         for (size_t i = 0; i < 10'00'000; i++)
             probstat.push(RNG::normal(-20.0f, 10.0f));
-        LOG_INFO("Observed RNG::normal(20.0f, 10.0f)", probstat);
+        LOG_INFO("Observed RNG::normal(-20.0f, 10.0f) {}", probstat);
     }
 
     for (size_t test = 0; test < 1; ++test)
@@ -33,7 +33,7 @@ int main()
         Nilib::RunningStats<int> probstat;
         for (size_t i = 0; i < 10'000'000; i++)
             probstat.push(RNG::index(10));
-        LOG_INFO("Observed RNG::index(10):", probstat);
+        LOG_INFO("Observed RNG::index(10): {}", probstat);
     }
 
     Nilib::RNG::seed(127);
@@ -44,7 +44,7 @@ int main()
         Nilib::RunningStats probstat;
         for (size_t i = 0; i < 10'000'000; i++)
             probstat.push(Nilib::RNG::normal());
-        LOG_INFO("Observed RNG::normal(0.0, 1.0):", probstat);
+        LOG_INFO("Observed RNG::normal(0.0, 1.0): {}", probstat);
     }
 
     for (size_t test = 0; test < 1; ++test)
@@ -53,6 +53,6 @@ int main()
         Nilib::RunningStats probstat;
         for (size_t i = 0; i < 10'000'000; i++)
             probstat.push(Nilib::RNG::rand());
-        LOG_INFO("Observed RNG::rand():", probstat);
+        LOG_INFO("Observed RNG::rand(): {}", probstat);
     }
 }

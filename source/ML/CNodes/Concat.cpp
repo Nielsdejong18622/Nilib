@@ -12,7 +12,7 @@ void Cbind::evaluate()
 {
     d_lhs.evaluate();
     d_rhs.evaluate();
-    ASSERT(d_lhs.value.cols() == d_rhs.value.cols(), d_lhs.value, d_rhs.value);
+    ASSERT(d_lhs.value.cols() == d_rhs.value.cols(), "{} != {}", d_lhs.value.cols(), d_rhs.value.cols());
     CORE_ASSERT(d_lhs.value.rows() > 0);
     CORE_ASSERT(d_rhs.value.rows() > 0);
     this->value = Nilib::cbind(d_lhs.value, d_rhs.value);
@@ -41,10 +41,10 @@ void Cbind::derive(Nilib::Matrixf const &seed)
         }
     }
 
-    ASSERT(d_lhs.value.rows() == seedlhs.rows(), d_lhs.value, seedlhs);
-    ASSERT(d_lhs.value.cols() == seedlhs.cols(), d_lhs.value, seedlhs);
-    ASSERT(d_rhs.value.rows() == seedrhs.rows(), d_rhs.value, seedrhs);
-    ASSERT(d_rhs.value.cols() == seedrhs.cols(), d_rhs.value, seedrhs);
+    ASSERT(d_lhs.value.rows() == seedlhs.rows(), "{} != {}", d_lhs.value.rows(), seedlhs.rows());
+    ASSERT(d_lhs.value.cols() == seedlhs.cols(), "{} != {}", d_lhs.value.cols(), seedlhs.cols());
+    ASSERT(d_rhs.value.rows() == seedrhs.rows(), "{} != {}", d_rhs.value.rows(), seedrhs.rows());
+    ASSERT(d_rhs.value.cols() == seedrhs.cols(), "{} != {}", d_rhs.value.cols(), seedrhs.cols());
     d_lhs.derive(seedlhs);
     d_rhs.derive(seedrhs);
 }
@@ -59,7 +59,7 @@ void Rbind::evaluate()
     d_rhs.evaluate();
     CORE_ASSERT(d_lhs.value.cols() > 0);
     CORE_ASSERT(d_rhs.value.cols() > 0);
-    ASSERT(d_lhs.value.rows() == d_rhs.value.rows(), d_lhs.value, d_rhs.value);
+    ASSERT(d_lhs.value.rows() == d_rhs.value.rows(), "{} != {}", d_lhs.value.rows(), d_rhs.value.rows());
     this->value = Nilib::rbind(d_lhs.value, d_rhs.value);
 }
 
@@ -81,10 +81,10 @@ void Rbind::derive(Nilib::Matrixf const &seed)
             }
         }
     }
-    ASSERT(d_lhs.value.rows() == seedlhs.rows(), d_lhs.value, seedlhs);
-    ASSERT(d_lhs.value.cols() == seedlhs.cols(), d_lhs.value, seedlhs);
-    ASSERT(d_rhs.value.rows() == seedrhs.rows(), d_rhs.value, seedrhs);
-    ASSERT(d_rhs.value.cols() == seedrhs.cols(), d_rhs.value, seedrhs);
+    ASSERT(d_lhs.value.rows() == seedlhs.rows(), "{} != {}", d_lhs.value.rows(), seedlhs.rows());
+    ASSERT(d_lhs.value.cols() == seedlhs.cols(), "{} != {}", d_lhs.value.cols(), seedlhs.cols());
+    ASSERT(d_rhs.value.rows() == seedrhs.rows(), "{} != {}", d_rhs.value.rows(), seedrhs.rows());
+    ASSERT(d_rhs.value.cols() == seedrhs.cols(), "{} != {}", d_rhs.value.cols(), seedrhs.cols());
     d_lhs.derive(seedlhs);
     d_rhs.derive(seedrhs);
 }

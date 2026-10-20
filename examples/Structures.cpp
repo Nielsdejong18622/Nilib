@@ -1,6 +1,5 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Structures/Circular.hpp"
-#include "Nilib/Structures/StackVector.hpp"
 
 struct SpecialData
 {
@@ -15,25 +14,23 @@ struct SpecialData
     }
 };
 
+using namespace Nilib;
 int main()
 {
-    using namespace Nilib;
     {
-
         CircularStack<int, 5> buffer(-1);
 
-        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
+        LOG_DEBUG("Printing buffer {} capacity: {}:{}", fmt_ptr(&buffer), buffer.capacity(), fmt_range(buffer));
         buffer.push_back(0);
         buffer.push_back(1);
         buffer.push_back(2);
         buffer.push_back(3);
         buffer.push_back(4);
         buffer.push_back(5);
-        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
         auto node3 = buffer.pop_back();
         CORE_ASSERT(node3 == 5);
         buffer.push_back(50);
-        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer, node3);
+        LOG_DEBUG("Printing buffer {} capacity: {}:{}", fmt_ptr(&buffer), buffer.capacity(), fmt_range(buffer));
         auto node50 = buffer.pop_back();
         CORE_ASSERT(node50 == 50);
         buffer.push_back(4);
@@ -42,8 +39,7 @@ int main()
         buffer.push_back(7);
         auto node7 = buffer.pop_back();
         CORE_ASSERT(node7 == 7);
-
-        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
+        LOG_DEBUG("Printing buffer {} capacity: {}:{}", fmt_ptr(&buffer), buffer.capacity(), fmt_range(buffer));
     }
 
     {
@@ -56,26 +52,7 @@ int main()
         buffer.pop_back();
         buffer.push_back('e');
 
-        LOG_DEBUG("Printing buffer", &buffer, "capacity:", buffer.capacity(), ':', buffer);
-    }
-
-    // Stackvector.
-    {
-        // Sizeof(vec) = 4 * size_t + sizeof(array)
-        StackVector<char, 8> vec;
-
-        vec.push_back(3);
-        vec.push_back(4);
-        vec.push_back(5);
-        vec.push_back(6);
-        vec.push_back(7);
-        vec.push_back(8);
-
-        vec.pop_back();
-
-        vec.clear();
-
-        LOG_DEBUG("Printing Stackvector", &vec, "size:", vec.size(), "elements,", sizeof(vec), "bytes", "vector:", vec);
+        LOG_DEBUG("Printing buffer {} capacity: {}:{}", fmt_ptr(&buffer), buffer.capacity(), fmt_range(buffer));
     }
 
     LOG_SUCCESS("Structure Example completed!");

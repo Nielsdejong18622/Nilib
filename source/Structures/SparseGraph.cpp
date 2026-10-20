@@ -32,13 +32,13 @@ size_t Nilib::SparseGraph::numEdges() const
 
 size_t Nilib::SparseGraph::out_degree(node_t const node_id) const
 {
-    ASSERT(node_id < numNodes(), "Non-existant node", node_id, "has no outdegree");
+    ASSERT(node_id < numNodes(), "Non-existant node {} has no outdegree", node_id);
     return d_head[node_id + 1] - d_head[node_id];
 }
 
 size_t Nilib::SparseGraph::in_degree(node_t const node_id) const
 {
-    ASSERT(node_id < numNodes(), "Non-existant node", node_id, "has no indegree");
+    ASSERT(node_id < numNodes(), "Non-existant node {} has no indegree", node_id);
     return std::count(d_edges.begin(), d_edges.end(), node_id);
 }
 
@@ -51,15 +51,13 @@ void Nilib::SparseGraph::addNode()
 
 void Nilib::SparseGraph::print()
 {
-    LOG_DEBUG("SparseGraph", this);
-    LOG_DEBUG("Head:", d_head);
-    LOG_DEBUG("Edges:", d_edges);
+    CORE_ASSERT(false);
 }
 
 // Removing a node will destroy the persistent index of the graph labels.
 void Nilib::SparseGraph::disconnectNode(uint32_t const node_id)
 {
-    ASSERT(node_id < numNodes(), "Can not remove non-existant node", node_id);
+    ASSERT(node_id < numNodes(), "Can not remove non-existant node {}", node_id);
     size_t const node_out_deg = out_degree(node_id);
 
     // Remove outgoing edges.
@@ -85,7 +83,7 @@ void Nilib::SparseGraph::disconnectNode(uint32_t const node_id)
 
 void Nilib::SparseGraph::removeNode(uint32_t const node_id)
 {
-    ASSERT(node_id < numNodes(), "Can not remove non-existant node", node_id);
+    ASSERT(node_id < numNodes(), "Can not remove non-existant node {}", node_id);
     disconnectNode(node_id);
 
     // This leaves a [0, 1, ..., node_id, node_id, ...,  numNodes-1] behind.
@@ -101,8 +99,8 @@ void Nilib::SparseGraph::removeNode(uint32_t const node_id)
 
 void Nilib::SparseGraph::addEdge(node_t const from, node_t const to)
 {
-    ASSERT(from < numNodes(), "Can not relate edge to", from);
-    ASSERT(to < numNodes(), "Can not relate edge to", to);
+    ASSERT(from < numNodes(), "Can not relate edge to {}", from);
+    ASSERT(to < numNodes(), "Can not relate edge to {}", to);
 
     // Get the first edge of the from-node.
     node_t const out_start = d_head[from];
@@ -122,9 +120,9 @@ void Nilib::SparseGraph::addEdge(node_t const from, node_t const to)
 // Does not remove multi-edges, only one edge!
 void Nilib::SparseGraph::remEdge(node_t const from, node_t const to)
 {
-    ASSERT(from < numNodes(), "Can not relate edge to", from);
-    ASSERT(to < numNodes(), "Can not relate edge to", to);
-    ASSERT(d_head[from] != d_head[from + 1], "Node", from, "has no outgoing edges to remove!");
+    ASSERT(from < numNodes(), "Can not relate edge to {}", from);
+    ASSERT(to < numNodes(), "Can not relate edge to {}", to);
+    ASSERT(d_head[from] != d_head[from + 1], "Node {} has no outgoing edges to remove!", from);
 
     auto it = std::lower_bound(d_edges.begin() + d_head[from], d_edges.begin() + d_head[from + 1], to);
     if (it != d_edges.end())

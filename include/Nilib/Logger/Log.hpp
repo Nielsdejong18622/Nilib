@@ -1,329 +1,360 @@
-#ifndef _LOGGING2_H
-#define _LOGGING2_H
+#ifndef NILIB_LOGGING_H
+#define NILIB_LOGGING_H
 
+#include "Nilib/Logger/Format.hpp"
+
+#include <chrono>
+#include <cstdio>
+#include <concepts>
+#include <ctime>
+#include <format>
 #include <mutex>
-#include <iostream>
+#include <print>
 #include <string>
+#include <iostream>
+#include <type_traits>
+#include <utility>
 
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
-#include <chrono>
 
 namespace Nilib
 {
-
-    enum class LogLevel : unsigned int
+    // Severity and filtering order, not console color codes.
+    enum class LogLevel : int
     {
-        Info = 0,     // Default
-        Success = 2,  // ON SUCCESS
-        Warning = 14, // WARNING
-        Error = 4,    // ERROR
-        Debug = 8,    // DEBUG
-        Trace = 8,    // Most detailed debug.
-        Progress = 0  // To show to the end user.
+        Trace = 0,
+        Debug = 1,
+        Info = 2,
+        Success = 3,
+        Progress = 4,
+        Warning = 5,
+        Error = 6
+    };
+    enum class ColorMode
+    {
+        Auto,   // Color only when output is a supported terminal
+        Always, // Always emit ANSI color codes
+        Never   // Never emit color codes
     };
 
-    // Meta programming.
-    template <typename T>
-    constexpr bool is_range =
-        requires(T t) {
-            std::begin(t);
-            std::end(t);
-        } && !std::is_convertible_v<T, const char *> && // exclude char*
-        !std::is_convertible_v<T, std::string_view> &&  // exclude std::string_view
-        !std::is_same_v<std::decay_t<T>, std::string>;  // exclude std::string
-
-    // Disallows user to do constructs like LOG_DEBUG("Some text") << "Some more text!\n";
-    struct DisallowedLogger
+    class Logger final
     {
-        static DisallowedLogger &empty()
-        {
-            static DisallowedLogger instance;
-            return instance;
-        }
-    };
-
-    // When LOGGING is disabled, we replace all LOG_DEBUG() << "test1" << 2; with EmptyLogger() << "test1" << 2;
-    struct EmptyLogger
-    {
-        static EmptyLogger &empty()
-        {
-            static EmptyLogger instance;
-            return instance;
-        }
-
-        // Should be compiled away.
-        template <typename T>
-        EmptyLogger &operator<<(T const &)
-        {
-            return EmptyLogger::empty();
-        }
-    };
-
-    class Logger
-    {
-    private:
-        // Recursive log printing of template arguments
-        template <typename T, typename... Args>
-        DisallowedLogger &log_internal(T &&first, Args &&...args)
-        {
-            // std::lock_guard<std::mutex> lock(d_mutex);
-            if (!d_stream)
-                return DisallowedLogger::empty();
-
-            // Logging of custom types such as ranges:
-            if constexpr (is_range<T>)
-            {
-                *d_stream << '[';
-                bool first_elem = true;
-                for (auto &&elem : first)
-                {
-                    if (!first_elem)
-                        *d_stream << ", ";
-                    *d_stream << elem;
-                    first_elem = false;
-                }
-                *d_stream << ']';
-            }
-            // Or exceptions.
-            else if constexpr (std::is_base_of_v<std::exception, std::remove_cvref_t<T>>)
-            {
-                *d_stream << typeid(first).name() << ' ' << first.what();
-            }
-            else
-            {
-                *d_stream << first; // Print the first argument
-            }
-
-            if constexpr (sizeof...(args) > 0)
-            {                                                     // Check if there are more arguments
-                *this << d_sep;                                   // Print separator
-                return log_internal(std::forward<Args>(args)...); // Template recurse
-            }
-            else
-            {
-                *this << d_end;
-                return DisallowedLogger::empty();
-            }
-        }
-
     public:
-        static Logger &default_logger()
+        Logger() = delete;
+
+        template <class... Args>
+        static void log(
+            LogLevel level,
+            bool const newline,
+            std::type_identity_t<CheckedFormatString<Args...>> fmt,
+            Args &&...args)
         {
-            static Logger instance(std::cout, '\n', ' '); // C++11 guarantees thread-safe initialization
-            return instance;
+            std::lock_guard<std::mutex> const lock(mutex());
+
+            std::ostream &stream = *file(level);
+
+            bool const use_color = colors_enabled(stream);
+            char const *color = use_color ? color_code(level) : "";
+            char const *reset = use_color ? "\033[0m" : "";
+            char const term = newline ? '\n' : '\r';
+
+            std::print(
+                stream,
+                "[{}|{}]:{}",
+                timestamp(),
+                std::this_thread::get_id(),
+                color);
+
+            std::print(stream, fmt.get(), std::forward<Args>(args)...);
+
+            std::print(stream, "{}{}", reset, term);
         }
 
-        template <typename T>
-        Logger &operator<<(T const &msg)
+        // Overload of single string_view.
+        // static void log(
+        //     LogLevel level,
+        //     bool const newline,
+        //     std::string_view const &string)
+        // {
+        //     log(level, newline, std::format("{}", string));
+        // }
+        // static void log(
+        //     LogLevel level,
+        //     bool const newline,
+        //     std::string const &string)
+        // {
+        //     log(level, newline, std::format("{}", string));
+        // }
+        // // Overload of custom type.
+        // template <typename T>
+        // static void log(
+        //     LogLevel level,
+        //     bool const newline,
+        //     T const &type)
+        // {
+        //     log(level, newline, "{}", type);
+        // // }
+
+        // // Overload of char const *.
+        // static void log(
+        //     LogLevel level,
+        //     bool const newline,
+        //     char const *string)
+        // {
+        //     log(level, newline, std::format("{}", string));
+        // }
+
+        // // Overload for exception.
+        // static void log(
+        //     LogLevel level,
+        //     bool const newline,
+        //     std::exception const &exception)
+        // {
+        //     log(level, newline, std::format("{} {}", typeid(exception).name(), exception.what()));
+        // }
+
+        static void set_color_mode(ColorMode mode)
         {
-            if (d_stream)
-                *d_stream << msg;
-            return *this;
+            color_mode() = mode;
         }
 
-        // Base case for empty variadic
-        Logger &log()
+        static void set_stream(std::ostream &stream)
         {
-            fast_time(); // Gets d_cached_time.
-            if (d_stream)
-                *d_stream << d_cached_time << '|';
-            return *this;
+            Logger::file(LogLevel::Warning) = &stream;
+            Logger::file(LogLevel::Info) = &stream;
         }
 
-        // Recursive log printing of template arguments
-        template <typename T, typename... Args>
-        DisallowedLogger &log(T &&first, Args &&...args)
+        static void sync_with_c(bool set = false)
         {
-            fast_time(); // Gets d_cached_time.
-            if (d_stream)
-                *d_stream << d_cached_time << '|';
-            return log_internal(std::forward<T>(first), std::forward<Args>(args)...); // Template recurse
+            std::ios::sync_with_stdio(set);
         }
 
-        // Set the upcoming level and other options.
-        Logger &set(LogLevel level, char end = '\n', char sep = ' ')
+    private:
+        static std::mutex &mutex()
         {
-            // Set the text color based on the platform
-#ifdef _WIN32
-            HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-            if (level != LogLevel::Info)
-                SetConsoleTextAttribute(hConsole, static_cast<WORD>(level));
-            else
-                SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-#endif
-#ifdef _LINUX
+            static std::mutex m;
+            return m;
+        }
+
+        static std::ostream *&file(LogLevel level)
+        {
+            static std::ostream *out = &std::cout;
+            static std::ostream *err = &std::cerr;
+
+            if (level == LogLevel::Warning)
+                return err;
+
+            return out;
+        }
+
+        static ColorMode &color_mode()
+        {
+            static ColorMode mode = ColorMode::Auto;
+            return mode;
+        }
+
+        static const char *color_code(LogLevel level)
+        {
             switch (level)
             {
             case LogLevel::Error:
-                (*d_stream) << "\033[31m";
-                break;
+                return "\033[31m";
             case LogLevel::Warning:
-                (*d_stream) << "\033[33m";
-                break;
+                return "\033[33m";
             case LogLevel::Success:
-                (*d_stream) << "\033[32m";
-                break;
+                return "\033[32m";
             case LogLevel::Debug:
-                (*d_stream) << "\033[90m";
-                break;
+                return "\033[90m";
             default:
-                (*d_stream) << "\033[0m";
-                break;
+                return "\033[0m";
             }
-#endif
-            d_end = end;
-            d_sep = sep;
 
-            return *this;
+            // Colors left over.
+            // return "\033[36m"; // Cyan
+            // return "\033[37m"; // White
+
+            return "\033[0m"; // Reset.
         }
 
-        // Redirects the stream.
-        void redirect(std::ostream &other)
+        static bool colors_enabled(std::ostream &stream)
         {
-            d_stream = &other;
-        }
+            const auto mode = color_mode();
 
+            if (mode == ColorMode::Never)
+                return false;
 
-        Logger(Logger const &other) : d_stream(other.d_stream), d_end('\n'), d_sep(' ')
-        {
-        }
+            if (mode == ColorMode::Always)
+                return true;
 
-        Logger(std::ostream &os = std::cout, char end = '\n', char sep = ' ') : d_stream(&os), d_end(end), d_sep(sep)
-        {
-            // Faster logging.
-            // std::ios_base::sync_with_stdio(false);
-            // std::cin.tie(nullptr);
-        }
+#ifdef _WIN32
+            DWORD id;
 
-        ~Logger()
-        {
-            set(Nilib::LogLevel::Info);
-            flush();
-        };
+            if (&stream == &std::cerr || &stream == &std::clog)
+                id = STD_ERROR_HANDLE;
+            else if (&stream == &std::cout)
+                id = STD_OUTPUT_HANDLE;
+            else
+                return false; // Custom streams, such as file streams.
 
-        void flush()
-        {
-            d_stream->flush();
-        }
+            HANDLE handle = GetStdHandle(id);
 
-    private:
-        std::string const &fast_time()
-        {
-            auto now = std::chrono::system_clock::now();
-            auto sec = std::chrono::system_clock::to_time_t(now);
+            if (handle == INVALID_HANDLE_VALUE || handle == nullptr)
+                return false;
 
-            if (sec != d_cached_sec)
+            DWORD console_mode = 0;
+
+            if (!GetConsoleMode(handle, &console_mode))
+                return false;
+
+            if (!(console_mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING))
             {
-                d_cached_sec = sec;
+                if (!SetConsoleMode(
+                        handle,
+                        console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+                    return false;
+            }
 
-                std::tm tm;
+            return true;
+#else
+            int fd = -1;
+
+            if (&stream == &std::cout || &stream == &std::clog)
+                fd = STDOUT_FILENO;
+            else if (&stream == &std::cerr)
+                fd = STDERR_FILENO;
+            else
+                return false;
+
+            return ::isatty(fd) != 0;
+#endif
+        }
+
+        static const std::string &timestamp()
+        {
+            using namespace std::chrono;
+
+            static std::time_t cached_second{};
+            static std::string cached_text;
+            static bool initialized = false;
+
+            const auto now = system_clock::now();
+            const std::time_t sec =
+                system_clock::to_time_t(now);
+
+            if (!initialized || sec != cached_second)
+            {
+                cached_second = sec;
+
+                std::tm tm{};
+
 #ifdef _WIN32
                 localtime_s(&tm, &sec);
 #else
                 localtime_r(&sec, &tm);
 #endif
-                char buf[20];
-                std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
-                d_cached_time = buf;
+
+                char buffer[20]{};
+                std::strftime(
+                    buffer, sizeof(buffer),
+                    "%Y-%m-%d %H:%M:%S", &tm);
+
+                cached_text = buffer;
+                initialized = true;
             }
 
-            return d_cached_time;
+            return cached_text;
         }
-
-        // std::mutex d_mutex;     // protects log output
-        std::ostream *d_stream = &std::cout;
-        std::string d_cached_time;
-        std::time_t d_cached_sec = 0;
-        char d_end = '\n';
-        char d_sep = ' ';
     };
-    // Logger needs to support:
-    // Color. Timestamp (custom formatting).
-    // Different Log levels.
-    // Some sort of dynamic switch to (rotating) file.
-    // Callable from anywhere in the code.
+    // A no-op sink for disabled log macros.
+    struct EmptyLogger
+    {
+        static constexpr void empty() noexcept {}
+    };
 
-    // Logger needs to end with '\n'.
-    // Logger_r needs to end with '\r'.
-};
+}
 
-// Macro's
-// Only LOG_LEVEL_TYPES equal or higher than the current LOG_LEVEL are printed.
+// Compile-time filter threshold.
+// Trace=0, Debug=1, Info=2, Warning=3, Error=4.
 #ifndef LOG_LEVEL
 #define LOG_LEVEL 0
 #endif
 
-// #define REGISTER_LOGGER(loggername, LOGGER_PTR) ::Nilib::LoggerPool::instance().register_logger(loggername, LOGGER_PTR)
-#define REGISTER_LOGGER(loggername, LOGGER_PTR) ;
-
-// Standard Log levels.
 #ifndef LOG_LEVEL_TRACE
-#define LOG_LEVEL_TRACE 1
+#define LOG_LEVEL_TRACE 0
 #endif
 #ifndef LOG_LEVEL_DEBUG
-#define LOG_LEVEL_DEBUG 2
+#define LOG_LEVEL_DEBUG 1
 #endif
 #ifndef LOG_LEVEL_INFO
-#define LOG_LEVEL_INFO 3
-#endif
-#ifndef LOG_LEVEL_WARNING
-#define LOG_LEVEL_WARNING 4
+#define LOG_LEVEL_INFO 2
 #endif
 #ifndef LOG_LEVEL_SUCCESS
-#define LOG_LEVEL_SUCCESS 5
-#endif
-#ifndef LOG_LEVEL_ERROR
-#define LOG_LEVEL_ERROR 5
+#define LOG_LEVEL_SUCCESS 2
 #endif
 #ifndef LOG_LEVEL_PROGRESS
-#define LOG_LEVEL_PROGRESS 6
+#define LOG_LEVEL_PROGRESS 2
+#endif
+#ifndef LOG_LEVEL_WARNING
+#define LOG_LEVEL_WARNING 3
+#endif
+#ifndef LOG_LEVEL_ERROR
+#define LOG_LEVEL_ERROR 4
 #endif
 
-#if (LOG_LEVEL_TRACE >= LOG_LEVEL)
-#define LOG_TRACE(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Trace).log(__VA_OPT__(__VA_ARGS__)))
+#if LOG_LEVEL_TRACE >= LOG_LEVEL
+#define LOG_TRACE(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Trace, true, __VA_ARGS__)
 #else
 #define LOG_TRACE(...) Nilib::EmptyLogger::empty()
 #endif
 
-#if (LOG_LEVEL_DEBUG >= LOG_LEVEL)
-#define LOG_DEBUG(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Debug).log(__VA_OPT__(__VA_ARGS__)))
+#if LOG_LEVEL_DEBUG >= LOG_LEVEL
+#define LOG_DEBUG(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Debug, true, __VA_ARGS__)
 #else
 #define LOG_DEBUG(...) Nilib::EmptyLogger::empty()
 #endif
 
-#if (LOG_LEVEL_INFO >= LOG_LEVEL)
-#define LOG_INFO(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Info).log(__VA_OPT__(__VA_ARGS__)))
+#if LOG_LEVEL_INFO >= LOG_LEVEL
+#define LOG_INFO(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Info, true, __VA_ARGS__)
 #else
 #define LOG_INFO(...) Nilib::EmptyLogger::empty()
 #endif
 
-#if (LOG_LEVEL_WARNING >= LOG_LEVEL)
-#define LOG_WARNING(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Warning).log(__VA_OPT__(__VA_ARGS__)))
-#else
-#define LOG_WARNING(...) Nilib::EmptyLogger::empty()
-#endif
-
-#if (LOG_LEVEL_ERROR >= LOG_LEVEL)
-#define LOG_ERROR(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Error).log(__VA_OPT__(__VA_ARGS__)))
-#else
-#define LOG_ERROR(...) Nilib::EmptyLogger::empty()
-#endif
-
-#if (LOG_LEVEL_SUCCESS >= LOG_LEVEL)
-#define LOG_SUCCESS(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Success).log(__VA_OPT__(__VA_ARGS__)))
+#if LOG_LEVEL_SUCCESS >= LOG_LEVEL
+#define LOG_SUCCESS(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Success, true, __VA_ARGS__)
 #else
 #define LOG_SUCCESS(...) Nilib::EmptyLogger::empty()
 #endif
 
-#if (LOG_LEVEL_PROGRESS >= LOG_LEVEL)
-#define LOG_PROGRESS(...) (Nilib::Logger::default_logger().set(Nilib::LogLevel::Progress).log(__VA_OPT__(__VA_ARGS__)))
+#if LOG_LEVEL_PROGRESS >= LOG_LEVEL
+#define LOG_PROGRESS(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Progress, true, __VA_ARGS__)
 #else
 #define LOG_PROGRESS(...) Nilib::EmptyLogger::empty()
 #endif
 
-#endif // LOGGING2_H
+#if LOG_LEVEL_WARNING >= LOG_LEVEL
+#define LOG_WARNING(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Warning, true, __VA_ARGS__)
+#else
+#define LOG_WARNING(...) Nilib::EmptyLogger::empty()
+#endif
+
+#if LOG_LEVEL_ERROR >= LOG_LEVEL
+#define LOG_ERROR(...) \
+    Nilib::Logger::log(Nilib::LogLevel::Error, true, __VA_ARGS__)
+#else
+#define LOG_ERROR(...) Nilib::EmptyLogger::empty()
+#endif
+
+#endif // NILIB_LOGGING_H

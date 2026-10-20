@@ -30,7 +30,7 @@ namespace Nilib
 
         StaticMatrixData(std::initializer_list<type> const &list)
         {
-            CORE_ASSERT(list.size() == size())
+            CORE_ASSERT(list.size() == size());
             std::move(list.begin(), list.end(), d_data.begin());
         }
 
@@ -114,13 +114,13 @@ namespace Nilib
 
         inline type &operator()(size_t idx)
         {
-            ASSERT(idx < d_data.size(), idx, '<', d_data.size());
+            ASSERT(idx < d_data.size(), "{} < {}", idx, d_data.size());
             return d_data[idx];
         };
 
         inline type operator()(size_t idx) const
         {
-            ASSERT(idx < d_data.size(), idx, '<', d_data.size());
+            ASSERT(idx < d_data.size(), "{} < {}", idx, d_data.size());
             return d_data[idx];
         };
 

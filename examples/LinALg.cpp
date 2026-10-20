@@ -35,9 +35,9 @@ int main()
 
     B.apply([](float const t)
             { return std::sin(t + 1); });
-    LOG_INFO("Applied sin to B", B);
+    LOG_INFO("Applied sin to B {}", B);
     B.print();
-    LOG_INFO("Matrix A:", A, A.sum());
+    LOG_INFO("Matrix A: {} sum: {}", A, A.sum());
     A.print();
     LOG_INFO("Multiplying A by 2");
     A *= 2;
@@ -45,41 +45,41 @@ int main()
 
     // Static * Dynamic Matrix:
     auto res_stat_dyn = B * D2;
-    LOG_DEBUG("Result of Static * Dynamic:", res_stat_dyn);
+    LOG_DEBUG("Result of Static * Dynamic: {}", res_stat_dyn);
     res_stat_dyn.print();
 
     auto Asin = apply(D1 - D, [](float const t)
                       { return std::sin(t + 1.0); });
 
-    LOG_INFO("Asin: ", Asin);
+    LOG_INFO("Asin: {}", Asin);
     Asin.print();
 
-    LOG_INFO("Dynamic Matrix D:", D, D.sum());
+    LOG_INFO("Dynamic Matrix D: {} sum: {}", D, D.sum());
     D.print();
-    LOG_INFO("Static  Matrix B:", B, B.sum());
+    LOG_INFO("Static  Matrix B: {} sum : {}", B, B.sum());
     B.print();
 
     auto C = 1.2 * (D + D1) * 2.0;
-    LOG_INFO("Matrix Addition:", C);
+    LOG_INFO("Matrix Addition: {}", C);
     C.print();
 
     C = D - D1;
-    LOG_INFO("Matrix Substraction:", C);
+    LOG_INFO("Matrix Substraction: {}", C);
     C.print();
 
-    LOG_INFO("D2", D2);
+    LOG_INFO("D2 {}", D2);
     D2.print();
     auto res = D2 * D2;
-    LOG_INFO("Matrix Matrix Multiplication D2xD2", res);
+    LOG_INFO("Matrix Matrix Multiplication D2xD2 {}", res);
     res.print();
 
     auto G = Matrixd::diag(4, 6, 4.0);
     auto I = Mat3x3::identity(3, 3);
-    LOG_INFO("I", I);
+    LOG_INFO("I {}", I);
     I.print();
-    LOG_INFO("G", G);
+    LOG_INFO("G {}", G);
     G.print();
-    LOG_INFO("transpose(G)", transpose(G));
+    LOG_INFO("transpose(G) {}", transpose(G));
     transpose(G).print();
 
     auto R = Matrixd::rand(10, 10);
@@ -89,26 +89,27 @@ int main()
     auto p2 = Matrixd::all(10, 10, -1.0);
 
     auto p1 = Mat<10, 10>::all(10, 10, 9.5);
-    LOG_INFO("P:", p);
-    LOG_INFO("P1:", p1);
+    LOG_INFO("P: {}", p);
+    LOG_INFO("P1: {}", p1);
     p.print();
-    LOG_INFO("Random Matrix R", c * R * b);
+
+    LOG_INFO("Random Matrix R {}", c * R * b);
     (c * R * b + Matrixd::rand(1, 1)).print();
 
     auto R1 = Mat<10, 10>::rand(10, 10);
     auto b1 = Mat<10, 1>::rand(10, 1);
     auto c1 = Mat<1, 10>::randn(1, 10, 0.0, 1.0);
-    LOG_INFO("Random Matrix R1", c1 * R1 * b1);
+    LOG_INFO("Random Matrix R1 {}", c1 * R1 * b1);
     auto res1 = (c1 * R1 * b1);
     res1.print();
 
     // Sizes.
-    LOG_INFO("Size of A", A, sizeof(A), sizeof(size_t), sizeof(std::valarray<float>));
-    LOG_INFO("Size of D", D, sizeof(D), sizeof(size_t), sizeof(std::valarray<float>));
-    LOG_INFO("Size of c1", c1, sizeof(c1), sizeof(float));
-    LOG_INFO("Size of b1", b1, sizeof(b1));
-    LOG_INFO("Size of B", B, sizeof(B), sizeof(float), sizeof(std::array<float, 9>));
-    LOG_INFO("Size of t(B)", transpose(B), sizeof(transpose(B)));
+    LOG_INFO("Size of A {} {} {} {}", A, sizeof(A), sizeof(size_t), sizeof(std::valarray<float>));
+    LOG_INFO("Size of D {} {} {} {}", D, sizeof(D), sizeof(size_t), sizeof(std::valarray<float>));
+    LOG_INFO("Size of c1 {} {} {}", c1, sizeof(c1), sizeof(float));
+    LOG_INFO("Size of b1 {} {}", b1, sizeof(b1));
+    LOG_INFO("Size of B {} {} {} {}", B, sizeof(B), sizeof(float), sizeof(std::array<float, 9>));
+    LOG_INFO("Size of t(B) {} {}", transpose(B), sizeof(transpose(B)));
 
     // Stress test.
     // Dynamic memory.
@@ -131,7 +132,7 @@ int main()
                 sum += res.sum();
             }
         }
-        LOG_INFO("Sum:", sum);
+        LOG_INFO("Sum: {}", sum);
     }
     RNG::seed(127);
     // Static (on the stack)
@@ -149,6 +150,6 @@ int main()
                 sum += res.sum();
             }
         }
-        LOG_INFO("Sum:", sum);
+        LOG_INFO("Sum: {}", sum);
     }
 }

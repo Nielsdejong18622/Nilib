@@ -49,7 +49,7 @@ void op2(DemoSolution &solution)
 
 void myfunction(DemoSolution &sol)
 {
-    LOG_DEBUG() << "Found global improvement:" << sol.objective() << '\n';
+    LOG_DEBUG("Found global improvement: {}", sol.objective());
 }
 
 int main(int argc, char **argv)
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     parser.option<std::filesystem::path>(params.history_filename, "outputlog", "ALNS history filename (.csv)", true);
     parser.option<size_t>(params.max_iterations, "iterations", "ALNS maximum number of iterations", true);
     parser.parse_or_exit(argc, argv);
-    
+
     Nilib::RNG::seed();
 
     params.num_threads = 10;
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
     solver.solve();
 
-    LOG_INFO("Best found solution", solver.bestfound.x, solver.bestfound.y, "objective:", solver.bestfound.objective());
+    LOG_INFO("Best found solution ({},{}) objective: {}", solver.bestfound.x, solver.bestfound.y, solver.bestfound.objective());
     LOG_SUCCESS("Closing Demo.exe!");
     return 1;
 }

@@ -82,7 +82,7 @@ namespace Nilib
                         ss << d_data(ridx, cidx);
                     ss << ((cidx < d_data.cols() - 1) ? ',' : ')');
                 }
-                LOG_DEBUG(ss.str());
+                LOG_DEBUG("{}", ss.str());
             }
         }
         // Returns the sum of all the entries in the Matrix.
@@ -113,8 +113,8 @@ namespace Nilib
         template <typename data>
         void operator+=(Matrix<type, data> const &B)
         {
-            ASSERT(d_data.rows() == B.rows(), "A:", d_data.rows(), "x", d_data.cols(), "B:", B.rows(), "x", B.cols());
-            ASSERT(d_data.cols() == B.cols(), "A:", d_data.rows(), "x", d_data.cols(), "B:", B.rows(), "x", B.cols());
+            ASSERT(d_data.rows() == B.rows(), "A: {}x{} B: {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols());
+            ASSERT(d_data.cols() == B.cols(), "A: {}x{} B: {}x{}", d_data.rows(), d_data.cols(), B.rows(), B.cols());
             for (size_t idx = 0; idx < d_data.size(); idx++)
                 d_data(idx) += B.d_data(idx);
         }
@@ -229,5 +229,16 @@ namespace Nilib
     template <size_t n>
     using Vecf = Matrix<float, StaticMatrixData<n, 1, float>>;
 } // namespace Nilib
+
+template <typename value, typename storage>
+struct std::formatter<Nilib::Matrix<value, storage>> : std::formatter<std::string>
+{
+
+    // Runtime formatting, we simply add "CustomObject" to the buffer
+    auto format(Nilib::Matrix<value, storage> const &mat, auto &ctx) const
+    {
+        return std::format_to(ctx.out(), "{}x{}", mat.rows(), mat.cols());
+    }
+};
 
 #endif

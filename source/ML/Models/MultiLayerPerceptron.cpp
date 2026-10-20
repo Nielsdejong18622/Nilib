@@ -20,16 +20,16 @@ void Nilib::MultilayerPerceptron::evaluate()
     d_x.evaluate();
     d_W.evaluate();
     d_b.evaluate();
-    ASSERT(d_x.value.cols() == d_W.value.rows(), "xW undefined", d_x.value, "!=", d_W.value, "Weight:", &d_W);
-    ASSERT(d_x.value.rows() == d_b.value.rows(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", d_x.value, "!=", d_b.value);
-    ASSERT(d_W.value.cols() == d_b.value.cols(), "xW + b undefined input of MultilayerPerceptron should be 1xinputdim", d_W.value, "!=", d_b.value);
+    CORE_ASSERT(d_x.value.cols() == d_W.value.rows());
+    CORE_ASSERT(d_x.value.rows() == d_b.value.rows());
+    CORE_ASSERT(d_W.value.cols() == d_b.value.cols());
     this->value = d_x.value * d_W.value + d_b.value;
 }
 
 void Nilib::MultilayerPerceptron::derive(Nilib::Matrixf const &seed)
 {
-    ASSERT(seed.rows() == d_b.value.rows(), "Output of MultilayerPerceptron is 1 x outputdim!");
-    ASSERT(seed.cols() == d_b.value.cols(), "Output of MultilayerPerceptron is 1 x outputdim!");
+    CORE_ASSERT(seed.rows() == d_b.value.rows());
+    CORE_ASSERT(seed.cols() == d_b.value.cols());
     d_b.derive(seed);
 
     CORE_ASSERT(d_x.value.rows() == seed.rows());

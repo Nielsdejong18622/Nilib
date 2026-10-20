@@ -79,12 +79,12 @@ namespace Nilib
                 size_t const num_threads = params.num_threads;
 
                 // Print starting information.
-                LOG_PROGRESS("User supplied", d_operators.size(), "operators");
-                LOG_PROGRESS("Optimizing a solution of size ", sizeof(Solution), "bytes");
-                LOG_PROGRESS("Thread count:", num_threads);
+                LOG_PROGRESS("User supplied {} operators", d_operators.size());
+                LOG_PROGRESS("Optimizing a solution of {} bytes", sizeof(Solution));
+                LOG_PROGRESS("Thread count: {}", num_threads);
 
                 float const best_obj = bestfound.objective();
-                LOG_PROGRESS("Initial solution objective:", best_obj);
+                LOG_PROGRESS("Initial solution objective: {}", best_obj);
 
                 if (num_threads <= 1)
                 {
@@ -111,7 +111,7 @@ namespace Nilib
                 bestfound = global_best;
                 incumbent = global_best;
 
-                LOG_PROGRESS("Best objective:", global_best_obj);
+                LOG_PROGRESS("Best objective: {}", global_best_obj);
             }
 
             // Solve using ALNS.
@@ -128,7 +128,7 @@ namespace Nilib
                 if (params.history_filename != "")
                 {
                     d_csvwriter.open(params.history_filename);
-                    LOG_PROGRESS("Writing history to file", params.history_filename.string());
+                    LOG_PROGRESS("Writing history to file {}", params.history_filename.string());
                 }
 
                 // Cooling rate so that acceptance probability is ~0.01 at the end
@@ -200,7 +200,7 @@ namespace Nilib
                                 best_obj = next_obj;
                                 bestfound = incumbent;
                                 iteration_without_improv = 0;
-                                LOG_PROGRESS("Found global improvement, objective:", best_obj);
+                                LOG_PROGRESS("Found global improvement, objective: {}", best_obj);
                             }
                         }
                         else if (Nilib::RNG::prob() < params.reset_prob)
@@ -224,7 +224,7 @@ namespace Nilib
                     temperature *= coolingrate;
                 }
 
-                LOG_PROGRESS("ALNS solver performed", iteration, "iterations in", timer.getMilliseconds());
+                LOG_PROGRESS("ALNS solver performed {} iterations in {}", iteration, timer.getMilliseconds());
             }
 
             // This userdefined callback is called at the start of each ALNS iteration.
@@ -345,8 +345,8 @@ namespace Nilib
                         global_best = best_local;
                     }
 
-                    LOG_PROGRESS("ALNS solver thread", thread_id, "performed", iteration, "iterations in",
-                                 timer.getMilliseconds(), "Best objective:", best_obj);
+                    LOG_PROGRESS("ALNS solver thread {} performed {} iterations in {} ms. Best objective: {}",
+                                 thread_id, iteration, timer.getMilliseconds(), best_obj);
                 }
             }
         };

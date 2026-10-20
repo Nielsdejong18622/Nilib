@@ -15,7 +15,7 @@ class Serializer
 {
     std::ofstream file;
 
-  public:
+public:
     // Close the file to serialize to, freeing resources.
     void close()
     {
@@ -37,28 +37,30 @@ class Serializer
         return file.is_open() && !file.bad();
     }
 
-    explicit Serializer(std::filesystem::path const &filename) : file(filename, std::ios::binary | std::ios ::out)
+    explicit Serializer(std::filesystem::path const &filename) : file(filename, std::ios::binary | std::ios::out)
     {
         if (!file)
         {
-            LOG_ERROR() << "Serialization Error: Could not open file " << filename << " for writing!\n";
+            LOG_ERROR("Serialization Error: Could not open file {} for writing", filename.string());
         }
     }
 
     // Write raw data to a binary file
-    template <typename T> bool writeRaw(T const &data)
+    template <typename T>
+    bool writeRaw(T const &data)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.write(reinterpret_cast<char const *>(&data), sizeof(T));
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to write raw data to file.\n";
+            LOG_ERROR("Error: Failed to write raw data to file.");
         }
         return !file;
     }
 
     // Write custom object to a binary stream.
-    template <typename T> bool writeObject(T const &data)
+    template <typename T>
+    bool writeObject(T const &data)
     {
         if constexpr (std::is_trivially_copyable<T>::value)
         {
@@ -70,14 +72,15 @@ class Serializer
         }
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to write Object data to file.\n";
+            LOG_ERROR("Error: Failed to write Object data to file.");
         }
         close();
         return !file;
     }
 
     // Specialization for matrix.
-    template <typename T> bool writeMatrix(Nilib::Matrix<T> const &data)
+    template <typename T>
+    bool writeMatrix(Nilib::Matrix<T> const &data)
     {
         size_t n = data.rows();
         size_t m = data.cols();
@@ -107,13 +110,14 @@ class Serializer
         file.close();
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to write String data to file.\n";
+            LOG_ERROR("Error: Failed to write String data to file.");
         }
         return !file;
     }
 
     // Specialization for std::vector<T>
-    template <typename T> bool writeVector(std::vector<T> const &vec)
+    template <typename T>
+    bool writeVector(std::vector<T> const &vec)
     {
         // Write the size of the vector first
         size_t size = vec.size();
@@ -134,7 +138,7 @@ class Serializer
         }
         if (!file)
         {
-            LOG_ERROR() << "Error: Failed to write Vector data to file.\n";
+            LOG_ERROR("Error: Failed to write Vector data to file.");
         }
         return !file;
     }

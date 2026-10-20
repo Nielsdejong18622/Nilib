@@ -154,6 +154,7 @@ namespace Nilib
             lhs += rhs;
             return lhs;
         }
+
         friend std::ostream &operator<<(std::ostream &os, RunningStats const &stats)
         {
             if (stats.d_n > 0)
@@ -167,4 +168,15 @@ namespace Nilib
 
 } // namespace Nilib
 
+template <typename T>
+struct std::formatter<Nilib::RunningStats<T>> : std::formatter<std::string>
+{
+
+    auto format(Nilib::RunningStats<T> const &stats, auto &ctx) const
+    {
+        std::ostringstream os;
+        os << stats;
+        return std::formatter<std::string>::format(os.str(), ctx);
+    }
+};
 #endif

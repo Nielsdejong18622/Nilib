@@ -8,6 +8,13 @@
 #include <filesystem>
 #include <fstream>
 
+
+template <typename T>
+concept is_range = requires(std::remove_reference_t<T> &value) {
+    std::begin(value);
+    std::end(value);
+};
+
 namespace Nilib
 {
     // Class that makes writing to a CSV file easier.
@@ -76,7 +83,7 @@ namespace Nilib
             {
                 close();
                 uintmax_t const size = std::filesystem::file_size(d_name);
-                LOG_PROGRESS("Closed CSVfile:", d_name, Nilib::format_bytes(size));
+                LOG_PROGRESS("Closed CSVfile: {} {}", d_name, Nilib::format_bytes(size));
             }
         }
 

@@ -31,8 +31,8 @@ void train_pinn(CSVWriter &writer, float labda)
     NeuralNet<Selu, Selu> NN(t, 1, 8, 8, 1);
     Nilib::Adam optimizer(NN, 0.01);
 
-    LOG_DEBUG("Data:", data);
-    LOG_DEBUG("VData:", vdata);
+    LOG_DEBUG("Data: {}", fmt_range(data));
+    LOG_DEBUG("VData: {}", fmt_range(vdata));
 
     for (size_t train_epoch = 0; train_epoch < 10'000; ++train_epoch)
     {
@@ -84,7 +84,8 @@ void train_pinn(CSVWriter &writer, float labda)
             break;
         if (train_epoch == 0 || (train_epoch + 1) % 100 == 0)
         {
-            LOG_INFO("Epoch:", train_epoch + 1, "Train loss:", train_loss.mean(), "Train Phys loss:", train_p_loss.mean(), "Validation loss:", valid_loss.mean());
+            LOG_INFO("Epoch: {}. Train loss: {}. Train Phys. loss: {}. Validation loss: {}.",
+                     train_epoch + 1, train_loss.mean(), train_p_loss.mean(), valid_loss.mean());
 
             train_loss.reset();
             train_p_loss.reset();
@@ -103,7 +104,7 @@ void train_pinn(CSVWriter &writer, float labda)
         test_loss.push(std::sqrt((NN.value(0) - f(rt)) * (NN.value(0) - f(rt))));
         writer.write_row(rt, NN.value(0), f(rt), labda);
     }
-    LOG_INFO("Finished training, Test loss:", test_loss.mean());
+    LOG_INFO("Finished training, Test loss: {}", test_loss.mean());
 }
 
 int main()

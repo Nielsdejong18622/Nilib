@@ -10,7 +10,7 @@ int main()
     for (size_t i = 0; i < 15; i++)
     {
         PROFILE_SCOPE(std::format("Loop {}", i).c_str());
-        LOG_INFO() << "Loop " << i << '\n';
+        LOG_INFO("Loop {}", i);
 #ifdef WIN_32
         Sleep(40 * i);
 #endif

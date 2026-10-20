@@ -226,12 +226,12 @@ bool Nilib::ArgParser::all_parsed() const
                 continue;
             if (!d_clargs[idx].long_name.empty() and d_clargs[idx].long_name == d_clargs[jdx].long_name)
             {
-                LOG_ERROR("Duplicate long name:", d_clargs[idx].long_name);
+                LOG_ERROR("Duplicate long name: {}", d_clargs[idx].long_name);
                 return false;
             }
             if (!d_clargs[idx].short_name.empty() and d_clargs[idx].short_name == d_clargs[jdx].short_name)
             {
-                LOG_ERROR("Duplicate short name:", d_clargs[idx].short_name);
+                LOG_ERROR("Duplicate short name: {}", d_clargs[idx].short_name);
                 return false;
             }
         }
@@ -244,11 +244,11 @@ bool Nilib::ArgParser::all_parsed() const
         {
             if (d_clargs[idx].type == CLArg::Type::ARGUMENT)
             {
-                LOG_ERROR() << "Unable to parse required argument: Arg" << d_clargs[idx].pos << '\n';
+                LOG_ERROR("Unable to parse required argument: Arg {}", d_clargs[idx].pos);
             }
             else if (d_clargs[idx].type == CLArg::Type::OPTION)
             {
-                LOG_ERROR() << "Unable to parse required option: --" << d_clargs[idx].long_name << '\n';
+                LOG_ERROR("Unable to parse required option: --{}", d_clargs[idx].long_name);
             }
             else
             {
@@ -265,7 +265,7 @@ bool Nilib::ArgParser::all_parsed() const
     {
         for (auto &&unreq : d_unrecognized)
         {
-            LOG_ERROR() << "Unable to parse input: " << unreq << '\n';
+            LOG_ERROR("Unable to parse input: {}", unreq);
         }
         return false;
     }
@@ -286,12 +286,11 @@ void Nilib::ArgParser::help() const
     if (d_program_description != "")
     {
         LOG_PROGRESS("Overview:");
-        LOG_PROGRESS() << '\t' << d_program_description << '\n';
+        LOG_PROGRESS("\t{}", d_program_description);
     }
     if (d_version != "")
     {
-        LOG_PROGRESS() << "\tversion: " << d_version << '\n';
-        LOG_PROGRESS(' ');
+        LOG_PROGRESS("\tversion: {}", d_version);
     }
 
     // Print usage.
@@ -333,8 +332,7 @@ void Nilib::ArgParser::help() const
     {
         usage_str << " [flags]";
     }
-    LOG_PROGRESS(usage_str.str());
-    LOG_PROGRESS(' ');
+    LOG_PROGRESS("{}", usage_str.str());
 
     // Argument menu.
     if (arg_count > 0)
@@ -345,10 +343,9 @@ void Nilib::ArgParser::help() const
         {
             if (userArg.type == CLArg::Type::ARGUMENT)
             {
-                LOG_PROGRESS() << '\t' << "Arg" << ++argc << ((userArg.required) ? " [req]\t\t" : "      \t\t") << userArg.description << '\n';
+                LOG_PROGRESS("\tArg{}{}{}", ++argc, ((userArg.required) ? " [req]\t\t" : "      \t\t"), userArg.description);
             }
         }
-        LOG_PROGRESS(' ');
     }
     if (options_count > 0)
     {
@@ -357,10 +354,9 @@ void Nilib::ArgParser::help() const
         {
             if (userArg.type == CLArg::Type::OPTION)
             {
-                LOG_PROGRESS() << "\t--" << userArg.long_name << ((userArg.short_name != "") ? (" -" + userArg.short_name) : "") << ((userArg.required) ? " [req]\t" : "      \t") << userArg.description << '\n';
+                LOG_PROGRESS("\t--{}{}{}{}", userArg.long_name, ((userArg.short_name != "") ? (" -" + userArg.short_name) : ""), ((userArg.required) ? " [req]\t" : "      \t"), userArg.description);
             }
         }
-        LOG_PROGRESS(' ');
     }
     if (flag_count > 0)
     {
@@ -369,7 +365,7 @@ void Nilib::ArgParser::help() const
         {
             if (userArg.type == CLArg::Type::FLAG)
             {
-                LOG_PROGRESS() << "\t--" << userArg.long_name << ((userArg.short_name != "") ? (" -" + userArg.short_name) : "") << "\t\t" << userArg.description << '\n';
+                LOG_PROGRESS("\t--{}{}\t\t{}", userArg.long_name, ((userArg.short_name != "") ? (" -" + userArg.short_name) : ""), userArg.description);
             }
         }
     }

@@ -38,11 +38,7 @@ void Nilib::Optimizer::printWeights() const
 {
     CORE_ASSERT(checkgradients());
     for (Weight const *w : weights)
-        LOG_PROGRESS() << "Weight " << w << ' ' << w->value << std::setprecision(4) << " value " << w->value.avg()
-                       // << '(' << w->value.stddev() << ')'
-                       << " partial " << w->partial.avg()
-                       // << '(' << w->partial.stddev() << ')'
-                       << '\n';
+        LOG_PROGRESS("Weight {:p} {}x{} value {:.4f} partial {:.4f}", static_cast<void*>(&w), w->value.rows(), w->value.cols(), w->value.avg(), w->partial.avg());
 }
 
 void Nilib::Optimizer::save(std::filesystem::path const &file) const
@@ -57,7 +53,7 @@ void Nilib::Optimizer::load(std::filesystem::path const &file) const
     Deserializer loader(file.string());
     if (loader.opened())
     {
-        LOG_WARNING("Loading weights from", file.string());
+        LOG_WARNING("Loading weights from {}", file.string());
         for (Weight *w : weights)
         {
             // size_t row = w->value.rows(), col = w->value.cols();

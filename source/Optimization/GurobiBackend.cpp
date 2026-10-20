@@ -17,7 +17,7 @@ GurobiBackend::GurobiBackend(Options const &options)
     }
     catch (GRBException const &e)
     {
-        LOG_ERROR("Failed to start Gurobi environment. Error:", e.getErrorCode(), e.getMessage());
+        LOG_ERROR("Failed to start Gurobi environment. Error: {} {}", e.getErrorCode(), e.getMessage());
         throw e;
     }
 

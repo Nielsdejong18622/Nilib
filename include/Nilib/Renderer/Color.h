@@ -276,4 +276,15 @@ namespace Nilib
 
 }; // namespace Nilib
 
+template <>
+struct std::formatter<Nilib::Color> : std::formatter<std::string>
+{
+
+    // Runtime formatting, we simply add "CustomObject" to the buffer
+    auto format(Nilib::Color const &, auto &ctx) const
+    {
+        return std::format_to(ctx.out(), "ColorObj");
+    }
+};
+
 #endif

@@ -19,13 +19,13 @@ namespace Nilib
               predecessor(graph.numNodes(), graph.numNodes())
         {
             size_t const k = graph.numNodes();
-            LOG_INFO("Starting BellmanFord on Graph", &graph, "with", k, "nodes,", graph.numEdges(), "edges, source:", source);
+            LOG_INFO("Starting BellmanFord on Graph {} with {} nodes, {} edges, source: {}", static_cast<void const*>(&graph), k, graph.numEdges(), source);
             costs[source] = 0;
             predecessor[source] = source;
 
             for (size_t iter = 0; iter < k - 1; ++iter)
             {
-                LOG_DEBUG("Iteration:", iter);
+                LOG_DEBUG("Iteration: {}", iter);
                 bool change = false;
                 for (auto &&[idx, jdx, edge_idx] : graph.arcs())
                 {
@@ -43,7 +43,7 @@ namespace Nilib
                 if (!change)
                     break;
             }
-            LOG_INFO("Completed BellmanFord on Graph", &graph);
+            LOG_INFO("Completed BellmanFord on Graph {}", static_cast<void const*>(&graph));
             // LOG_INFO("Costs:", costs);
             // LOG_INFO("predecessor:", predecessor);
         }

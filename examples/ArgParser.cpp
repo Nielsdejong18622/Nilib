@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     parser.argument<Strategy>(strat, Strategy::description());
     parser.parse_or_exit(argc, argv);
 
-    LOG_SUCCESS("Program", parser.program_name(), "arguments:", "InputFile:", inputfile, "integerDim:", integer,
-                "verbose:", verbose, "strategy:", std::string(strat));
+    LOG_SUCCESS("Program: {}, inputFile: {}  integerDim: {}, verbose: {}, strategy: {}",
+                parser.program_name(), inputfile, integer, verbose, std::string(strat));
 
     return 0;
 }

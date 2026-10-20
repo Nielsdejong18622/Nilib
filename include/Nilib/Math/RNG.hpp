@@ -129,7 +129,7 @@ namespace Nilib
         template <typename scalar = float>
         static inline scalar normal(scalar const mean, scalar const var)
         {
-            CORE_ASSERT(var > static_cast<scalar>(0.0f))
+            CORE_ASSERT(var > static_cast<scalar>(0.0f));
             return static_cast<scalar>(wy2gau(wyhash(&state))) * std::sqrt(static_cast<scalar>(var)) + mean;
         }
 

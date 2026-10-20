@@ -16,8 +16,8 @@ void GraphConv::evaluate()
     d_A.evaluate();
     d_X.evaluate();
     d_W.evaluate();
-    ASSERT(d_A.value.cols() == d_X.value.rows(), "AX undefined:", d_A.value, 'x', d_X.value);
-    ASSERT(d_X.value.cols() == d_W.value.rows(), "XW undefined:", d_X.value, 'x', d_W.value);
+    ASSERT(d_A.value.cols() == d_X.value.rows(), "AX undefined: {}!={}", d_A.value.cols(), d_X.value.rows());
+    ASSERT(d_X.value.cols() == d_W.value.rows(), "XW undefined: {}!={}", d_X.value.cols(), d_W.value.rows());
     this->value = d_A.value * d_X.value * d_W.value;
 }
 

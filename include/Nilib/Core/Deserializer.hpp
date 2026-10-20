@@ -15,12 +15,12 @@ class Deserializer
 {
     std::ifstream file;
 
-  public:
+public:
     explicit Deserializer(std::string const &filename) : file(filename, std::ios::binary)
     {
         if (!file.is_open())
         {
-            LOG_ERROR("Deserialization Error: Could not open file", filename, "for reading!");
+            LOG_ERROR("Deserialization Error: Could not open file {} for reading!", filename);
         }
         if (file.bad())
         {
@@ -46,18 +46,20 @@ class Deserializer
         close();
     }
 
-    template <typename T> bool readRaw(T &data)
+    template <typename T>
+    bool readRaw(T &data)
     {
         static_assert(std::is_trivially_copyable<T>::value, "Object is not trivially copyable!");
         file.read(reinterpret_cast<char *>(&data), sizeof(T));
         if (!file)
         {
-            LOG_ERROR("Error: Failed to read", sizeof(T), "bytes of Raw data from file into", &data);
+            LOG_ERROR("Error: Failed to read {} bytes of Raw data from file", sizeof(T));
         }
         return !file;
     }
 
-    template <typename T> bool readObject(T &data)
+    template <typename T>
+    bool readObject(T &data)
     {
         if constexpr (std::is_trivially_copyable<T>::value)
         {
@@ -89,7 +91,8 @@ class Deserializer
     }
 
     // Specialization for Matrix.
-    template <typename T> bool readMatrix(Nilib::Matrix<T> &data)
+    template <typename T>
+    bool readMatrix(Nilib::Matrix<T> &data)
     {
         size_t n, m;
         readRaw(n);
@@ -112,12 +115,13 @@ class Deserializer
     }
 
     // Specialization for std::vector<T>
-    template <typename T> bool readVector(std::vector<T> &vec)
+    template <typename T>
+    bool readVector(std::vector<T> &vec)
     {
         // Read the size of the vector
         size_t size;
         readRaw(size);
-        LOG_DEBUG("Reading vector size", size);
+        LOG_DEBUG("Reading vector size {}", size);
         // Resize the vector to hold the data
         vec.resize(size);
 
@@ -140,42 +144,6 @@ class Deserializer
         }
         return !file;
     }
-
-    // Static methods for one shot encoding!
-    /*
-    // Read data from a binary file
-    template <typename T>
-    static bool read(T& data, std::string const &filename)
-    {
-        static_assert(std::is_trivially_copyable<T>::value, "Data type must be trivially copyable!");
-
-        std::ifstream file(filename, std::ios::binary | std::ios::in);
-        if (!file) {
-            std::cerr << "Error: Could not open file for reading." << std::endl;
-            return false;
-        }
-
-        file.read(reinterpret_cast<char*>(&data), sizeof(T));
-        file.close();
-        return true;
-    }
-
-    // Specialization for std::string
-    static bool read(std::string& data, std::string const &filename) {
-        std::ifstream file(filename, std::ios::binary | std::ios::in);
-        if (!file) {
-            std::cerr << "Error: Could not open file for reading." << std::endl;
-            return false;
-        }
-
-        size_t length = 0;
-        file.read(reinterpret_cast<char*>(&length), sizeof(length));
-        data.resize(length);
-        file.read(&data[0], length);
-        file.close();
-        return true;
-    }
-    */
 };
 
 #endif

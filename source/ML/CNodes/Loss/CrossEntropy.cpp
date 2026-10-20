@@ -9,8 +9,8 @@ void Nilib::CrossEntropy::evaluate()
 {
     d_prediction.evaluate();
     d_target.evaluate();
-    ASSERT(d_target.value.rows() == d_prediction.value.rows(), d_target.value, "!=", d_prediction.value);
-    ASSERT(d_target.value.cols() == d_prediction.value.cols(), d_target.value, "!=", d_prediction.value);
+    CORE_ASSERT(d_target.value.rows() == d_prediction.value.rows());
+    CORE_ASSERT(d_target.value.cols() == d_prediction.value.cols());
     d_rows = d_target.value.rows();
     d_cols = d_target.value.cols();
 

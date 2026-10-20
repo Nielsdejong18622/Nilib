@@ -38,7 +38,7 @@ size_t Nilib::DenseGraph::numEdges() const
 
 size_t Nilib::DenseGraph::out_degree(node_t const node_id) const
 {
-    ASSERT(node_id < numNodes(), "Non-existant node", node_id, "has no outdegree");
+    ASSERT(node_id < numNodes(), "Non-existant node {} has no outdegree", node_id);
     size_t sum = 0;
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
@@ -49,7 +49,7 @@ size_t Nilib::DenseGraph::out_degree(node_t const node_id) const
 
 size_t Nilib::DenseGraph::in_degree(node_t const node_id) const
 {
-    ASSERT(node_id < numNodes(), "Non-existant node", node_id, "has no indegree");
+    ASSERT(node_id < numNodes(), "Non-existant node {} has no indegree", node_id);
     size_t sum = 0;
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
@@ -74,8 +74,8 @@ void Nilib::DenseGraph::addNode()
 
 void Nilib::DenseGraph::print()
 {
-    LOG_DEBUG("DenseGraph", this);
-    LOG_DEBUG("Adjacency:", d_adj);
+    // LOG_DEBUG("DenseGraph {}", this);
+    LOG_DEBUG("Adjacency: {}", d_adj);
 }
 
 void Nilib::DenseGraph::disconnectNode(uint32_t const node_id)
@@ -108,8 +108,8 @@ void Nilib::DenseGraph::removeNode(uint32_t const node_id)
 
 void Nilib::DenseGraph::addEdge(node_t const from, node_t const to)
 {
-    ASSERT(from < numNodes(), "Can not relate edge to", from);
-    ASSERT(to < numNodes(), "Can not relate edge to", to);
+    ASSERT(from < numNodes(), "Can not relate edge to {}", from);
+    ASSERT(to < numNodes(), "Can not relate edge to {}", to);
 
     d_adj(from, to) = 1.0;
 }

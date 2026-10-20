@@ -27,7 +27,7 @@ Window::Window(size_t width,
     {
         int major, minor, rev;
         glfwGetVersion(&major, &minor, &rev);
-        LOG_INFO() << "Initialized GLFW version " << major << '.' << minor << '.' << rev << ".\n";
+        LOG_INFO("Initialized GLFW version {}.{}.{}.", major, minor, rev);
 
         glfwSetErrorCallback(Window::error_callback);
     }
@@ -75,7 +75,7 @@ Window::Window(size_t width,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Window::s_windowsactive++;
-    LOG_DEBUG("Constructed Window", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
+    LOG_DEBUG("Constructed Window {}, res: {}x{}, min {}x{}, fullscreen:{}, decorated:{}, resizeable:{}", title, width, height, minwidth, minheight, fullscreen, decorated, resizeable);
 #endif
 }
 
@@ -151,11 +151,11 @@ void Window::drop_callback(WindowBackend *window, int path_count, const char *pa
 {
     // LOG_DEBUG("[WEVENT] Window", window, "dropping", path_count, "files");
     for (int path = 0; path < path_count; ++path)
-        LOG_DEBUG(paths[path]);
+        LOG_DEBUG("[WEVENT] Dropped path: {}", paths[path]);
 };
 void Window::error_callback(int code, char const *description)
 {
-    LOG_ERROR("[WEVENT] Error ", code, description);
+    LOG_ERROR("[WEVENT] Error {} {}", code, description);
 }
 void Window::windowClose_callback(WindowBackend *window)
 {
@@ -219,14 +219,14 @@ void Window::open()
     // If already open.
     if (!glfwWindowShouldClose(d_window))
     {
-        LOG_WARNING("Window", title(), "already open!");
+        LOG_WARNING("Window {} already open!", title());
         return;
     }
 
     // If window already exists but is hidden.
     glfwSetWindowShouldClose(d_window, GLFW_FALSE);
     glfwShowWindow(d_window);
-    LOG_DEBUG("Showing window", title());
+    LOG_DEBUG("Showing window {}", title());
 #endif
 };
 
@@ -235,7 +235,7 @@ Window::~Window()
 #ifdef GLFW
     CORE_ASSERT(d_window);
     glfwDestroyWindow(d_window);
-    LOG_DEBUG("Window", title(), "destructed!");
+    LOG_DEBUG("Window {} destructed!", title());
     d_window = nullptr;
     if (--Window::s_windowsactive == 0)
     {
@@ -265,7 +265,7 @@ void Window::startScene()
 #ifdef GLFW
     if (!d_window || glfwWindowShouldClose(d_window))
     {
-        LOG_WARNING("Starting scene on unopened Window", title());
+        LOG_WARNING("Starting scene on unopened Window {}", title());
         return;
     }
     glfwMakeContextCurrent(d_window);
@@ -305,7 +305,7 @@ void Window::screenshotPNG(char const *filename)
 #ifdef GLFW
     int width = d_data.width;
     int height = d_data.height;
-    LOG_PROGRESS("Saving Framebuffer screenshot to file", filename, "dimensions", width, 'x', height);
+    LOG_PROGRESS("Saving Framebuffer screenshot to file {} dimensions {}x{}", filename, width, height);
     // Step 1: Create a buffer to store pixel data
     unsigned char *pixels = new unsigned char[3 * width * height];
 
@@ -343,7 +343,7 @@ void Window::close()
     // if (glfwWindowShouldClose(d_window)) return;
     glfwSetWindowShouldClose(d_window, GLFW_TRUE);
     glfwHideWindow(d_window);
-    LOG_DEBUG() << "Closed window.\n";
+    LOG_DEBUG("Closed window.");
 #endif
 };
 
@@ -606,7 +606,7 @@ void Window::color(Color const &color) const
 void Window::clearColor(Color const &color)
 {
     d_data.clearColor = color;
-    LOG_DEBUG("Set clear color:", color);
+    LOG_DEBUG("Set clear color: {}", color);
 }
 
 void Window::transform2D(float &x, float &y) const

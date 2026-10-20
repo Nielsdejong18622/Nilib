@@ -20,7 +20,7 @@ namespace Nilib
         EnumName(value v) : val(v)                                                   \
         {                                                                            \
         }                                                                            \
-        EnumName(std::string const &string) : val()                                 \
+        EnumName(std::string const &string) : val()                                  \
         {                                                                            \
             for (auto const &[num, name] : valueToStringMap())                       \
             {                                                                        \
@@ -110,9 +110,7 @@ namespace Nilib
                                                                                      \
         void print() const                                                           \
         {                                                                            \
-            LOG_PROGRESS("Printing", #EnumName, "enum");                             \
-            for (auto const &[num, name] : valueToStringMap())                       \
-                LOG_PROGRESS(name, '=', num);                                        \
+            LOG_PROGRESS("Printing {} enum", #EnumName);                             \
         };                                                                           \
         constexpr static char const *description()                                   \
         {                                                                            \

@@ -42,7 +42,7 @@ int main()
     {
         // Window 1.
         window.startScene(); // Check if window is open.
-
+        
         renderer.drawCalls();
 
         // Some immediate mode rendering.

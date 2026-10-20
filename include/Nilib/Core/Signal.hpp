@@ -8,40 +8,40 @@
 
 namespace Nilib
 {
-// Singleton.
-class Signal
-{
-    static std::atomic<bool> running;
-    Signal()
+    // Singleton.
+    class Signal
     {
-        running = true;
-        std::signal(SIGINT, Signal::signal_handler);
-    }
-
-    static void signal_handler(int signal)
-    {
-        if (signal == 2)
-            LOG_WARNING("Received signal: SIG_KILL (CTRL-C)");
-        else
-            LOG_WARNING("Received signal:", signal);
-        if (signal == SIGINT)
+        static std::atomic<bool> running;
+        Signal()
         {
-            running = false;
+            running = true;
+            std::signal(SIGINT, Signal::signal_handler);
         }
-    }
 
-    static Signal getInstance()
-    {
-        static Signal signal;
-        return signal;
-    }
+        static void signal_handler(int signal)
+        {
+            if (signal == 2)
+                LOG_WARNING("Received signal: SIG_KILL (CTRL-C)");
+            else
+                LOG_WARNING("Received signal: {}", signal);
+            if (signal == SIGINT)
+            {
+                running = false;
+            }
+        }
 
-  public:
-    static bool receivedCtrlC()
-    {
-        return !getInstance().running;
-    }
-};
+        static Signal getInstance()
+        {
+            static Signal signal;
+            return signal;
+        }
+
+    public:
+        static bool receivedCtrlC()
+        {
+            return !getInstance().running;
+        }
+    };
 
 } // namespace Nilib
 

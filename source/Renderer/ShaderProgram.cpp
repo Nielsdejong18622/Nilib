@@ -40,7 +40,7 @@ ShaderProgram::~ShaderProgram()
 unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *shaderSource)
 {
 #ifdef GLFW
-    LOG_DEBUG("Compiling", ((shaderType == 0x8B31) ? "VertexShader" : "FragmentShader"));
+    LOG_DEBUG("Compiling {}", ((shaderType == 0x8B31) ? "VertexShader" : "FragmentShader"));
     ASSERT(glfwGetCurrentContext(), "No associated GLFW window context! Has Window been constructed?");
 
     // Initialize GLAD
@@ -61,7 +61,7 @@ unsigned int ShaderProgram::compileShader(unsigned int shaderType, const char *s
     {
         char infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        LOG_ERROR("[SHADER] COMPILATION_FAILED", infoLog);
+        LOG_ERROR("[SHADER] COMPILATION_FAILED {}", infoLog);
         return 0;
     }
     CORE_ASSERT(shader);
@@ -81,13 +81,13 @@ ShaderProgram ShaderProgram::createFromFiles(const char *vertexsourcefilename, c
     // Check if the file is open
     if (!vertexfile.is_open())
     {
-        LOG_ERROR("Error when opening file", vertexsourcefilename);
+        LOG_ERROR("Error when opening file {}", vertexsourcefilename);
         return ShaderProgram(0);
     }
     // Check if the file is open
     if (!fragmentfile.is_open())
     {
-        LOG_ERROR("Error when opening file", fragmentsourcefilename);
+        LOG_ERROR("Error when opening file {}", fragmentsourcefilename);
         return ShaderProgram(0);
     }
 
@@ -118,7 +118,7 @@ ShaderProgram ShaderProgram::createFromStrings(const char *vertexSource, const c
     {
         char infoLog[512];
         glGetProgramInfoLog(programid, 512, nullptr, infoLog);
-        LOG_ERROR("Shader Program LINKING_FAILED", infoLog);
+        LOG_ERROR("Shader Program LINKING_FAILED {}", infoLog);
         return ShaderProgram(0);
     }
 

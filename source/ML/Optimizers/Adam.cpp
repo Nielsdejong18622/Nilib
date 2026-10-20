@@ -15,7 +15,7 @@ Nilib::Adam::Adam(Weightptrs const &weightptr, float learning_rate, float weight
 
 void Nilib::Adam::updateGrad(float const multi)
 {
-    CORE_ASSERT(!(d_lr == 0.0f && d_weight_decay > 0.0f))
+    CORE_ASSERT(!(d_lr == 0.0f && d_weight_decay > 0.0f));
     float const beta = 0.9f;    // Momentum
     float const beta2 = 0.999f; // Velocity
     float const epsilon = 1e-8f;

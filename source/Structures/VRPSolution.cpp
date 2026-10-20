@@ -22,7 +22,7 @@ float Solution::optimalityGap() const
         return 0.0;
     // CORE_ASSERT(obj >= optimal_objective)
     if (optimal_objective == 0)
-        LOG_WARNING() << "Optimal Objective value not calculated!\n";
+        LOG_WARNING("Optimal Objective value not calculated!");
     return (obj - optimal_objective) / optimal_objective;
 }
 
@@ -64,7 +64,7 @@ Solution Solution::feasibleSolution(Instance const &inst)
     {
         return Solution(inst, Matrixf::ones(1, 1));
     }
-    CORE_ASSERT(numLocations > 1)
+    CORE_ASSERT(numLocations > 1);
 
     size_t const VEHICLE_CAP = inst.vehcap;
 
@@ -142,104 +142,6 @@ Solution Solution::optimalSolution(Instance const &inst)
     int n = inst.numlocations(); // Number of nodes
     Matrixf d_X = Matrixf(n, n);
     double objValue = 0.0;
-    // try
-    // {
-    //     static GRBEnv env = GRBEnv(true);
-    //     env.start();
-
-    //     GRBModel model = GRBModel(env);
-
-    //     // Silence the solver output
-    //     model.set(GRB_IntParam_OutputFlag, 1);
-
-    //     // Create decision variables
-    //     std::vector<std::vector<GRBVar>> x(n, std::vector<GRBVar>(n));
-    //     std::vector<GRBVar> u(n); // Auxiliary variables for MTZ constraints
-
-    //     for (int i = 0; i < n; ++i)
-    //     {
-    //         for (int j = 0; j < n; ++j)
-    //         {
-    //             float const xdist = std::pow(inst.X(i, 0) - inst.X(j, 0), 2.0f);
-    //             float const ydist = std::pow(inst.X(i, 1) - inst.X(j, 1), 2.0f);
-    //             float const dist = std::sqrt(xdist + ydist);
-    //             x[i][j] = model.addVar(0.0, 1.0, dist, GRB_BINARY, "x_" + std::to_string(i) + "_" + std::to_string(j));
-    //         }
-    //     }
-
-    //     for (int i = 1; i < n; ++i)
-    //     {
-    //         u[i] = model.addVar(1, n - 1, 0.0, GRB_CONTINUOUS, "u_" + std::to_string(i));
-    //     }
-
-    //     // MTZ Subtour Elimination Constraints
-    //     for (int i = 1; i < n; ++i)
-    //     {
-    //         for (int j = 1; j < n; ++j)
-    //         {
-    //             if (i != j)
-    //             {
-    //                 model.addConstr(u[i] - u[j] + (n - 1) * x[i][j] <= n - 2,
-    //                                 "MTZ_" + std::to_string(i) + "_" + std::to_string(j));
-    //             }
-    //         }
-    //         model.addConstr(u[i] <= inst.vehcapacity());
-    //     }
-
-    //     // Constraints
-    //     // Each node must be entered and exited exactly once
-    //     for (int i = 1; i < n; ++i)
-    //     {
-    //         GRBLinExpr entry = 0;
-    //         GRBLinExpr exit = 0;
-    //         for (int j = 0; j < n; ++j)
-    //         {
-    //             if (i != j)
-    //             {
-    //                 entry += x[j][i];
-    //                 exit += x[i][j];
-    //             }
-    //         }
-    //         model.addConstr(entry == 1, "entry_" + std::to_string(i));
-    //         model.addConstr(exit == 1, "exit_" + std::to_string(i));
-    //     }
-
-    //     // Add constraints for vehicle capacity
-    //     // Assuming k is the vehicle capacity constraint (simplified)
-    //     // Adding additional constraints to ensure vehicle capacity constraint
-
-    //     // Optimize the model
-    //     model.optimize();
-    //     // Print the solution
-    //     if (model.get(GRB_IntAttr_Status) == GRB_OPTIMAL)
-    //     {
-    //         // std::cout << "Optimal solution found!" << std::endl;
-    //         objValue = model.get(GRB_DoubleAttr_ObjVal);
-
-    //         // Retrieve and print the solution
-    //         for (int i = 0; i < n; ++i)
-    //         {
-    //             for (int j = 0; j < n; ++j)
-    //             {
-    //                 d_X(i, j) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
-    //                 // d_X(j, i) = (x[i][j].get(GRB_DoubleAttr_X) > 0.5);
-    //             }
-    //         }
-    //     }
-    //     else
-    //     {
-    //         // std::cout << "No optimal solution found." << std::endl;
-    //     }
-    // }
-    // catch (GRBException &e)
-    // {
-    //     // std::cerr << "Error code = " << e.getErrorCode() << std::endl;
-    //     // std::cerr << e.getMessage() << std::endl;
-    // }
-    // catch (...)
-    // {
-    //     // std::cerr << "Exception during optimization" << std::endl;
-    // }
 
     Solution sol = Solution(inst, d_X, objValue);
     return sol;
@@ -269,7 +171,7 @@ void Solution::draw(Window const &window) const
 
 bool Solution::serialize(Serializer &serializer)
 {
-    LOG_DEBUG() << "Serializing Solution!\n";
+    LOG_DEBUG("Serializing Solution!");
     // serializer.writeObject(d_instance);
     // serializer.writeObject(d_X);
     // LOG_SUCCESS("Serialized Instance!\n");
@@ -278,7 +180,7 @@ bool Solution::serialize(Serializer &serializer)
 
 bool Solution::deserialize(Deserializer &deserializer)
 {
-    LOG_DEBUG() << "Deserializing Instance!\n";
+    LOG_DEBUG("Deserializing Solution!");
     // deserializer.readObject(d_instance);
     // deserializer.readObject(d_X);
     return true;

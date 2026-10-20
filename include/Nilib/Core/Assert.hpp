@@ -10,16 +10,26 @@ namespace Nilib
 
 #ifndef ASSERT_OFF
 
-#define ASSERT(condition, ...)                                                                    \
-    if (!(condition))                                                                             \
-    {                                                                                             \
-        LOG_ERROR("Assertion (", #condition, ") failed!", __VA_OPT__(__VA_ARGS__));               \
-        LOG_ERROR() << "Call: __" << __func__ << "__ in " << __FILE__ << ':' << __LINE__ << '\n'; \
-        ::Nilib::Logger::default_logger().~Logger();                                              \
-        std::exit(EXIT_FAILURE);                                                                  \
-    }
+#define ASSERT(condition, ...)                             \
+    do                                                     \
+    {                                                      \
+        if (!(condition))                                  \
+        {                                                  \
+            LOG_ERROR("Assertion failed: {}", #condition); \
+            __VA_OPT__(LOG_ERROR(__VA_ARGS__);)            \
+        }                                                  \
+    } while (false)
 
-#define CORE_ASSERT(condition) ASSERT(condition, "")
+#define CORE_ASSERT(condition)                                                \
+    do                                                                        \
+    {                                                                         \
+        if (!(condition))                                                     \
+        {                                                                     \
+            LOG_ERROR("Assertion ({}) failed!", #condition);                  \
+            LOG_ERROR("Call: __{}__ in {}:{}", __func__, __FILE__, __LINE__); \
+            std::abort();                                                     \
+        }                                                                     \
+    } while (false)
 
 #else
 #define ASSERT(...) \
