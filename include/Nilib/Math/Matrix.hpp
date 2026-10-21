@@ -82,7 +82,7 @@ namespace Nilib
                         ss << d_data(ridx, cidx);
                     ss << ((cidx < d_data.cols() - 1) ? ',' : ')');
                 }
-                LOG_DEBUG("{}", ss.str());
+                LOG_DEBUG(ss.str());
             }
         }
         // Returns the sum of all the entries in the Matrix.

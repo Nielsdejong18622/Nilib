@@ -32,7 +32,8 @@ int main()
     {
         std::string mystring = std::format("Test string {}", i);
 
-        LOG_DEBUG("{}", mystring); // Legal.
+        LOG_DEBUG("{}", mystring); // Legal, but weird.
+        LOG_DEBUG(mystring); // More concise.
     }
     // LOG_DEBUG() << '\n'; // Clear the last \r line.
 

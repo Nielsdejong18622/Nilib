@@ -78,47 +78,38 @@ namespace Nilib
         }
 
         // Overload of single string_view.
-        // static void log(
-        //     LogLevel level,
-        //     bool const newline,
-        //     std::string_view const &string)
-        // {
-        //     log(level, newline, std::format("{}", string));
-        // }
-        // static void log(
-        //     LogLevel level,
-        //     bool const newline,
-        //     std::string const &string)
-        // {
-        //     log(level, newline, std::format("{}", string));
-        // }
-        // // Overload of custom type.
-        // template <typename T>
-        // static void log(
-        //     LogLevel level,
-        //     bool const newline,
-        //     T const &type)
-        // {
-        //     log(level, newline, "{}", type);
-        // // }
+        static void log(
+            LogLevel level,
+            bool const newline,
+            std::string_view const &string)
+        {
+            log(level, newline, "{}", string);
+        }
+        static void log(
+            LogLevel level,
+            bool const newline,
+            std::string const &string)
+        {
+            log(level, newline, "{}", string);
+        }
 
-        // // Overload of char const *.
-        // static void log(
-        //     LogLevel level,
-        //     bool const newline,
-        //     char const *string)
-        // {
-        //     log(level, newline, std::format("{}", string));
-        // }
+        // Overload of char const *.
+        static void log(
+            LogLevel level,
+            bool const newline,
+            char const *string)
+        {
+            log(level, newline, "{}", string);
+        }
 
-        // // Overload for exception.
-        // static void log(
-        //     LogLevel level,
-        //     bool const newline,
-        //     std::exception const &exception)
-        // {
-        //     log(level, newline, std::format("{} {}", typeid(exception).name(), exception.what()));
-        // }
+        // Overload for exception.
+        static void log(
+            LogLevel level,
+            bool const newline,
+            std::exception const &exception)
+        {
+            log(level, newline, "{} {}", typeid(exception).name(), exception.what());
+        }
 
         static void set_color_mode(ColorMode mode)
         {

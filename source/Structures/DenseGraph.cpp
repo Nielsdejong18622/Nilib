@@ -80,7 +80,7 @@ void Nilib::DenseGraph::print()
 
 void Nilib::DenseGraph::disconnectNode(uint32_t const node_id)
 {
-    ASSERT(node_id < numNodes(), "Can not remove non-existant node", node_id);
+    ASSERT(node_id < numNodes(), "Can not remove non-existant node {}", node_id);
 
     for (size_t jdx = 0; jdx < numEdges(); ++jdx)
     {
@@ -92,8 +92,8 @@ void Nilib::DenseGraph::disconnectNode(uint32_t const node_id)
 // Removing a node will destroy the persistent index of the graph labels.
 void Nilib::DenseGraph::removeNode(uint32_t const node_id)
 {
-    ASSERT(node_id < numNodes(), "Can not remove non-existant node", node_id);
-    ASSERT(node_id > 0, "Can not remove non-existant node", node_id);
+    ASSERT(node_id < numNodes(), "Can not remove non-existant node {}", node_id);
+    ASSERT(node_id > 0, "Can not remove non-existant node {}", node_id);
     size_t const n = numNodes();
     StoreMatrix new_adj = StoreMatrix::zeros(n - 1, n - 1);
     for (size_t idx = 0; idx < n - 1; ++idx)
@@ -117,9 +117,9 @@ void Nilib::DenseGraph::addEdge(node_t const from, node_t const to)
 // Does not remove multi-edges, only one edge!
 void Nilib::DenseGraph::removeEdge(node_t const from, node_t const to)
 {
-    ASSERT(from < numNodes(), "Can not relate edge to", from);
-    ASSERT(to < numNodes(), "Can not relate edge to", to);
-    ASSERT(d_adj(from, to) == 1.0, "Edge from", from, "to", to, "not present");
+    ASSERT(from < numNodes(), "Can not relate edge to {}", from);
+    ASSERT(to < numNodes(), "Can not relate edge to {}", to);
+    ASSERT(d_adj(from, to) == 1.0, "Edge from {} to {} not present", from, to);
     d_adj(from, to) = 0.0;
 }
 
