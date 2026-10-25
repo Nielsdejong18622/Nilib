@@ -44,7 +44,7 @@ namespace Nilib
             std::filesystem::path history_filename;
 
             // Threads.
-            size_t num_threads = 1;
+            size_t max_threads = 1;
         };
 
         // Standard ALNS framework procedure.
@@ -76,7 +76,7 @@ namespace Nilib
 
             void solve()
             {
-                size_t const num_threads = params.num_threads;
+                size_t const num_threads = params.max_threads;
 
                 // Print starting information.
                 LOG_PROGRESS("User supplied {} operators", d_operators.size());

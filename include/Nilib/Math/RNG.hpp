@@ -16,7 +16,7 @@ namespace Nilib
     template <size_t stream = 0>
     class RAN
     {
-        inline static uint64_t state;
+        inline static thread_local uint64_t state;
 
     public:
         static inline void seed(uint64_t const seed)

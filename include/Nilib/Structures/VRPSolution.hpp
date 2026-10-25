@@ -2,7 +2,7 @@
 #define _VRP_SOLUTION_H
 
 #include "Nilib/Structures/VRPInstance.hpp"
-#include "Nilib/Math/ALNS.hpp"
+#include "Nilib/Optimization/ALNS.hpp"
 
 #include "Nilib/Core/Serializer.hpp"
 #include "Nilib/Core/Deserializer.hpp"
