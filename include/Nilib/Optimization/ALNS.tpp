@@ -31,7 +31,7 @@ ALNSHistory Solver<Solution>::solve()
     LOG_PROGRESS("ALNS::Solver User supplied {} operators and {} delta operators", d_operators.size(), d_delta_operators.size());
     LOG_PROGRESS("ALNS::Solver Optimizing a solution of {} bytes.", sizeof(Solution));
     LOG_PROGRESS("ALNS::Solver Thread count: {} hardware supports {} concurrent threads.", num_threads, std::thread::hardware_concurrency());
-    LOG_PROGRESS("ALNS::Solver Stopping conditions: Max iterations: {} ({}  with. improvement) Max duration: {} ",
+    LOG_PROGRESS("ALNS::Solver Stopping conditions: Max iterations: {} ({}  without improvement) Max duration: {} ",
                  params.max_iterations, params.max_iterations_without_improvement, params.max_duration);
 
     float const best_obj = bestfound.objective();
@@ -107,16 +107,8 @@ float Solver<Solution>::anneal_probability(float delta, float completion_perc) c
     if (delta <= 0.0)
         return 1.0;
 
-    float p = std::clamp(completion_perc, 0.0f, 1.0f);
-    float init_temp = 1.0;
-    float final_temp = 0.0;
-    float temperature = init_temp * (1.0 - p) + final_temp * p;
-
-    if (temperature <= 0.0)
-        return 0.0;
-
-    return std::exp(-delta / temperature);
-    // return std::exp(-5.0f * delta / temperature) return 0.05;
+    float temperature = std::pow(0.01f, completion_perc);
+    return std::exp(-10.0f * delta / temperature);
 }
 
 template <typename Solution>
@@ -201,10 +193,13 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
 
                 // Update global best safely
                 {
+
                     std::lock_guard<std::mutex> lock(global_mutex);
 
                     if (best_obj < global_best_obj)
                     {
+                        LOG_PROGRESS("ALNS::Solver Thread {} found global improvement on iteration {}. Best objective: {}",
+                                     thread_id, iteration, best_obj);
                         global_best_obj = best_obj;
                         global_best = best_local;
                     }
@@ -232,7 +227,7 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
         global_best = best_local;
     }
 
-    LOG_PROGRESS("ALNS::Solver Thread {} performed {} iterations in {} ms. Best objective: {}",
+    LOG_PROGRESS("ALNS::Solver Thread {} performed {} iterations in {}. Best objective: {}",
                  thread_id, iteration, timer.getMilliseconds(), best_obj);
 
     return history;

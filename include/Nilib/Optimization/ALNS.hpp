@@ -42,8 +42,7 @@ namespace Nilib
             bool use_annealing = true;
             float reset_prob = 0.01; // Chance per iteration to reset to global.
 
-            std::filesystem::path history_filename = ""; // For (optional) logging. 
-
+            std::filesystem::path history_filename = ""; // For (optional) logging.
         };
 
         struct ALNSHistory
@@ -111,7 +110,7 @@ namespace Nilib
         public:
             using Operator = void (*)(Solution &);
             using deltaOperator = float (*)(Solution &);
-            using Callback = void (*)(Solution &);
+            using Callback = std::function<void(Solution &)>;
 
             Solution bestfound;
             Solution incumbent;

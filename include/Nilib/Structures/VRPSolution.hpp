@@ -47,7 +47,7 @@ namespace Nilib
 
         // Pretty basic list<Route> VRP solution.
         template <typename VRPinstance, typename Route>
-        struct RouteSolution : public ALNS::Solution
+        struct RouteSolution
         {
             VRPinstance instance;
 
@@ -57,8 +57,9 @@ namespace Nilib
             virtual void draw(Nilib::Window &window) const = 0;
 
             // Inherited from ALNS::Solution.
-            virtual float objective() const override = 0;
-            virtual bool feasible() const override = 0;
+            virtual float objective() const = 0;
+            virtual bool feasible() const = 0;
+            virtual float violation() const = 0;
         };
     };
 };
