@@ -123,7 +123,7 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
     float best_obj = global_best_obj;
     float current_obj = best_obj;
     float violation = incumbent_local.violation();
-    float const eps = 10e-06;
+    float const eps = 0.001;
     size_t const iterations = params.max_iterations;
 
     size_t iteration_without_improv = 0;
@@ -139,7 +139,7 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
     {
         // How far we are (%) to complete this run.
         float const complete_perc = completion(iteration, iteration_without_improv, timer.getMilliseconds());
-        if (complete_perc >= 1.0)
+        if (complete_perc >= 1.0f)
             break;
 
         previous = incumbent_local;
@@ -227,8 +227,8 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
         global_best = best_local;
     }
 
-    LOG_PROGRESS("ALNS::Solver Thread {} performed {} iterations in {}. Best objective: {}",
-                 thread_id, iteration, timer.getMilliseconds(), best_obj);
+    // LOG_PROGRESS("ALNS::Solver Thread {} performed {} iterations in {}. Best objective: {}",
+    //              thread_id, iteration, timer.getMilliseconds(), best_obj);
 
     return history;
 }

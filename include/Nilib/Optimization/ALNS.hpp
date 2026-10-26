@@ -27,7 +27,7 @@ namespace Nilib
             virtual ~Solution();
             virtual float objective() const = 0;
             virtual float violation() const = 0;
-            virtual bool feasible() const { return violation() <= 0.0; };
+            virtual bool feasible() const { return violation() <= 0.0f; };
         };
 
         struct Params
@@ -41,7 +41,7 @@ namespace Nilib
             size_t max_threads = 1;
             bool allow_infeasible = false;
             bool use_annealing = true;
-            float reset_prob = 0.01; // Chance per iteration to reset to global.
+            float reset_prob = 0.01f; // Chance per iteration to reset to global.
 
             std::filesystem::path history_filename = ""; // For (optional) logging.
         };

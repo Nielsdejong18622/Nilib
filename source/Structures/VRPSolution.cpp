@@ -19,21 +19,21 @@ float Solution::optimalityGap() const
 {
     float obj = objective();
     if (obj <= optimal_objective)
-        return 0.0;
+        return 0.0f;
     // CORE_ASSERT(obj >= optimal_objective)
-    if (optimal_objective == 0)
+    if (optimal_objective == 0.0f)
         LOG_WARNING("Optimal Objective value not calculated!");
     return (obj - optimal_objective) / optimal_objective;
 }
 
 float Solution::objective() const
 {
-    float objval = 0;
+    float objval = 0.0f;
     for (size_t ri = 0; ri < adjacencyMatrix.rows(); ++ri)
     {
         for (size_t ci = 0; ci < adjacencyMatrix.cols(); ++ci)
         {
-            if (adjacencyMatrix(ri, ci) > 0.5)
+            if (adjacencyMatrix(ri, ci) > 0.5f)
             {
                 objval += instance.distances()(ri, ci);
             }
@@ -46,7 +46,7 @@ Solution::Solution(Instance const &inst, Matrixf const &X, float const opt_objva
 {
 }
 
-Solution::Solution(Instance const &inst, Matrixf const &X) : Solution(inst, X, 0.0)
+Solution::Solution(Instance const &inst, Matrixf const &X) : Solution(inst, X, 0.0f)
 {
 }
 
@@ -54,7 +54,7 @@ void Solution::random()
 {
     adjacencyMatrix = Matrixf::rand(adjacencyMatrix.rows(), adjacencyMatrix.cols());
     adjacencyMatrix.apply([](float const t)
-                          { return (t > 0.8); });
+                          { return (t > 0.8f); });
 }
 
 Solution Solution::feasibleSolution(Instance const &inst)
@@ -123,7 +123,7 @@ Solution Solution::randomSolution(Instance const &inst)
     // Really random.
     Matrixf X = Matrixf::rand(numnodes, numnodes);
     X.apply([](float const t)
-            { return (t > 0.8); });
+            { return (t > 0.8f); });
 
     // Feasible random.
 
@@ -141,7 +141,7 @@ Solution Solution::optimalSolution(Instance const &inst)
     // 0 is the depot.
     int n = inst.numlocations(); // Number of nodes
     Matrixf d_X = Matrixf(n, n);
-    double objValue = 0.0;
+    float objValue = 0.0;
 
     Solution sol = Solution(inst, d_X, objValue);
     return sol;
@@ -157,14 +157,14 @@ void Solution::draw(Window const &window) const
     {
         for (size_t to = 0; to < numnodes; ++to)
         {
-            if (adjacencyMatrix(from, to) < 0.5)
+            if (adjacencyMatrix(from, to) < 0.5f)
                 continue;
 
-            window.color(Nilib::Color::RGBAf(0.87, 0.87, 0.87, 1.0));
+            window.color(Nilib::Color::RGBAf(0.87f, 0.87f, 0.87f, 1.0f));
             Nilib::Vec2f from_pos({instance.X(from, 0), instance.X(from, 1)});
             Nilib::Vec2f to_pos({instance.X(to, 0), instance.X(to, 1)});
 
-            window.drawArc(from_pos, to_pos, 2.0f + (1 - hide_depot_arcs) * 1.0);
+            window.drawArc(from_pos, to_pos, 2.0f + (1.0f - hide_depot_arcs) * 1.0f);
         }
     }
 }
