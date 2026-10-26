@@ -123,7 +123,7 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
     float best_obj = global_best_obj;
     float current_obj = best_obj;
     float violation = incumbent_local.violation();
-
+    float const eps = 10e-06;
     size_t const iterations = params.max_iterations;
 
     size_t iteration_without_improv = 0;
@@ -196,7 +196,7 @@ ALNSHistory Solver<Solution>::solve_internal(size_t thread_id, Solution &global_
 
                     std::lock_guard<std::mutex> lock(global_mutex);
 
-                    if (best_obj < global_best_obj)
+                    if (best_obj < global_best_obj - eps)
                     {
                         LOG_PROGRESS("ALNS::Solver Thread {} found global improvement on iteration {}. Best objective: {}",
                                      thread_id, iteration, best_obj);

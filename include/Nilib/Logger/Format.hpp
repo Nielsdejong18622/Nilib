@@ -15,6 +15,8 @@
 #include <stdexcept>
 #include <string_view>
 #include <utility>
+#include <fstream>
+#include <iomanip>
 
 template <class... Args>
 class CheckedFormatString
@@ -129,5 +131,7 @@ struct std::formatter<PtrView<T>, char> : std::formatter<std::string>
         return std::format_to(ctx.out(), "{}", *view.ptr);
     }
 };
+
+std::string fmt_bytes(size_t bytes, bool useBinary = true);
 
 #endif

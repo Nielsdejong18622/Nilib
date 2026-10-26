@@ -90,7 +90,6 @@ target_compile_options(Nilib PRIVATE
     # -Werror
   >
 )
-
 # set_property(TARGET Nilib PROPERTY
 #     INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 

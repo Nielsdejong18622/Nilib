@@ -4,6 +4,11 @@ file(GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 # Define the static library Nilib
 add_library(Nilib STATIC ${CPP_FILES})
 
+# Print support for MINGW
+if (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+  target_link_libraries(Nilib PUBLIC stdc++exp) # std:: print, println, ...
+endif()
+
 # Link GLFW, Glad, HiGHS, Gurobi, OpenGL
 if(WIN32)
     if (HIGHS)

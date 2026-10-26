@@ -17,6 +17,7 @@ namespace Nilib
         {                                                  \
             LOG_ERROR("Assertion failed: {}", #condition); \
             __VA_OPT__(LOG_ERROR(__VA_ARGS__);)            \
+            std::abort();                                  \
         }                                                  \
     } while (false)
 

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 namespace Nilib
 {

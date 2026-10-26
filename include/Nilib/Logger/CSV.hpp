@@ -3,7 +3,6 @@
 
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Assert.hpp"
-#include "Nilib/Core/Memory.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -83,7 +82,7 @@ namespace Nilib
             {
                 close();
                 uintmax_t const size = std::filesystem::file_size(d_name);
-                LOG_PROGRESS("Closed CSVfile: {} {}", d_name, Nilib::format_bytes(size));
+                LOG_PROGRESS("Closed CSVfile: {} {}", d_name, fmt_bytes(size));
             }
         }
 

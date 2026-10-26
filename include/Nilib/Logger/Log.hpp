@@ -14,6 +14,7 @@
 #include <iostream>
 #include <type_traits>
 #include <utility>
+#include <thread>
 
 #ifdef _WIN32
 #ifndef NOMINMAX

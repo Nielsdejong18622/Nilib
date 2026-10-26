@@ -1,7 +1,7 @@
-#include "Nilib/Core/Memory.hpp"
-#include "Nilib/Logger/Log.hpp"
+#include "Nilib/Logger/Format.hpp"
 
-std::string Nilib::format_bytes(size_t bytes, bool useBinary)
+
+std::string fmt_bytes(size_t bytes, bool useBinary)
 {
     const char *siUnits[] = {"B", "KB", "MB", "GB", "TB", "PB"};
     const char *iecUnits[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB"};
