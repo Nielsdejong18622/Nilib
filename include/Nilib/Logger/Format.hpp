@@ -17,6 +17,7 @@
 #include <utility>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 
 template <class... Args>
 class CheckedFormatString
