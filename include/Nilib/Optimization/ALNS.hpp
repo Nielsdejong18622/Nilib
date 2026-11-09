@@ -24,7 +24,7 @@ namespace Nilib
         class Solution
         {
         public:
-            virtual ~Solution();
+            virtual ~Solution() = default;
             virtual float objective() const = 0;
             virtual float violation() const = 0;
             virtual bool feasible() const { return violation() <= 0.0f; };

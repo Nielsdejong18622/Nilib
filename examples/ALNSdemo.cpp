@@ -1,7 +1,6 @@
 #include "Nilib/Optimization/ALNS.hpp"
 
 #include "Nilib/Logger/Log.hpp"
-
 #include "Nilib/Core/ArgParser.hpp"
 #include "Nilib/Math/RNG.hpp"
 
@@ -9,6 +8,7 @@ struct DemoSolution : public Nilib::ALNS::Solution
 {
     float x, y;
 
+    // ~DemoSolution();
     DemoSolution(float x, float y) : x(x), y(y)
     {
     }
