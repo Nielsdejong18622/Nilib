@@ -1,5 +1,3 @@
-#include "Nilib/Logger/Log.hpp"
-
 #include <Nilib/Renderer/Window.hpp>
 
 int main(int argc, char **argv)

@@ -1,6 +1,5 @@
 #include "Nilib/Optimization/MixedIntegerLinearProgram.hpp"
 #include "Nilib/Logger/Log.hpp"
-#include <iostream>
 
 using namespace Nilib::MixedIntegerLinearProgram;
 

@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "Nilib/Renderer/Renderer.h"
-#include "Nilib/Renderer/ShaderProgram.h"
 #include "Nilib/Renderer/Window.hpp"
 
 int main()

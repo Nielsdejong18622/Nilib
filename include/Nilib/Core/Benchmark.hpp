@@ -1,7 +1,6 @@
 #ifndef _BENCHMARK_HPP
 #define _BENCHMARK_HPP
 
-#include "Nilib/Core/Profiler.hpp"
 #include "Nilib/Logger/CSV.hpp"
 #include "Nilib/Logger/Log.hpp"
 

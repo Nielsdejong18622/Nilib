@@ -1,5 +1,4 @@
 #include "Nilib/Math/RNG.hpp"
-#include "Nilib/Core/Assert.hpp"
 #include "Nilib/Core/Profiler.hpp"
 #include "Nilib/Math/Stats.hpp"
 

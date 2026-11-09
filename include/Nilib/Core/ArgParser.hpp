@@ -2,7 +2,6 @@
 #define ARGS_H
 
 #include "Nilib/Core/Assert.hpp"
-#include "Nilib/Core/Enum.hpp"
 #include "Nilib/Logger/Log.hpp"
 #include <functional>
 #include <algorithm>

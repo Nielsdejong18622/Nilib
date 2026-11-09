@@ -1,7 +1,6 @@
 #ifndef _ENUM_HPP
 #define _ENUM_HPP
 
-#include <iostream>
 #include <unordered_map>
 
 namespace Nilib

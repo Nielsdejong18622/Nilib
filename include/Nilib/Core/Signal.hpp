@@ -4,7 +4,6 @@
 #include "Nilib/Logger/Log.hpp"
 #include <atomic>
 #include <csignal>
-#include <functional>
 
 namespace Nilib
 {

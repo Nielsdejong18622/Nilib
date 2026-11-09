@@ -1,6 +1,4 @@
-#include "Nilib/Renderer/Window.hpp"
 #include "Nilib/Structures/SparseGraph.hpp"
-#include "Nilib/Structures/DenseGraph.hpp"
 #include "Nilib/Structures/WeightedGraph.hpp"
 #include "Nilib/Structures/GraphFunctions.hpp"
 

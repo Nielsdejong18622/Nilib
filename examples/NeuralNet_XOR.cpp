@@ -8,10 +8,10 @@ int main()
     using namespace Nilib;
     Nilib::RNG::seed(126);
 
-    // // Set up the data to learn from.
+    // Set up the data to learn from.
     MLData<XORobs> data_xor = XOR();
 
-    // // Define the Computational Graph.
+    // Define the Computational Graph.
     Input x;
     Target y;
     NeuralNet<Nilib::Selu> nn(x, XORobs::Xcol, 10, 10, XORobs::Ycol);

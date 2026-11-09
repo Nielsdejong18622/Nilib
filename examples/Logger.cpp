@@ -1,7 +1,6 @@
 #include "Nilib/Logger/Log.hpp"
 #include "Nilib/Core/Profiler.hpp"
 
-#include <print>
 #include <fstream>
 
 int main()

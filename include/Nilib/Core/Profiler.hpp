@@ -1,7 +1,6 @@
 #ifndef _PROFILER_H
 #define _PROFILER_H
 
-#include "Nilib/Logger/Log.hpp"
 #include <chrono>
 #include <string_view>
 

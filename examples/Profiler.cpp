@@ -1,6 +1,5 @@
 #include "Nilib/Core/Profiler.hpp"
-
-#include <format>
+#include "Nilib/Logger/Log.hpp"
 
 using namespace Nilib;
 

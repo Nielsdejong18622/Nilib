@@ -1,5 +1,7 @@
 #include "Nilib/Logger/Format.hpp"
 
+#include <iomanip>
+#include <sstream>
 
 std::string fmt_bytes(size_t bytes, bool useBinary)
 {

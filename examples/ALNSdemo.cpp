@@ -1,6 +1,5 @@
 #include "Nilib/Optimization/ALNS.hpp"
 
-#include "Nilib/Logger/CSV.hpp"
 #include "Nilib/Logger/Log.hpp"
 
 #include "Nilib/Core/ArgParser.hpp"
@@ -61,13 +60,14 @@ int main(int argc, char **argv)
     using namespace std::chrono_literals;
 
     Nilib::ALNS::Params params{
+        .max_iterations = 10'000,
+        .max_iterations_without_improvement = 2500,
         .max_duration = 60s,
+        .max_threads = 1,
         .allow_infeasible = false,
         .use_annealing = true,
-        .history_filename = "examples/ALNS.csv",
-        .max_threads = 1,
-        .max_iterations = 10'000,
-        .max_iterations_without_improvement = 2500};
+        .history_filename = "examples/ALNS.csv"
+    };
 
     // Overwrite some parameters from commandline. 
     parser.option<size_t>(params.max_iterations, "iterations", "ALNS maximum number of iterations");

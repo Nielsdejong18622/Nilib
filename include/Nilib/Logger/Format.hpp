@@ -2,22 +2,9 @@
 #define NILIB_FORMAT_HPP
 
 #include <format>
-#include <ranges>
 #include <string>
 #include <string_view>
 #include <iterator>
-#include <format>
-#include <iterator>
-#include <string>
-#include <utility>
-
-#include <format>
-#include <stdexcept>
-#include <string_view>
-#include <utility>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
 
 template <class... Args>
 class CheckedFormatString
