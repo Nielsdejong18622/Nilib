@@ -12,64 +12,66 @@ namespace Nilib
     template <typename Element, size_t N>
     class CircularStack
     {
-        std::array<Element, N> data;
-        size_t head = 0;
+        std::array<Element, N> d_data;
+        size_t d_head = 0;
 
     public:
         CircularStack() = default;
 
         explicit CircularStack(Element const &element)
         {
-            data.fill(element);
+            d_data.fill(element);
         }
 
         // Add a value to the stack.
         void push_back(Element const &value)
         {
-            data[head] = value;
-            head = (head + 1) % N;
+            d_data[d_head] = value;
+            d_head = (d_head + 1) % N;
         }
         // Remove a value to the stack.
         // On the next push_back this value is gonna be erased!
         Element &pop_back()
         {
-            head = (head + N - 1) % N;
-            return data[head];
+            d_head = (d_head + N - 1) % N;
+            return d_data[d_head];
         }
         // Iterators for range-for compatibility and STL algorithms
-        auto begin() noexcept { return data.begin(); }
-        auto end() noexcept { return data.end(); }
+        auto begin() noexcept { return d_data.begin(); }
+        auto end() noexcept { return d_data.end(); }
 
-        auto begin() const noexcept { return data.begin(); }
-        auto end() const noexcept { return data.end(); }
+        auto begin() const noexcept { return d_data.begin(); }
+        auto end() const noexcept { return d_data.end(); }
 
-        auto cbegin() const noexcept { return data.cbegin(); }
-        auto cend() const noexcept { return data.cend(); }
+        auto cbegin() const noexcept { return d_data.cbegin(); }
+        auto cend() const noexcept { return d_data.cend(); }
 
-        auto rbegin() noexcept { return data.rbegin(); }
-        auto rend() noexcept { return data.rend(); }
+        auto rbegin() noexcept { return d_data.rbegin(); }
+        auto rend() noexcept { return d_data.rend(); }
 
-        auto rbegin() const noexcept { return data.rbegin(); }
-        auto rend() const noexcept { return data.rend(); }
+        auto rbegin() const noexcept { return d_data.rbegin(); }
+        auto rend() const noexcept { return d_data.rend(); }
 
-        auto crbegin() const noexcept { return data.crbegin(); }
-        auto crend() const noexcept { return data.crend(); }
+        auto crbegin() const noexcept { return d_data.crbegin(); }
+        auto crend() const noexcept { return d_data.crend(); }
 
         // Optional: size, operator[], etc.
         constexpr size_t capacity() const noexcept { return N; }
+        constexpr size_t size() const noexcept { return N; }
+        constexpr size_t head() const noexcept { return d_head; }
 
-        Element &operator[](size_t const i) noexcept { return data[i]; }
-        Element const &operator[](size_t const i) const noexcept { return data[i]; }
+        Element &operator[](size_t const i) noexcept { return d_data[i]; }
+        Element const &operator[](size_t const i) const noexcept { return d_data[i]; }
 
         Element &at(size_t const i) noexcept
         {
             CORE_ASSERT(i < N);
-            return data[i];
+            return d_data[i];
         }
         Element const &at(size_t const i) const noexcept
         {
             CORE_ASSERT(i < N);
-            return data[i];
+            return d_data[i];
         }
     };
 

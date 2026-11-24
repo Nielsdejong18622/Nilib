@@ -34,7 +34,6 @@
 #include "Nilib/ML/Optimizers/Momentum.hpp"
 
 #include "Nilib/ML/MLData.hpp"
-#include "Nilib/ML/MLData.hpp"
 
 #include "Nilib/ML/Supervised.hpp"
 

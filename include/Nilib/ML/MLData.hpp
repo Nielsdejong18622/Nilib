@@ -38,6 +38,11 @@ namespace Nilib
         };
 
     public:
+        MLData(size_t const validation_start, size_t const test_start)
+            : d_data(), d_valid_start(validation_start), d_test_start(test_start)
+        {
+        }
+        
         MLData(std::vector<Obs> const &data, size_t const validation_start, size_t const test_start)
             : d_data(data), d_valid_start(validation_start), d_test_start(test_start)
         {

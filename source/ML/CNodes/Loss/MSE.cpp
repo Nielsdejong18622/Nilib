@@ -5,7 +5,10 @@
 using namespace Nilib;
 
 MSELoss::MSELoss(CNode &prediction, CNode &target)
-    : d_prediction(prediction), d_target(target), d_mingate(prediction, target), d_square(d_mingate),
+    : d_prediction(prediction),
+      d_target(target),
+      d_mingate(prediction, target),
+      d_square(d_mingate),
       d_meanpool(d_square)
 {
 }
