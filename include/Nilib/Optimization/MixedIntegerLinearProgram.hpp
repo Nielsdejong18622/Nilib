@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <filesystem>
 
 namespace Nilib
 {
@@ -74,6 +75,7 @@ namespace Nilib
             virtual void removeConstraints(std::vector<constr_t> const &constraints) = 0;
             virtual void removeVariables(std::vector<var_t> const &variables) = 0;
             virtual void solve() = 0;
+            virtual void write(std::filesystem::path const &path) = 0;
             virtual Status status() const = 0;
             virtual double objective() const = 0;
             virtual double variableValue(var_t variable) const = 0;
@@ -115,8 +117,12 @@ namespace Nilib
 
             // Add a complete row to the model.
 
+            // Change a constraint information. 
+            void setConstraintRHS(constr_t constraint, double rhs);
+
             // Try to solve the model.
             void solve();
+            void write(std::filesystem::path const &path);
 
             Status status() const;
 

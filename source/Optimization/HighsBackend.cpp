@@ -173,6 +173,11 @@ void HighsBackend::removeVariables(std::vector<var_t> const &variables)
     }
 }
 
+void HighsBackend::write(std::filesystem::path const &path)
+{
+    d_env.writeModel(path.string());
+}
+
 void HighsBackend::solve()
 {
     // ------------------------------------------------------------

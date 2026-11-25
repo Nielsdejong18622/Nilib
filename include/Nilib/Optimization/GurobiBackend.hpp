@@ -29,6 +29,7 @@ namespace Nilib
             void removeConstraints(std::vector<constr_t> const &constraints) override;
             void removeVariables(std::vector<var_t> const &variables) override;
             void solve() override;
+            void write(std::filesystem::path const &path) override;
 
             Status status() const override;
 

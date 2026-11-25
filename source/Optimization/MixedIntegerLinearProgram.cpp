@@ -40,6 +40,11 @@ MixedIntegerLinearProgram::var_t MixedIntegerLinearProgram::addVar(double coeff,
     return d_backend->addVar(coeff, type, lb, ub);
 }
 
+void MixedIntegerLinearProgram::setConstraintRHS(constr_t constraint, double rhs)
+{
+    // d_backend->changeConstraint(constraint, coeff, rhs, type);
+}
+
 MixedIntegerLinearProgram::constr_t MixedIntegerLinearProgram::addConstraint(var_t variable, double coeff, double rhs, ConstrType type)
 {
     d_numconstraints++;
@@ -72,6 +77,11 @@ MixedIntegerLinearProgram::constr_t MixedIntegerLinearProgram::addConstraints(st
 void MixedIntegerLinearProgram::solve()
 {
     d_backend->solve();
+}
+
+void MixedIntegerLinearProgram::write(std::filesystem::path const &path)
+{
+    d_backend->write(path);
 }
 
 Status MixedIntegerLinearProgram::status() const

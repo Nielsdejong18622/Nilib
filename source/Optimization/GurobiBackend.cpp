@@ -123,6 +123,11 @@ MILPBackend::constr_t GurobiBackend::addConstraint(
     return static_cast<constr_t>(d_constrs.size() - 1);
 }
 
+void GurobiBackend::write(std::filesystem::path const &path)
+{
+    d_model->write(path.string());
+}
+
 void GurobiBackend::solve()
 {
     d_model->optimize();
@@ -180,12 +185,12 @@ double GurobiBackend::dual(constr_t constraint) const
 
 void GurobiBackend::removeConstraints(std::vector<constr_t> const &constraints)
 {
-    if (constraints.empty())
-        return;
+    CORE_ASSERT(!constraints.empty());
+
     for (constr_t constraint : constraints)
     {
         CORE_ASSERT(constraint >= 0);
-        CORE_ASSERT(constraint < static_cast<constr_t>(d_constrs.size()));
+        CORE_ASSERT(constraint < static_cast<constr_t>(d_active_constrs.size()));
         CORE_ASSERT(d_active_constrs[constraint]);
         d_model->remove(d_constrs[constraint]);
         d_active_constrs[constraint] = false;
@@ -193,8 +198,8 @@ void GurobiBackend::removeConstraints(std::vector<constr_t> const &constraints)
 }
 void GurobiBackend::removeVariables(std::vector<var_t> const &variables)
 {
-    if (variables.empty())
-        return;
+    CORE_ASSERT(!variables.empty());
+    
     for (var_t variable : variables)
     {
         CORE_ASSERT(variable >= 0);

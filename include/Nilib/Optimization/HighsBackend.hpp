@@ -28,6 +28,7 @@ namespace Nilib
                                    ConstrType type) override;
 
             void solve() override;
+            void write(std::filesystem::path const &path) override;
 
             var_t addColumn(double obj_coeff, VarType type, double lb, double ub, std::vector<constr_t> const &constr, std::vector<double> const &coeff) override;
             void removeConstraints(std::vector<constr_t> const &constraints) override;
