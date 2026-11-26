@@ -7,7 +7,7 @@
 using namespace Nilib::MixedIntegerLinearProgram;
 
 MixedIntegerLinearProgram::MixedIntegerLinearProgram(Options const &options)
-    : d_backend(nullptr), d_numvariables(0), d_numconstraints(0), d_model_continuous(true)
+    : d_backend(nullptr), d_numvariables(0), d_numconstraints(0)
 {
     if (options.backend == Options::Backend::GUROBI_BACKEND)
     {
@@ -36,7 +36,6 @@ MixedIntegerLinearProgram::MixedIntegerLinearProgram()
 MixedIntegerLinearProgram::var_t MixedIntegerLinearProgram::addVar(double coeff, VarType type, double lb, double ub)
 {
     d_numvariables++;
-    d_model_continuous = (d_model_continuous) ? (type == VarType::CONTINUOUS) : false;
     return d_backend->addVar(coeff, type, lb, ub);
 }
 
@@ -74,11 +73,6 @@ MixedIntegerLinearProgram::constr_t MixedIntegerLinearProgram::addConstraints(st
     return d_backend->addConstraint(variables, coeffs, rhs, type);
 }
 
-bool MixedIntegerLinearProgram::continuous() const
-{
-    return d_model_continuous;
-}
-
 void MixedIntegerLinearProgram::solve()
 {
     d_backend->solve();
@@ -114,6 +108,5 @@ double MixedIntegerLinearProgram::variableValue(var_t variable) const
 double MixedIntegerLinearProgram::dual(constr_t constraint) const
 {
     CORE_ASSERT(status() == Status::OPTIMAL);
-    ASSERT(d_model_continuous, "Model contains integral variable, dual not available!");
     return d_backend->dual(constraint);
 }
