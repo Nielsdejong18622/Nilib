@@ -135,12 +135,14 @@ namespace Nilib
         static std::ostream *&file(LogLevel level)
         {
             static std::ostream *out = &std::cout;
-            static std::ostream *err = &std::cerr;
-
-            if (level == LogLevel::Warning)
-                return err;
-
             return out;
+            // Seperate logging for different streams.
+            // static std::ostream *err = &std::cerr;
+
+            // if (level == LogLevel::Warning or level== LogLevel::ERROR)
+            //     return err;
+
+            // return out;
         }
 
         static ColorMode &color_mode()
