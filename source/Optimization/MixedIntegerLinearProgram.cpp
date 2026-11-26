@@ -74,6 +74,11 @@ MixedIntegerLinearProgram::constr_t MixedIntegerLinearProgram::addConstraints(st
     return d_backend->addConstraint(variables, coeffs, rhs, type);
 }
 
+bool MixedIntegerLinearProgram::continuous() const
+{
+    return d_model_continuous;
+}
+
 void MixedIntegerLinearProgram::solve()
 {
     d_backend->solve();

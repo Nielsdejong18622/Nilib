@@ -135,6 +135,9 @@ namespace Nilib
             // Get the dual variable of a constraint (after a solve).
             double dual(constr_t constraint) const;
 
+            // Check if the model is continuous.
+            bool continuous() const;
+
             size_t numConstraints() const { return d_numconstraints; }
             size_t numVariables() const { return d_numvariables; }
 
